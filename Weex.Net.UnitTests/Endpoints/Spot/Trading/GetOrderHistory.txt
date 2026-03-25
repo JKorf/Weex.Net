@@ -1,0 +1,21 @@
+GET
+/api/v3/allOrders
+true
+[
+  {
+    "symbol": "BTCUSDT",
+    "orderId": 702345678901234567,
+    "clientOrderId": "my-spot-order-001",
+    "price": "68900",
+    "origQty": "0.01",
+    "executedQty": "0.01",
+    "cummulativeQuoteQty": "689.00",
+    "status": "FILLED",
+    "timeInForce": "GTC",
+    "type": "LIMIT",
+    "side": "BUY",
+    "time": 1764506000456,
+    "updateTime": 1764506001556,
+    "isWorking": false
+  }
+]

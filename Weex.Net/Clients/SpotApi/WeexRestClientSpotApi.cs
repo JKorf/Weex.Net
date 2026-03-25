@@ -1,0 +1,104 @@
+using CryptoExchange.Net.Authentication;
+using CryptoExchange.Net.Objects;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
+using Weex.Net.Interfaces.Clients.SpotApi;
+using Weex.Net.Objects.Options;
+using CryptoExchange.Net.Clients;
+using CryptoExchange.Net.Converters.SystemTextJson;
+using CryptoExchange.Net.Interfaces;
+using CryptoExchange.Net.SharedApis;
+using CryptoExchange.Net.Objects.Errors;
+using CryptoExchange.Net.Converters.MessageParsing.DynamicConverters;
+using Weex.Net.Clients.MessageHandlers;
+using System.Collections.Generic;
+
+namespace Weex.Net.Clients.SpotApi
+{
+    /// <inheritdoc cref="IWeexRestClientSpotApi" />
+    internal partial class WeexRestClientSpotApi : RestApiClient<WeexEnvironment, WeexAuthenticationProvider, WeexCredentials>, IWeexRestClientSpotApi
+    {
+        #region fields 
+        protected override ErrorMapping ErrorMapping => WeexErrors.Errors;
+
+        /// <inheritdoc />
+        protected override IRestMessageHandler MessageHandler { get; } = new WeexRestMessageHandler(WeexErrors.Errors);
+        #endregion
+
+        #region Api clients
+        /// <inheritdoc />
+        public IWeexRestClientSpotApiAccount Account { get; }
+        /// <inheritdoc />
+        public IWeexRestClientSpotApiExchangeData ExchangeData { get; }
+        /// <inheritdoc />
+        public IWeexRestClientSpotApiTrading Trading { get; }
+        /// <inheritdoc />
+        public string ExchangeName => "Weex";
+        #endregion
+
+        #region constructor/destructor
+        internal WeexRestClientSpotApi(WeexRestClient baseClient, ILogger logger, HttpClient? httpClient, WeexRestOptions options)
+            : base(logger, httpClient, options.Environment.RestClientAddress, options, options.SpotOptions)
+        {
+            Account = new WeexRestClientSpotApiAccount(this);
+            ExchangeData = new WeexRestClientSpotApiExchangeData(logger, this);
+            Trading = new WeexRestClientSpotApiTrading(logger, this);
+
+            //ParameterPositions[HttpMethod.Delete] = HttpMethodParameterPosition.InUri;
+
+            StandardRequestHeaders = new Dictionary<string, string>
+            {
+                { "User-Agent", "CryptoExchange.Net/" + baseClient.CryptoExchangeLibVersion }
+            };
+        }
+        #endregion
+
+        /// <inheritdoc />
+        protected override IMessageSerializer CreateSerializer() => new SystemTextJsonMessageSerializer(WeexExchange._serializerContext);
+
+        /// <inheritdoc />
+        protected override WeexAuthenticationProvider CreateAuthenticationProvider(WeexCredentials credentials)
+            => new WeexAuthenticationProvider(credentials);
+
+        internal Task<WebCallResult> SendAsync(RequestDefinition definition, ParameterCollection? parameters, CancellationToken cancellationToken, int? weight = null)
+            => SendToAddressAsync(BaseAddress, definition, parameters, cancellationToken, weight);
+
+        internal async Task<WebCallResult> SendToAddressAsync(string baseAddress, RequestDefinition definition, ParameterCollection? parameters, CancellationToken cancellationToken, int? weight = null)
+        {
+            var result = await base.SendAsync(baseAddress, definition, parameters, cancellationToken, null, weight).ConfigureAwait(false);
+            return result;
+        }
+
+        internal Task<WebCallResult<T>> SendAsync<T>(RequestDefinition definition, ParameterCollection? parameters, CancellationToken cancellationToken, int? weight = null) where T : class
+            => SendToAddressAsync<T>(BaseAddress, definition, parameters, cancellationToken, weight);
+
+        internal async Task<WebCallResult<T>> SendToAddressAsync<T>(string baseAddress, RequestDefinition definition, ParameterCollection? parameters, CancellationToken cancellationToken, int? weight = null) where T : class
+        {
+            var result = await base.SendAsync<T>(baseAddress, definition, parameters, cancellationToken, null, weight).ConfigureAwait(false);
+            return result;
+        }
+
+        internal Task<WebCallResult<T>> SendAsync<T>(RequestDefinition definition, ParameterCollection? uriParameters, ParameterCollection? bodyParameters, CancellationToken cancellationToken, int? weight = null) where T : class
+            => SendToAddressAsync<T>(BaseAddress, definition, uriParameters, bodyParameters, cancellationToken, weight);
+
+        internal async Task<WebCallResult<T>> SendToAddressAsync<T>(string baseAddress, RequestDefinition definition, ParameterCollection? uriParameters, ParameterCollection? bodyParameters, CancellationToken cancellationToken, int? weight = null) where T : class
+        {
+            var result = await base.SendAsync<T>(baseAddress, definition, uriParameters, bodyParameters, cancellationToken, null, weight).ConfigureAwait(false);
+            return result;
+        }
+
+        /// <inheritdoc />
+        protected override Task<WebCallResult<DateTime>> GetServerTimestampAsync()
+            => ExchangeData.GetServerTimeAsync();
+
+        /// <inheritdoc />
+        public override string FormatSymbol(string baseAsset, string quoteAsset, TradingMode tradingMode, DateTime? deliverDate = null) 
+            => WeexExchange.FormatSymbol(baseAsset, quoteAsset, tradingMode, deliverDate);
+
+        /// <inheritdoc />
+        public IWeexRestClientSpotApiShared SharedClient => this;
+    }
+}

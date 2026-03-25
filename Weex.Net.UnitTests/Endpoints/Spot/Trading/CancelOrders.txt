@@ -1,0 +1,16 @@
+DELETE
+/api/v3/order/batch
+true
+{
+  "orderList": [
+    {
+      "orderId": 702345678901234567,
+      "status": "CANCELED"
+    },
+    {
+      "orderId": 702345678901234568,
+      "status": "EXPIRED",
+      "errorMsg": "order not found"
+    }
+  ]
+}

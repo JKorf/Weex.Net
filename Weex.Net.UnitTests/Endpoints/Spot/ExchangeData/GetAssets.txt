@@ -1,0 +1,32 @@
+GET
+/api/v3/coins
+false
+[
+  {
+    "coin": "USDT",
+    "name": "USDT",
+    "depositAllEnable": true,
+    "withdrawAllEnable": true,
+    "networkList": [
+      {
+        "network": "BEP20(BSC)",
+        "coin": "USDT",
+        "withdrawIntegerMultiple": 1e-8,
+        "isDefault": false,
+        "depositEnable": true,
+        "withdrawEnable": true,
+        "depositDesc": null,
+        "withdrawDesc": null,
+        "name": "BEP20(BSC)",
+        "withdrawFee": "0.000002",
+        "withdrawMin": "0.00001",
+        "withdrawInternalMin": null,
+        "depositDust": "0.0001",
+        "minConfirm": 11,
+        "withdrawTag": false,
+        "contractAddressUrl": "https://bscscan.com/token/",
+        "contractAddress": "0x55d39832789f99059ff7545246999027b3197955"
+      }
+    ]
+  }
+]

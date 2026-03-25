@@ -1,0 +1,14 @@
+GET
+/api/v3/market/trades
+false
+[
+  {
+    "id": "120045678901",
+    "price": "68950.00",
+    "qty": "0.002",
+    "quoteQty": "137.90000",
+    "time": 1764506000456,
+    "isBuyerMaker": true,
+    "isBestMatch": true
+  }
+]

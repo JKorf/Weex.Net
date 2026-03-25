@@ -1,0 +1,9 @@
+POST
+/api/v3/order
+true
+{
+  "symbol": "BTCUSDT",
+  "orderId": 702345678901234567,
+  "clientOrderId": "my-spot-order-001",
+  "transactTime": 1764506000456
+}

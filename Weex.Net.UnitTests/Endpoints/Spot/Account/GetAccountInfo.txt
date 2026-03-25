@@ -1,0 +1,28 @@
+GET
+/api/v3/account/
+true
+{
+  "makerCommission": 10,
+  "takerCommission": 10,
+  "commissionRates": {
+    "maker": "0.0010",
+    "taker": "0.0010"
+  },
+  "canTrade": true,
+  "canWithdraw": true,
+  "canDeposit": true,
+  "permissions": ["SPOT_TRADING"],
+  "balances": [
+    {
+      "asset": "BTC",
+      "free": "0.004",
+      "locked": "0"
+    },
+    {
+      "asset": "USDT",
+      "free": "1200.00000000",
+      "locked": "0"
+    }
+  ],
+  "uid": 1002003004
+}

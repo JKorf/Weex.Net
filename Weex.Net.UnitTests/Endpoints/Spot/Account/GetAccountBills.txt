@@ -1,0 +1,17 @@
+Post
+/api/v3/account/bills
+true
+[
+  {
+    "billId": "701234567890123456",
+    "coinId": 2,
+    "coinName": "USDT",
+    "bizType": "trade_out",
+    "fillSize": "0.005",
+    "fillValue": "0",
+    "deltaAmount": "-100.00000000",
+    "afterAmount": "900.00000000",
+    "fees": "0.10000000",
+    "cTime": "1764505800123"
+  }
+]

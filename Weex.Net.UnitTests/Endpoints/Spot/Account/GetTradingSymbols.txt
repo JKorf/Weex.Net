@@ -1,0 +1,8 @@
+GET
+/api/v3/apiTradingSymbols
+true
+[
+  "BTCUSDT",
+  "ETHUSDT",
+  "SOLUSDT"
+]

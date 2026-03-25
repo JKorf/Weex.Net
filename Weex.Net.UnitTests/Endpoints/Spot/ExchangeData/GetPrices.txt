@@ -1,0 +1,7 @@
+GET
+/api/v3/market/ticker/price
+false
+[{
+  "symbol": "BTCUSDT",
+  "price": "68920.40"
+}]

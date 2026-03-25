@@ -1,0 +1,23 @@
+GET
+/api/v3/market/ticker/24hr
+false
+[
+  {
+    "symbol": "BTCUSDT",
+    "priceChange": "-350.50",
+    "priceChangePercent": "-0.0051",
+    "lastPrice": "68920.40",
+    "bidPrice": "68919.90",
+    "bidQty": "2.480",
+    "askPrice": "68920.70",
+    "askQty": "1.375",
+    "openPrice": "69270.90",
+    "highPrice": "70110.00",
+    "lowPrice": "68500.10",
+    "volume": "1524.361",
+    "quoteVolume": "105060432.75",
+    "openTime": 1764412800000,
+    "closeTime": 1764499200000,
+    "count": 98642
+  }
+]

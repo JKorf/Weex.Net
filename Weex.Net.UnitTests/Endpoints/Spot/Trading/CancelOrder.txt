@@ -1,0 +1,7 @@
+DELETE
+/api/v3/order
+true
+{
+  "orderId": 702345678901234567,
+  "status": "CANCELED"
+}

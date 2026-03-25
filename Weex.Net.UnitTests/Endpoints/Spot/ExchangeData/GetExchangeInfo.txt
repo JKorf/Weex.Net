@@ -1,0 +1,31 @@
+GET
+/api/v3/exchangeInfo
+false
+{
+  "timezone": "UTC",
+  "serverTime": 1764506000123,
+  "symbols": [
+    {
+      "symbol": "BTCUSDT",
+      "status": "TRADING",
+      "baseAsset": "BTC",
+      "baseAssetPrecision": 8,
+      "quoteAsset": "USDT",
+      "quoteAssetPrecision": 8,
+      "minTradeAmount": "0.0001",
+      "maxTradeAmount": "1000",
+      "takerFeeRate": "0.001",
+      "makerFeeRate": "0.001",
+      "buyLimitPriceRatio": "0.1",
+      "sellLimitPriceRatio": "0.1",
+      "marketBuyLimitSize": "50",
+      "marketSellLimitSize": "50",
+      "marketFallbackPriceRatio": "0.2",
+      "enableTrade": true,
+      "enableDisplay": true,
+      "displayDigitMerge": "1,0.1,0.01",
+      "displayNew": false,
+      "displayHot": true
+    }
+  ]
+}

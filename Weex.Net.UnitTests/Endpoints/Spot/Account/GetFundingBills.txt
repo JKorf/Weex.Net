@@ -1,0 +1,22 @@
+POST
+/api/v3/account/fundingBills
+true
+{
+  "total": 12,
+  "pageSize": 20,
+  "pages": 1,
+  "page": 1,
+  "hasNextPage": false,
+  "items": [
+    {
+      "billId": "701234567890123456",
+      "coinId": 2,
+      "coinName": "USDT",
+      "bizType": "transfer_in",
+      "deltaAmount": "100.00000000",
+      "afterAmount": "910.00000000",
+      "fees": "0",
+      "cTime": "1764505800123"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+GET
+/api/v3/market/ticker/bookTicker
+false
+[
+  {
+    "symbol": "BTCUSDT",
+    "bidPrice": "68919.90",
+    "bidQty": "2.480",
+    "askPrice": "68920.60",
+    "askQty": "1.102"
+  }
+]
