@@ -66,6 +66,16 @@ namespace Weex.Net.Objects.Models
         [JsonPropertyName("quoteAssetPrecision")]
         public int QuoteAssetPrecision { get; set; }
         /// <summary>
+        /// ["<c>tickSize</c>"] Price tick size
+        /// </summary>
+        [JsonPropertyName("tickSize")]
+        public decimal TickSize { get; set; }
+        /// <summary>
+        /// ["<c>stepSize</c>"] Quantity tick size
+        /// </summary>
+        [JsonPropertyName("stepSize")]
+        public decimal StepSize { get; set; }
+        /// <summary>
         /// ["<c>minTradeAmount</c>"] Min trade quantity
         /// </summary>
         [JsonPropertyName("minTradeAmount")]

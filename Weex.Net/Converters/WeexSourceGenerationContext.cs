@@ -30,6 +30,10 @@ namespace Weex.Net.Converters
     [JsonSerializable(typeof(WeexUserTrade[]))]
     [JsonSerializable(typeof(WeexOrderRequest[]))]
 
+    [JsonSerializable(typeof(WeexOrderUpdate))]
+    [JsonSerializable(typeof(WeexUserTradeUpdate))]
+    [JsonSerializable(typeof(WeexAccountUpdate))]
+    [JsonSerializable(typeof(WeexSocketEvent<WeexTradeUpdate[]>))]
     [JsonSerializable(typeof(WeexSocketEvent<WeexKlineUpdate[]>))]
     [JsonSerializable(typeof(WeexBookTickerUpdate))]
     [JsonSerializable(typeof(WeexOrderBookUpdate))]

@@ -1,4 +1,5 @@
 using CryptoExchange.Net.Objects;
+using CryptoExchange.Net.Objects.Errors;
 using CryptoExchange.Net.Sockets;
 using CryptoExchange.Net.Sockets.Default;
 using System;
@@ -15,7 +16,9 @@ namespace Weex.Net.Objects.Sockets
 
         public CallResult<WeexSocketResponse> HandleMessage(SocketConnection connection, DateTime receiveTime, string? originalData, WeexSocketResponse message)
         {
-#warning error handling?
+            if (!message.Result)
+                return new CallResult<WeexSocketResponse>(new ServerError(ErrorInfo.Unknown with { Message = message.Message }));
+
             return new CallResult<WeexSocketResponse>(message, originalData, null);
         }
     }

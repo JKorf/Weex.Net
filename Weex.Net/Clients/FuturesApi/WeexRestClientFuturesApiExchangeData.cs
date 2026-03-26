@@ -25,7 +25,7 @@ namespace Weex.Net.Clients.FuturesApi
         /// <inheritdoc />
         public async Task<WebCallResult<DateTime>> GetServerTimeAsync(CancellationToken ct = default)
         {
-            var request = _definitions.GetOrCreate(HttpMethod.Get, "XXX", WeexExchange.RateLimiter.Weex, 1, false);
+            var request = _definitions.GetOrCreate(HttpMethod.Get, "XXX", WeexExchange.RateLimiter.WeexRestIp, 1, false);
             var result = await _baseClient.SendAsync<WeexModel>(request, null, ct).ConfigureAwait(false);
             throw new NotImplementedException();
         }

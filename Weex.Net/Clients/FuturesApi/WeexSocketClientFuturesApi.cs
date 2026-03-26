@@ -29,7 +29,7 @@ namespace Weex.Net.Clients.FuturesApi
     internal partial class WeexSocketClientFuturesApi : SocketApiClient<WeexEnvironment, WeexAuthenticationProvider, WeexCredentials>, IWeexSocketClientFuturesApi
     {
         #region fields
-        protected override ErrorMapping ErrorMapping => WeexErrors.Errors;
+        //protected override ErrorMapping ErrorMapping => WeexErrors.Errors;
         #endregion
 
         #region constructor/destructor
@@ -60,7 +60,7 @@ namespace Weex.Net.Clients.FuturesApi
                 //UpdateTimeOffset(data.Timestamp);
 
                 onMessage(
-                    new DataEvent<WeexModel>(WeexExchange.ExchangeName, data, receiveTime, originalData)
+                    new DataEvent<WeexModel>(WeexExchange.Metadata.Id, data, receiveTime, originalData)
                         .WithUpdateType(SocketUpdateType.Update)
                         //.WithStreamId(data.Stream)
                         //.WithSymbol(data.Symbol)

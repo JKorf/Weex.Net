@@ -21,10 +21,10 @@ namespace Weex.Net.Clients.FuturesApi
     internal partial class WeexRestClientFuturesApi : RestApiClient<WeexEnvironment, WeexAuthenticationProvider, WeexCredentials>, IWeexRestClientFuturesApi
     {
         #region fields 
-        protected override ErrorMapping ErrorMapping => WeexErrors.Errors;
+        protected override ErrorMapping ErrorMapping => WeexErrors.RestErrors;
 
         /// <inheritdoc />
-        protected override IRestMessageHandler MessageHandler { get; } = new WeexRestMessageHandler(WeexErrors.Errors);
+        protected override IRestMessageHandler MessageHandler { get; } = new WeexRestMessageHandler(WeexErrors.RestErrors);
         #endregion
 
         #region Api clients

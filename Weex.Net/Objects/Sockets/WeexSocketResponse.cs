@@ -13,5 +13,7 @@ namespace Weex.Net.Objects.Sockets
         public bool Result { get; set; }
         [JsonPropertyName("id")]
         public long Id { get; set; }
+        [JsonPropertyName("msg")]
+        public string? Message { get; set; }
     }
 }

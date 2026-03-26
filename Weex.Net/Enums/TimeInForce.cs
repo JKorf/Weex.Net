@@ -13,7 +13,7 @@ namespace Weex.Net.Enums
         /// <summary>
         /// ["<c>GTC</c>"] Good until canceled
         /// </summary>
-        [Map("GTC")]
+        [Map("GTC", "GOOD_TIL_CANCEL")]
         GoodTillCanceled,
         /// <summary>
         /// ["<c>IOC</c>"] Immediately fill at least partially or cancel
@@ -25,6 +25,11 @@ namespace Weex.Net.Enums
         /// </summary>
         [Map("FOK")]
         FillOrKill,
+        /// <summary>
+        /// ["<c>POST_ONLY</c>"] Post only
+        /// </summary>
+        [Map("POST_ONLY")]
+        PostOnly
     }
 
 }

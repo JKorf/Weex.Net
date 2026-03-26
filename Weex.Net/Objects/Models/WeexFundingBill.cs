@@ -23,7 +23,7 @@ namespace Weex.Net.Objects.Models
         /// ["<c>coinName</c>"] Asset name
         /// </summary>
         [JsonPropertyName("coinName")]
-        public string AssetName { get; set; } = string.Empty;
+        public string Asset { get; set; } = string.Empty;
         /// <summary>
         /// ["<c>bizType</c>"] Business type
         /// </summary>

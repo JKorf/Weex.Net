@@ -12,7 +12,7 @@ namespace Weex.Net.UnitTests
     [NonParallelizable]
     public class WeexRestIntegrationTests : RestIntegrationTest<WeexRestClient>
     {
-        public override bool Run { get; set; } = false;
+        public override bool Run { get; set; } = true;
 
         public override WeexRestClient GetClient(ILoggerFactory loggerFactory)
         {
@@ -35,11 +35,10 @@ namespace Weex.Net.UnitTests
             if (!ShouldRun())
                 return;
 
-#warning Implement error response
-            //var result = await CreateClient().SpotApi.ExchangeData.GetTickerAsync("TSTTST", default);
+            var result = await CreateClient().SpotApi.ExchangeData.GetRecentTradesAsync("AAAUSDT", default);
 
-            //Assert.That(result.Success, Is.False);
-            //Assert.That(result.Error.Code, Is.EqualTo(-1121));
+            Assert.That(result.Success, Is.False);
+            Assert.That(result.Error.Code, Is.EqualTo(-1142));
         }
 
         [Test]

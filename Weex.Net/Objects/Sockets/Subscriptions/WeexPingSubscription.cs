@@ -18,7 +18,11 @@ namespace Weex.Net.Objects.Sockets.Subscriptions
         private CallResult? HandlePing(SocketConnection connection, DateTime time, string? arg3, WeexPing ping)
         {
             var id = ExchangeHelpers.NextId();
-            _ = connection.SendAndWaitQueryAsync(new WeexQuery(new WeexSocketRequest() { Id = id, Method = "PONG" }, false));
+            // Private connection doesn't send a response to out pong, no need to wait
+            if (connection.ConnectionUri.PathAndQuery.Contains("/private"))
+                _ = connection.SendAsync(id, new WeexSocketRequest() { Id = id, Method = "PONG" }, 1);
+            else
+                _ = connection.SendAndWaitQueryAsync(new WeexQuery(new WeexSocketRequest() { Id = id, Method = "PONG" }, false));
             return CallResult.SuccessResult;
         }
     }

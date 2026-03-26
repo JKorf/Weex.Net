@@ -11,6 +11,11 @@ namespace Weex.Net.Enums
     public enum OrderStatus
     {
         /// <summary>
+        /// ["<c>PENDING</c>"] Pending
+        /// </summary>
+        [Map("PENDING")]
+        Pending,
+        /// <summary>
         /// ["<c>NEW</c>"] New
         /// </summary>
         [Map("NEW")]
@@ -21,6 +26,11 @@ namespace Weex.Net.Enums
         [Map("FILLED")]
         Filled,
         /// <summary>
+        /// ["<c>CANCELING</c>"] Canceling
+        /// </summary>
+        [Map("CANCELING")]
+        Canceling,
+        /// <summary>
         /// ["<c>CANCELED</c>"] Canceled
         /// </summary>
         [Map("CANCELED")]
@@ -29,7 +39,12 @@ namespace Weex.Net.Enums
         /// ["<c>EXPIRED</c>"] Expired
         /// </summary>
         [Map("EXPIRED")]
-        Expired
+        Expired,
+        /// <summary>
+        /// ["<c>UNTRIGGERED</c>"] Untriggered
+        /// </summary>
+        [Map("UNTRIGGERED")]
+        Untriggered
     }
 
 }

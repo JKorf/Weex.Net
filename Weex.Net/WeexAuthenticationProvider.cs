@@ -49,9 +49,13 @@ namespace Weex.Net
             requestConfig.Headers.Add("ACCESS-PASSPHRASE", Credential.Pass);
         }
 
-        public override Query? GetAuthenticationQuery(SocketApiClient apiClient, SocketConnection connection, Dictionary<string, object?>? context = null)
+        public void ApplyWebsocketAuthentication(SocketApiClient apiClient, IDictionary<string, string> headers)
         {
-            return null;
+            var timestamp = GetMillisecondTimestampLong(apiClient);
+            headers["ACCESS-KEY"] = Key;
+            headers["ACCESS-PASSPHRASE"] = Credential.Pass;
+            headers["ACCESS-TIMESTAMP"] = timestamp.ToString();
+            headers["ACCESS-SIGN"] = SignHMACSHA256(timestamp + "/v3/ws/private", SignOutputType.Base64);
         }
     }
 }

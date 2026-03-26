@@ -33,6 +33,13 @@ namespace Weex.Net.Clients.MessageHandlers
             },
 
             new MessageTypeDefinition {
+                Fields = [
+                    new PropertyFieldReference("type"),
+                ],
+                TypeIdentifierCallback = x => x.FieldValue("type")!,
+            },
+
+            new MessageTypeDefinition {
                 ForceIfFound = true,
                 Fields = [
                     new PropertyFieldReference("id"),

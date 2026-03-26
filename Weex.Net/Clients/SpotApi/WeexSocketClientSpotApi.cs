@@ -36,7 +36,7 @@ namespace Weex.Net.Clients.SpotApi
         #region fields
         private readonly WeexSocketClient _baseClient;
 
-        protected override ErrorMapping ErrorMapping => WeexErrors.Errors;
+        //protected override ErrorMapping ErrorMapping => WeexErrors.Errors;
         #endregion
 
         #region constructor/destructor
@@ -48,6 +48,8 @@ namespace Weex.Net.Clients.SpotApi
             base(logger, options.Environment.SocketClientAddress!, options, options.SpotOptions)
         {
             _baseClient = baseClient;
+
+            RateLimiter = WeexExchange.RateLimiter.WeexSocket;
 
             AddSystemSubscription(new WeexConnectedSubscription(logger));
             AddSystemSubscription(new WeexPingSubscription(logger));
@@ -75,7 +77,7 @@ namespace Weex.Net.Clients.SpotApi
                 UpdateTimeOffset(data.EventTime);
 
                 onMessage(
-                    new DataEvent<WeexTickerUpdate>(WeexExchange.ExchangeName, data.Data.First(), receiveTime, originalData)
+                    new DataEvent<WeexTickerUpdate>(WeexExchange.Metadata.Id, data.Data.First(), receiveTime, originalData)
                         .WithUpdateType(SocketUpdateType.Update)
                         .WithStreamId(data.Event)
                         .WithSymbol(data.Symbol)
@@ -99,7 +101,7 @@ namespace Weex.Net.Clients.SpotApi
                 UpdateTimeOffset(data.EventTime);
 
                 onMessage(
-                    new DataEvent<WeexBookTickerUpdate>(WeexExchange.ExchangeName, data, receiveTime, originalData)
+                    new DataEvent<WeexBookTickerUpdate>(WeexExchange.Metadata.Id, data, receiveTime, originalData)
                         .WithUpdateType(SocketUpdateType.Update)
                         .WithStreamId(data.Event)
                         .WithSymbol(data.Symbol)
@@ -123,7 +125,7 @@ namespace Weex.Net.Clients.SpotApi
                 UpdateTimeOffset(data.EventTime);
 
                 onMessage(
-                    new DataEvent<WeexOrderBookUpdate>(WeexExchange.ExchangeName, data, receiveTime, originalData)
+                    new DataEvent<WeexOrderBookUpdate>(WeexExchange.Metadata.Id, data, receiveTime, originalData)
                         .WithUpdateType(data.UpdateType.Equals("SNAPSHOT", StringComparison.OrdinalIgnoreCase) ? SocketUpdateType.Snapshot : SocketUpdateType.Update)
                         .WithStreamId(data.Event)
                         .WithSymbol(data.Symbol)
@@ -147,7 +149,7 @@ namespace Weex.Net.Clients.SpotApi
                 UpdateTimeOffset(data.EventTime);
 
                 onMessage(
-                    new DataEvent<WeexKlineUpdate[]>(WeexExchange.ExchangeName, data.Data, receiveTime, originalData)
+                    new DataEvent<WeexKlineUpdate[]>(WeexExchange.Metadata.Id, data.Data, receiveTime, originalData)
                         .WithUpdateType(data.Event.Equals("klineSnapshot", StringComparison.OrdinalIgnoreCase) ? SocketUpdateType.Snapshot : SocketUpdateType.Update)
                         .WithStreamId(data.Event)
                         .WithSymbol(data.Symbol)
@@ -166,6 +168,93 @@ namespace Weex.Net.Clients.SpotApi
             return await SubscribeAsync(BaseAddress.AppendPath("/v3/ws/public"), subscription, ct).ConfigureAwait(false);
         }
 
+        /// <inheritdoc />
+        public Task<CallResult<UpdateSubscription>> SubscribeToTradeUpdatesAsync(string symbol, Action<DataEvent<WeexTradeUpdate[]>> onMessage, CancellationToken ct = default)
+            => SubscribeToTradeUpdatesAsync([symbol], onMessage, ct);
+
+        /// <inheritdoc />
+        public async Task<CallResult<UpdateSubscription>> SubscribeToTradeUpdatesAsync(IEnumerable<string> symbols, Action<DataEvent<WeexTradeUpdate[]>> onMessage, CancellationToken ct = default)
+        {
+            var internalHandler = new Action<DateTime, string?, WeexSocketEvent<WeexTradeUpdate[]>>((receiveTime, originalData, data) =>
+            {
+                UpdateTimeOffset(data.EventTime);
+
+                onMessage(
+                    new DataEvent<WeexTradeUpdate[]>(WeexExchange.Metadata.Id, data.Data, receiveTime, originalData)
+                        .WithUpdateType(SocketUpdateType.Update)
+                        .WithStreamId(data.Event)
+                        .WithSymbol(data.Symbol)
+                        .WithDataTimestamp(data.EventTime, GetTimeOffset())
+                    );
+            });
+
+            var subscription = new WeexSubscription<WeexSocketEvent<WeexTradeUpdate[]>>(_logger, symbols.Select(x => $"{x}@trade").ToArray(), ["trade", "tradeSnapshot"], symbols.ToArray(), internalHandler, false);
+            return await SubscribeAsync(BaseAddress.AppendPath("/v3/ws/public"), subscription, ct).ConfigureAwait(false);
+        }
+
+        /// <inheritdoc />
+        public async Task<CallResult<UpdateSubscription>> SubscribeToAccountUpdatesAsync(Action<DataEvent<WeexAccountUpdate>> onMessage, CancellationToken ct = default)
+        {
+            var internalHandler = new Action<DateTime, string?, WeexAccountUpdate>((receiveTime, originalData, data) =>
+            {
+                UpdateTimeOffset(data.EventTime);
+
+                onMessage(
+                    new DataEvent<WeexAccountUpdate>(WeexExchange.Metadata.Id, data, receiveTime, originalData)
+                        .WithUpdateType(SocketUpdateType.Update)
+                        .WithStreamId(data.Event)
+                        .WithSymbol(data.Symbol)
+                        .WithDataTimestamp(data.EventTime, GetTimeOffset())
+                    );
+            });
+
+            var subscription = new WeexSubscription<WeexAccountUpdate>(_logger, ["account"], ["account"], null, internalHandler, true);
+            return await SubscribeAsync(BaseAddress.AppendPath("/v3/ws/private"), subscription, ct).ConfigureAwait(false);
+        }
+
+        /// <inheritdoc />
+        public async Task<CallResult<UpdateSubscription>> SubscribeToOrderUpdatesAsync(Action<DataEvent<WeexOrderUpdate>> onMessage, CancellationToken ct = default)
+        {
+            var internalHandler = new Action<DateTime, string?, WeexOrderUpdate>((receiveTime, originalData, data) =>
+            {
+                UpdateTimeOffset(data.EventTime);
+
+                onMessage(
+                    new DataEvent<WeexOrderUpdate>(WeexExchange.Metadata.Id, data, receiveTime, originalData)
+                        .WithUpdateType(SocketUpdateType.Update)
+                        .WithStreamId(data.Event)
+                        .WithSymbol(data.Symbol)
+                        .WithDataTimestamp(data.EventTime, GetTimeOffset())
+                    );
+            });
+
+            var subscription = new WeexSubscription<WeexOrderUpdate>(_logger, ["orders"], ["orders"], null, internalHandler, true);
+            return await SubscribeAsync(BaseAddress.AppendPath("/v3/ws/private"), subscription, ct).ConfigureAwait(false);
+        }
+
+
+        /// <inheritdoc />
+        public async Task<CallResult<UpdateSubscription>> SubscribeToUserTradeUpdatesAsync(Action<DataEvent<WeexUserTradeUpdate>> onMessage, CancellationToken ct = default)
+        {
+            var internalHandler = new Action<DateTime, string?, WeexUserTradeUpdate>((receiveTime, originalData, data) =>
+            {
+                UpdateTimeOffset(data.EventTime);
+
+                onMessage(
+                    new DataEvent<WeexUserTradeUpdate>(WeexExchange.Metadata.Id, data, receiveTime, originalData)
+                        .WithUpdateType(SocketUpdateType.Update)
+                        .WithStreamId(data.Event)
+                        .WithSymbol(data.Symbol)
+                        .WithDataTimestamp(data.EventTime, GetTimeOffset())
+                    );
+            });
+
+            var subscription = new WeexSubscription<WeexUserTradeUpdate>(_logger, ["fill"], ["fill"], null, internalHandler, true);
+            return await SubscribeAsync(BaseAddress.AppendPath("/v3/ws/private"), subscription, ct).ConfigureAwait(false);
+        }
+
+        protected override Task<Query?> GetAuthenticationRequestAsync(SocketConnection connection) => Task.FromResult<Query?>(null);
+
         protected override WebSocketParameters GetWebSocketParameters(string address)
         {
             var result = base.GetWebSocketParameters(address);
@@ -173,6 +262,13 @@ namespace Weex.Net.Clients.SpotApi
             {
                 { "User-Agent", "CryptoExchange.Net/" + _baseClient.CryptoExchangeLibVersion }
             };
+
+            if (address.EndsWith("/private"))
+            {
+                // Apply authentication
+                AuthenticationProvider!.ApplyWebsocketAuthentication(this, result.Headers);
+            }
+             
             return result;
         }
 

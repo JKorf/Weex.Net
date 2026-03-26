@@ -7,6 +7,8 @@ using Weex.Net.Converters;
 using System.Text.Json;
 using CryptoExchange.Net.Converters.SystemTextJson;
 using CryptoExchange.Net.Converters;
+using CryptoExchange.Net.RateLimiting.Guards;
+using CryptoExchange.Net.RateLimiting.Filters;
 
 namespace Weex.Net
 {
@@ -18,50 +20,15 @@ namespace Weex.Net
         /// <summary>
         /// Platform metadata
         /// </summary>
-#warning TODO
         public static PlatformInfo Metadata { get; } = new PlatformInfo(
                 "Weex",
                 "Weex",
-                "",
-                "",
-                ["",
-                 ""],
+                "https://raw.githubusercontent.com/JKorf/Weex.Net/main/Weex.Net/Icon/icon.png",
+                "https://www.weex.com/",
+                ["https://www.weex.com/api-doc/spot/log/changelog"],
                 PlatformType.CryptoCurrencyExchange,
                 CentralizationType.Centralized
                 );
-
-        /// <summary>
-        /// Exchange name
-        /// </summary>
-        public static string ExchangeName => "Weex";
-
-        /// <summary>
-        /// Display name
-        /// </summary>
-        public static string DisplayName => "Weex";
-
-        /// <summary>
-        /// Url to exchange image
-        /// </summary>
-        public static string ImageUrl { get; } = "TODO";
-
-        /// <summary>
-        /// Url to the main website
-        /// </summary>
-        public static string Url { get; } = "https://www.XXX.com";
-
-        /// <summary>
-        /// Urls to the API documentation
-        /// </summary>
-#warning TODO
-        public static string[] ApiDocsUrl { get; } = new[] {
-            "XXX"
-            };
-
-        /// <summary>
-        /// Type of exchange
-        /// </summary>
-        public static ExchangeType Type { get; } = ExchangeType.CEX;
 
         internal static JsonSerializerOptions _serializerContext = SerializerOptions.WithConverters(JsonSerializerContextCache.GetOrCreate<WeexSourceGenerationContext>());
 
@@ -88,8 +55,7 @@ namespace Weex.Net
             baseAsset = AssetAliases.CommonToExchangeName(baseAsset.ToUpperInvariant());
             quoteAsset = AssetAliases.CommonToExchangeName(quoteAsset.ToUpperInvariant());
 
-#warning todo
-            throw new NotImplementedException();
+            return baseAsset + quoteAsset;
         }
 
         /// <summary>
@@ -121,13 +87,26 @@ namespace Weex.Net
 
         private void Initialize()
         {
-            Weex = new RateLimitGate("Weex");
-            Weex.RateLimitTriggered += (x) => RateLimitTriggered?.Invoke(x);
-            Weex.RateLimitUpdated += (x) => RateLimitUpdated?.Invoke(x);
+            WeexRestIp = new RateLimitGate("Weex IP")
+                .AddGuard(new RateLimitGuard(RateLimitGuard.PerEndpoint, new LimitItemTypeFilter(RateLimitItemType.Request), 500, TimeSpan.FromSeconds(10), RateLimitWindowType.Sliding)); // 500 weight per 10 seconds 
+            WeexRestUid = new RateLimitGate("Weex UID")
+                .AddGuard(new RateLimitGuard(RateLimitGuard.PerApiKeyPerEndpoint, new LimitItemTypeFilter(RateLimitItemType.Request), 500, TimeSpan.FromSeconds(10), RateLimitWindowType.Sliding)); // 500 weight per 10 seconds 
+            WeexSocket = new RateLimitGate("Weex Socket")
+                .AddGuard(new RateLimitGuard(RateLimitGuard.PerHost, new LimitItemTypeFilter(RateLimitItemType.Connection), 300, TimeSpan.FromMinutes(5), RateLimitWindowType.Sliding)) // 300 connections per 5 minutes 
+                .AddGuard(new RateLimitGuard(RateLimitGuard.PerConnection, new LimitItemTypeFilter(RateLimitItemType.Request), 240, TimeSpan.FromMinutes(60), RateLimitWindowType.Sliding)); // 240 operations per hour per connection 
+
+            WeexRestIp.RateLimitTriggered += (x) => RateLimitTriggered?.Invoke(x);
+            WeexRestIp.RateLimitUpdated += (x) => RateLimitUpdated?.Invoke(x);
+            WeexRestUid.RateLimitTriggered += (x) => RateLimitTriggered?.Invoke(x);
+            WeexRestUid.RateLimitUpdated += (x) => RateLimitUpdated?.Invoke(x);
+            WeexSocket.RateLimitTriggered += (x) => RateLimitTriggered?.Invoke(x);
+            WeexSocket.RateLimitUpdated += (x) => RateLimitUpdated?.Invoke(x);
         }
 
 
-        internal IRateLimitGate Weex { get; private set; }
+        internal IRateLimitGate WeexSocket { get; private set; }
+        internal IRateLimitGate WeexRestIp { get; private set; }
+        internal IRateLimitGate WeexRestUid { get; private set; }
 
     }
 }

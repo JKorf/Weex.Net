@@ -22,10 +22,10 @@ namespace Weex.Net.Clients.SpotApi
     internal partial class WeexRestClientSpotApi : RestApiClient<WeexEnvironment, WeexAuthenticationProvider, WeexCredentials>, IWeexRestClientSpotApi
     {
         #region fields 
-        protected override ErrorMapping ErrorMapping => WeexErrors.Errors;
+        protected override ErrorMapping ErrorMapping => WeexErrors.RestErrors;
 
         /// <inheritdoc />
-        protected override IRestMessageHandler MessageHandler { get; } = new WeexRestMessageHandler(WeexErrors.Errors);
+        protected override IRestMessageHandler MessageHandler { get; } = new WeexRestMessageHandler(WeexErrors.RestErrors);
         #endregion
 
         #region Api clients

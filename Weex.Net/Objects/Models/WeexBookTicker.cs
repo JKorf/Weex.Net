@@ -13,25 +13,25 @@ namespace Weex.Net.Objects.Models
         [JsonPropertyName("symbol")]
         public string Symbol { get; set; } = string.Empty;
         /// <summary>
-        /// ["<c>bidPrice</c>"] Bid price
+        /// ["<c>bidPrice</c>"] Best bid price
         /// </summary>
         [JsonPropertyName("bidPrice")]
-        public decimal BidPrice { get; set; }
+        public decimal BestBidPrice { get; set; }
         /// <summary>
-        /// ["<c>bidQty</c>"] Bid quantity
+        /// ["<c>bidQty</c>"] Best bid quantity
         /// </summary>
         [JsonPropertyName("bidQty")]
-        public decimal BidQuantity { get; set; }
+        public decimal BestBidQuantity { get; set; }
         /// <summary>
-        /// ["<c>askPrice</c>"] Ask price
+        /// ["<c>askPrice</c>"] Best ask price
         /// </summary>
         [JsonPropertyName("askPrice")]
-        public decimal AskPrice { get; set; }
+        public decimal BestAskPrice { get; set; }
         /// <summary>
-        /// ["<c>askQty</c>"] Ask quantity
+        /// ["<c>askQty</c>"] Best ask quantity
         /// </summary>
         [JsonPropertyName("askQty")]
-        public decimal AskQuantity { get; set; }
+        public decimal BestAskQuantity { get; set; }
     }
 
 

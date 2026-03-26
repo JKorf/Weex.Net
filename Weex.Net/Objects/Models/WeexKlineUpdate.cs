@@ -34,7 +34,7 @@ namespace Weex.Net.Objects.Models
         /// </summary>
         public KlineInterval Interval => EnumConverter.ParseString<KlineInterval>(IntervalString)!.Value;
         [JsonPropertyName("i")]
-        public string IntervalString { get; set; } = string.Empty;
+        internal string IntervalString { get; set; } = string.Empty;
         /// <summary>
         /// ["<c>o</c>"] Open price
         /// </summary>

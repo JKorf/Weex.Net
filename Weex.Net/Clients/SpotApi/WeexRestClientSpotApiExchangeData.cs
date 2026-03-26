@@ -27,7 +27,7 @@ namespace Weex.Net.Clients.SpotApi
         /// <inheritdoc />
         public async Task<WebCallResult<DateTime>> GetServerTimeAsync(CancellationToken ct = default)
         {
-            var request = _definitions.GetOrCreate(HttpMethod.Get, "/api/v3/time", WeexExchange.RateLimiter.Weex, 1, false);
+            var request = _definitions.GetOrCreate(HttpMethod.Get, "/api/v3/time", WeexExchange.RateLimiter.WeexRestIp, 1, false);
             var result = await _baseClient.SendAsync<WeexServerTime>(request, null, ct).ConfigureAwait(false);
             return result.As(result.Data?.Timestamp ?? default);
         }
@@ -39,7 +39,7 @@ namespace Weex.Net.Clients.SpotApi
         /// <inheritdoc />
         public async Task<WebCallResult<WeexAsset[]>> GetAssetsAsync(CancellationToken ct = default)
         {
-            var request = _definitions.GetOrCreate(HttpMethod.Get, "/api/v3/coins", WeexExchange.RateLimiter.Weex, 5, false);
+            var request = _definitions.GetOrCreate(HttpMethod.Get, "/api/v3/coins", WeexExchange.RateLimiter.WeexRestIp, 5, false);
             var result = await _baseClient.SendAsync<WeexAsset[]>(request, null, ct).ConfigureAwait(false);
             return result;
         }
@@ -54,7 +54,7 @@ namespace Weex.Net.Clients.SpotApi
             var parameters = new ParameterCollection();
             parameters.AddOptionalCommaSeparated("symbols", symbols);
             parameters.AddOptionalEnum("symbolStatus", symbolStatus);
-            var request = _definitions.GetOrCreate(HttpMethod.Get, "/api/v3/exchangeInfo", WeexExchange.RateLimiter.Weex, 20, false);
+            var request = _definitions.GetOrCreate(HttpMethod.Get, "/api/v3/exchangeInfo", WeexExchange.RateLimiter.WeexRestIp, 20, false);
             var result = await _baseClient.SendAsync<WeexExchangeInfo>(request, parameters, ct).ConfigureAwait(false);
             return result;
         }
@@ -68,7 +68,7 @@ namespace Weex.Net.Clients.SpotApi
         {
             var parameters = new ParameterCollection();
             parameters.AddOptionalCommaSeparated("symbols", symbols);
-            var request = _definitions.GetOrCreate(HttpMethod.Get, "/api/v3/market/ticker/price", WeexExchange.RateLimiter.Weex, 4, false);
+            var request = _definitions.GetOrCreate(HttpMethod.Get, "/api/v3/market/ticker/price", WeexExchange.RateLimiter.WeexRestIp, 4, false);
             var result = await _baseClient.SendAsync<WeexPrice[]>(request, parameters, ct).ConfigureAwait(false);
             return result;
         }
@@ -82,7 +82,7 @@ namespace Weex.Net.Clients.SpotApi
         {
             var parameters = new ParameterCollection();
             parameters.AddOptionalCommaSeparated("symbols", symbols);
-            var request = _definitions.GetOrCreate(HttpMethod.Get, "/api/v3/market/ticker/24hr", WeexExchange.RateLimiter.Weex, 2, false);
+            var request = _definitions.GetOrCreate(HttpMethod.Get, "/api/v3/market/ticker/24hr", WeexExchange.RateLimiter.WeexRestIp, 2, false);
             var result = await _baseClient.SendAsync<WeexTicker[]>(request, parameters, ct).ConfigureAwait(false);
             return result;
         }
@@ -97,7 +97,7 @@ namespace Weex.Net.Clients.SpotApi
             var parameters = new ParameterCollection();
             parameters.Add("symbol", symbol);
             parameters.AddOptional("limit", limit);
-            var request = _definitions.GetOrCreate(HttpMethod.Get, "/api/v3/market/trades", WeexExchange.RateLimiter.Weex, 25, false);
+            var request = _definitions.GetOrCreate(HttpMethod.Get, "/api/v3/market/trades", WeexExchange.RateLimiter.WeexRestIp, 25, false);
             var result = await _baseClient.SendAsync<WeexTrade[]>(request, parameters, ct).ConfigureAwait(false);
             return result;
         }
@@ -112,7 +112,7 @@ namespace Weex.Net.Clients.SpotApi
             var parameters = new ParameterCollection();
             parameters.Add("symbol", symbol);
             parameters.AddEnum("interval", interval);
-            var request = _definitions.GetOrCreate(HttpMethod.Get, "/api/v3/market/klines", WeexExchange.RateLimiter.Weex, 2, false);
+            var request = _definitions.GetOrCreate(HttpMethod.Get, "/api/v3/market/klines", WeexExchange.RateLimiter.WeexRestIp, 2, false);
             var result = await _baseClient.SendAsync<WeexKline[]>(request, parameters, ct).ConfigureAwait(false);
             return result;
         }
@@ -127,7 +127,7 @@ namespace Weex.Net.Clients.SpotApi
             var parameters = new ParameterCollection();
             parameters.Add("symbol", symbol);
             parameters.AddOptional("limit", limit);
-            var request = _definitions.GetOrCreate(HttpMethod.Get, "/api/v3/market/depth", WeexExchange.RateLimiter.Weex, 5, false);
+            var request = _definitions.GetOrCreate(HttpMethod.Get, "/api/v3/market/depth", WeexExchange.RateLimiter.WeexRestIp, 5, false);
             var result = await _baseClient.SendAsync<WeexOrderBook>(request, parameters, ct).ConfigureAwait(false);
             return result;
         }
@@ -141,7 +141,7 @@ namespace Weex.Net.Clients.SpotApi
         {
             var parameters = new ParameterCollection();
             parameters.AddOptionalCommaSeparated("symbols", symbols);
-            var request = _definitions.GetOrCreate(HttpMethod.Get, "/api/v3/market/ticker/bookTicker", WeexExchange.RateLimiter.Weex, 4, false);
+            var request = _definitions.GetOrCreate(HttpMethod.Get, "/api/v3/market/ticker/bookTicker", WeexExchange.RateLimiter.WeexRestIp, 4, false);
             var result = await _baseClient.SendAsync<WeexBookTicker[]>(request, parameters, ct).ConfigureAwait(false);
             return result;
         }

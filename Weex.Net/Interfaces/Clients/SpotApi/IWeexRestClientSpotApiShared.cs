@@ -6,7 +6,18 @@ namespace Weex.Net.Interfaces.Clients.SpotApi
     /// Shared interface for Spot rest API usage
     /// </summary>
     public interface IWeexRestClientSpotApiShared :
-        ISharedClient
+        IAssetsRestClient,
+        IBalanceRestClient,
+        IBookTickerRestClient,
+        IDepositRestClient,
+        IFeeRestClient,
+        IKlineRestClient,
+        IOrderBookRestClient,
+        IRecentTradeRestClient,
+        IWithdrawalRestClient,
+        ISpotSymbolRestClient,
+        ISpotTickerRestClient,
+        ISpotOrderRestClient
     {
     }
 }
