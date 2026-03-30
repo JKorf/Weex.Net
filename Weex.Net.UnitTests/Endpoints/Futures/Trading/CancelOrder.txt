@@ -1,0 +1,10 @@
+DELETE
+/capi/v3/order
+true
+{
+  "orderId": "702345678901234567",
+  "origClientOrderId": "my-order-0001",
+  "success": true,
+  "errorCode": "",
+  "errorMessage": ""
+}

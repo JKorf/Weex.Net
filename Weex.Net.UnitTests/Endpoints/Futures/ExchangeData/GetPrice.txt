@@ -1,0 +1,8 @@
+GET
+/capi/v3/market/symbolPrice
+false
+{
+  "symbol": "BTCUSDT",
+  "price": "69348.5",
+  "time": 1764505776890
+}

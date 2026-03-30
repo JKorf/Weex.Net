@@ -1,0 +1,10 @@
+POST
+/capi/v3/account/leverage
+true
+{
+  "symbol": "BTCUSDT",
+  "marginType": "ISOLATED",
+  "crossLeverage": "0",
+  "isolatedLongLeverage": "20",
+  "isolatedShortLeverage": "20"
+}

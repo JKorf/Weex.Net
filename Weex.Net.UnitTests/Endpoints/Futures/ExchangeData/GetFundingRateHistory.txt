@@ -1,0 +1,11 @@
+GET
+/capi/v3/market/fundingRate
+false
+[
+  {
+    "symbol": "BTCUSDT",
+    "fundingRate": "0.00025",
+    "fundingTime": 1764499200000,
+    "markPrice": "69250.0"
+  }
+]

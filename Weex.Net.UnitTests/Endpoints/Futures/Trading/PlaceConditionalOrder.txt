@@ -1,0 +1,10 @@
+POST
+/capi/v3/algoOrder
+true
+{
+  "orderId": "702345678901234700",
+  "clientOrderId": "algo-20240201-1",
+  "success": true,
+  "errorCode": "",
+  "errorMessage": ""
+}

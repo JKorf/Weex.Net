@@ -80,7 +80,7 @@ namespace Weex.Net.Objects.Models
         /// ["<c>type</c>"] Type
         /// </summary>
         [JsonPropertyName("type")]
-        public OrderType Type { get; set; }
+        public OrderType OrderType { get; set; }
         /// <summary>
         /// ["<c>timeInForce</c>"] Time in force
         /// </summary>

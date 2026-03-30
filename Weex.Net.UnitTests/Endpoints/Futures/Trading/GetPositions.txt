@@ -1,0 +1,36 @@
+GET
+/capi/v3/account/position/allPosition
+true
+[
+  {
+    "id": 689987235755328154,
+    "asset": "USDT",
+    "symbol": "BTCUSDT",
+    "side": "LONG",
+    "marginType": "CROSSED",
+    "separatedMode": "COMBINED",
+    "separatedOpenOrderId": 0,
+    "leverage": "100",
+    "size": "0.020000",
+    "openValue": "1801.0670000",
+    "openFee": "0.70731060",
+    "fundingFee": "1.22618160",
+    "marginSize": "17.154980",
+    "isolatedMargin": "0",
+    "isAutoAppendIsolatedMargin": false,
+    "cumOpenSize": "0.020000",
+    "cumOpenValue": "1801.0670000",
+    "cumOpenFee": "0.70731060",
+    "cumCloseSize": "0",
+    "cumCloseValue": "0",
+    "cumCloseFee": "0",
+    "cumFundingFee": "1.22618160",
+    "cumLiquidateFee": "0",
+    "createdMatchSequenceId": 7027745116,
+    "updatedMatchSequenceId": 7040274110,
+    "createdTime": 1764505776347,
+    "updatedTime": 1764588886461,
+    "unrealizePnl": "-85.5690000",
+    "liquidatePrice": "0"
+  }
+]

@@ -1,0 +1,32 @@
+GET
+/capi/v3/openAlgoOrders
+true
+[
+  {
+    "algoId": 812345678901234500,
+    "clientAlgoId": "algo-20240201-1",
+    "algoType": "CONDITIONAL",
+    "orderType": "STOP",
+    "symbol": "BTCUSDT",
+    "side": "BUY",
+    "positionSide": "LONG",
+    "timeInForce": "GTC",
+    "quantity": "0.01",
+    "algoStatus": "UNTRIGGERED",
+    "actualOrderId": null,
+    "actualPrice": "0",
+    "triggerPrice": "68900",
+    "price": "68800",
+    "tpTriggerPrice": "70500",
+    "tpPrice": "70500",
+    "slTriggerPrice": "68000",
+    "slPrice": "0",
+    "tpOrderType": "MARK_PRICE",
+    "workingType": "MARK_PRICE",
+    "closePosition": false,
+    "reduceOnly": false,
+    "createTime": 1764505800123,
+    "updateTime": 1764505800123,
+    "triggerTime": 0
+  }
+]

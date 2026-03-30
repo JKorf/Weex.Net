@@ -1,0 +1,13 @@
+GET
+/capi/v3/account/symbolConfig
+true
+[
+  {
+    "symbol": "BTCUSDT",
+    "marginType": "CROSSED",
+    "separatedType": "COMBINED",
+    "crossLeverage": "20",
+    "isolatedLongLeverage": "20",
+    "isolatedShortLeverage": "20"
+  }
+]

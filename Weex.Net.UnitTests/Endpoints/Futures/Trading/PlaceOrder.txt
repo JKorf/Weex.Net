@@ -1,0 +1,10 @@
+POST
+/capi/v3/order
+true
+{
+  "orderId": "702345678901234567",
+  "clientOrderId": "my-order-0001",
+  "success": true,
+  "errorCode": "",
+  "errorMessage": ""
+}

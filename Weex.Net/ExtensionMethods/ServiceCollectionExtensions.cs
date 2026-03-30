@@ -57,7 +57,6 @@ namespace Microsoft.Extensions.DependencyInjection
             options.Socket.Environment = WeexEnvironment.GetEnvironmentByName(socketEnvName) ?? options.Socket.Environment!;
             options.Socket.ApiCredentials = options.Socket.ApiCredentials ?? options.ApiCredentials;
 
-
             services.AddSingleton(x => Options.Options.Create(options.Rest));
             services.AddSingleton(x => Options.Options.Create(options.Socket));
 
@@ -118,14 +117,9 @@ namespace Microsoft.Extensions.DependencyInjection
                     x.GetRequiredService<IOptions<WeexRestOptions>>(),
                     x.GetRequiredService<IOptions<WeexSocketOptions>>()));
 
-            // TP_IN_REGISTER_SHARED_INTERFACES_REST
+            services.RegisterSharedRestInterfaces(x => x.GetRequiredService<IWeexRestClient>().FuturesApi.SharedClient);
             services.RegisterSharedSocketInterfaces(x => x.GetRequiredService<IWeexSocketClient>().FuturesApi.SharedClient);
-
-            services.RegisterSharedSocketInterfaces(x => x.GetRequiredService<IWeexSocketClient>().SpotApi.SharedClient);
-
-            // TP_IN_REGISTER_SHARED_INTERFACES_SOCKET
-            services.RegisterSharedSocketInterfaces(x => x.GetRequiredService<IWeexSocketClient>().FuturesApi.SharedClient);
-
+            services.RegisterSharedRestInterfaces(x => x.GetRequiredService<IWeexRestClient>().SpotApi.SharedClient);
             services.RegisterSharedSocketInterfaces(x => x.GetRequiredService<IWeexSocketClient>().SpotApi.SharedClient);
 
 

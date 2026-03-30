@@ -17,7 +17,8 @@ namespace Weex.Net.Interfaces.Clients.SpotApi
         IWithdrawalRestClient,
         ISpotSymbolRestClient,
         ISpotTickerRestClient,
-        ISpotOrderRestClient
+        ISpotOrderRestClient,
+        ISpotOrderClientIdRestClient
     {
     }
 }

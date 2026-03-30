@@ -1,0 +1,6 @@
+GET
+/capi/v3/market/apiTradingSymbols
+false
+[
+  "ETHUSDT"
+]

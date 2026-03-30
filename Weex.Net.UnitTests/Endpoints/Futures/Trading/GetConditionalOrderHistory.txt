@@ -1,0 +1,28 @@
+GET
+/capi/v3/allAlgoOrders
+true
+{
+  "orders": [
+    {
+      "algoId": 812345678901234500,
+      "clientAlgoId": "algo-20240201-1",
+      "algoType": "PLAN",
+      "orderType": "STOP",
+      "symbol": "BTCUSDT",
+      "side": "BUY",
+      "positionSide": "LONG",
+      "timeInForce": "GTC",
+      "quantity": "0.01",
+      "algoStatus": "TRIGGERED",
+      "actualOrderId": 702345678901234700,
+      "actualPrice": "68850",
+      "triggerPrice": "68900",
+      "price": "68800",
+      "workingType": "MARK_PRICE",
+      "createTime": 1764505800123,
+      "updateTime": 1764506000456,
+      "triggerTime": 1764506000123
+    }
+  ],
+  "hasMore": false
+}

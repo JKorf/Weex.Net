@@ -1,0 +1,10 @@
+GET
+/capi/v3/account/accountConfig
+true
+{
+  "canTrade": true,
+  "canDeposit": true,
+  "canWithdraw": true,
+  "dualSidePosition": true,
+  "updateTime": 1713339011237
+}

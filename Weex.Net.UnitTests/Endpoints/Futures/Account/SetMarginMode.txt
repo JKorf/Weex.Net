@@ -1,0 +1,8 @@
+POST
+/capi/v3/account/marginType
+true
+{
+  "code": "200",
+  "msg": "success",
+  "requestTime": 1764505776347
+}

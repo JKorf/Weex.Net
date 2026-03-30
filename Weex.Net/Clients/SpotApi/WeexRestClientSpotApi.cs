@@ -41,13 +41,11 @@ namespace Weex.Net.Clients.SpotApi
 
         #region constructor/destructor
         internal WeexRestClientSpotApi(WeexRestClient baseClient, ILogger logger, HttpClient? httpClient, WeexRestOptions options)
-            : base(logger, httpClient, options.Environment.RestClientAddress, options, options.SpotOptions)
+            : base(logger, httpClient, options.Environment.RestClientSpotAddress, options, options.SpotOptions)
         {
             Account = new WeexRestClientSpotApiAccount(this);
             ExchangeData = new WeexRestClientSpotApiExchangeData(logger, this);
             Trading = new WeexRestClientSpotApiTrading(logger, this);
-
-            //ParameterPositions[HttpMethod.Delete] = HttpMethodParameterPosition.InUri;
 
             StandardRequestHeaders = new Dictionary<string, string>
             {

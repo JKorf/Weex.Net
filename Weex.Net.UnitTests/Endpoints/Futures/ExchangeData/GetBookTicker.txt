@@ -1,0 +1,13 @@
+GET
+/capi/v3/market/ticker/bookTicker
+false
+[
+  {
+    "symbol": "BTCUSDT",
+    "bidPrice": "69350.1",
+    "bidQty": "12.5",
+    "askPrice": "69351.0",
+    "askQty": "8.3",
+    "time": 1764505776000
+  }
+]

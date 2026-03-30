@@ -49,6 +49,16 @@ namespace Weex.Net.Objects.Models
         /// </summary>
         [JsonPropertyName("cTime")]
         public DateTime CreateTime { get; set; }
+        /// <summary>
+        /// ["<c>fillSize</c>"] Fill quantity
+        /// </summary>
+        [JsonPropertyName("fillSize")]
+        public decimal? FillQuantity { get; set; }
+        /// <summary>
+        /// ["<c>fillValue</c>"] Fill value
+        /// </summary>
+        [JsonPropertyName("fillValue")]
+        public decimal? FillValue { get; set; }
     }
 
 

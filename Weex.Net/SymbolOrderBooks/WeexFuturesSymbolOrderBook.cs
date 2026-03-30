@@ -7,6 +7,7 @@ using CryptoExchange.Net.OrderBook;
 using Microsoft.Extensions.Logging;
 using Weex.Net.Clients;
 using Weex.Net.Interfaces.Clients;
+using Weex.Net.Objects.Models;
 using Weex.Net.Objects.Options;
 
 namespace Weex.Net.SymbolOrderBooks
@@ -18,7 +19,6 @@ namespace Weex.Net.SymbolOrderBooks
     public class WeexFuturesSymbolOrderBook : SymbolOrderBook
     {
         private readonly bool _clientOwner;
-        private readonly IWeexRestClient _restClient;
         private readonly IWeexSocketClient _socketClient;
         private readonly TimeSpan _initialDataTimeout;
 
@@ -56,18 +56,40 @@ namespace Weex.Net.SymbolOrderBooks
             _strictLevels = false;
             _sequencesAreConsecutive = true;
 
-            Levels = options?.Limit;
+            Levels = options?.Limit ?? 15;
             _initialDataTimeout = options?.InitialDataTimeout ?? TimeSpan.FromSeconds(30);
             _clientOwner = socketClient == null;
             _socketClient = socketClient ?? new WeexSocketClient();
-            _restClient = restClient ?? new WeexRestClient();
         }
 
         /// <inheritdoc />
         protected override async Task<CallResult<UpdateSubscription>> DoStartAsync(CancellationToken ct)
         {
-            // XXX
-            throw new NotImplementedException();
+            var result = await _socketClient.SpotApi.SubscribeToOrderBookUpdatesAsync(Symbol, Levels!.Value, ProcessUpdate).ConfigureAwait(false);
+            if (!result)
+                return result;
+
+            if (ct.IsCancellationRequested)
+            {
+                await result.Data.CloseAsync().ConfigureAwait(false);
+                return result.AsError<UpdateSubscription>(new CancellationRequestedError());
+            }
+
+            Status = OrderBookStatus.Syncing;
+
+            var setResult = await WaitForSetOrderBookAsync(_initialDataTimeout, ct).ConfigureAwait(false);
+            if (!setResult)
+                await result.Data.CloseAsync().ConfigureAwait(false);
+
+            return setResult ? result : new CallResult<UpdateSubscription>(setResult.Error!);
+        }
+
+        private void ProcessUpdate(DataEvent<WeexOrderBookUpdate> @event)
+        {
+            if (@event.UpdateType == SocketUpdateType.Snapshot)
+                SetSnapshot(@event.Data.LastUpdateId, @event.Data.Bids, @event.Data.Asks, @event.DataTime, @event.DataTimeLocal);
+            else
+                UpdateOrderBook(@event.Data.FirstUpdateId + 1, @event.Data.LastUpdateId, @event.Data.Bids, @event.Data.Asks, @event.DataTime, @event.DataTimeLocal);
         }
 
         /// <inheritdoc />
@@ -78,18 +100,14 @@ namespace Weex.Net.SymbolOrderBooks
         /// <inheritdoc />
         protected override async Task<CallResult<bool>> DoResyncAsync(CancellationToken ct)
         {
-            // XXX
-            throw new NotImplementedException();
+            return await WaitForSetOrderBookAsync(_initialDataTimeout, ct).ConfigureAwait(false);
         }
 
         /// <inheritdoc />
         protected override void Dispose(bool disposing)
         {
-            if (_clientOwner)
-            {
-                _restClient?.Dispose();
+            if (_clientOwner)            
                 _socketClient?.Dispose();
-            }
 
             base.Dispose(disposing);
         }

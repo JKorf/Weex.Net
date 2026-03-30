@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System;
+using System.Text.Json.Serialization;
 
 namespace Weex.Net.Objects.Models
 {
@@ -51,7 +52,12 @@ namespace Weex.Net.Objects.Models
         /// ["<c>uid</c>"] Uid
         /// </summary>
         [JsonPropertyName("uid")]
-        public decimal Uid { get; set; }
+        public long Uid { get; set; }
+        /// <summary>
+        /// Update time
+        /// </summary>
+        [JsonPropertyName("updateTime")]
+        public DateTime UpdateTime { get; set; }
     }
 
     /// <summary>

@@ -6,7 +6,13 @@ namespace Weex.Net.Interfaces.Clients.FuturesApi
     /// Shared interface for Futures socket API usage
     /// </summary>
     public interface IWeexSocketClientFuturesApiShared :
-        ISharedClient
+        IBalanceSocketClient,
+        IKlineSocketClient,
+        ITickerSocketClient,
+        ITradeSocketClient,
+        IUserTradeSocketClient,
+        IFuturesOrderSocketClient,
+        IPositionSocketClient
     {
     }
 }

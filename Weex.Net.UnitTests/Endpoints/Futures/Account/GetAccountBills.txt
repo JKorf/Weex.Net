@@ -1,0 +1,19 @@
+POST
+/capi/v3/account/income
+true
+{
+  "hasNextPage": true,
+  "items": [
+    {
+      "billId": 686960019383517338,
+      "asset": "USDT",
+      "symbol": "BTCUSDT",
+      "income": "0.08266646",
+      "incomeType": "position_funding",
+      "balance": "4738.70667369",
+      "fillFee": "0",
+      "time": 1763784031721,
+      "transferReason": "UNKNOWN_TRANSFER_REASON"
+    }
+  ]
+}

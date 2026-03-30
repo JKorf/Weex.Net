@@ -1,0 +1,20 @@
+GET
+/capi/v3/market/ticker/24hr
+false
+[
+  {
+    "symbol": "BTCUSDT",
+    "priceChange": "150.5",
+    "priceChangePercent": "0.22",
+    "lastPrice": "69350.5",
+    "openPrice": "69200.0",
+    "highPrice": "69980.0",
+    "lowPrice": "68888.0",
+    "volume": "1234.567",
+    "quoteVolume": "85679012.45",
+    "markPrice": "69348.7",
+    "indexPrice": "69347.9",
+    "openTime": 1764419370000,
+    "closeTime": 1764505770000
+  }
+]

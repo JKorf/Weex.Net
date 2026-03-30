@@ -1,0 +1,8 @@
+GET
+/capi/v3/market/openInterest
+false
+{
+  "symbol": "BTCUSDT",
+  "openInterest": "128345.67",
+  "time": 1764505777345
+}

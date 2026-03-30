@@ -1,0 +1,10 @@
+DELETE
+/capi/v3/algoOrder
+true
+{
+  "orderId": "712345678901234567",
+  "origClientOrderId": "",
+  "success": true,
+  "errorCode": "",
+  "errorMessage": ""
+}

@@ -12,8 +12,8 @@ namespace Weex.Net.Clients.MessageHandlers
 
         public WeexSocketSpotMessageHandler()
         {
-            AddTopicMapping<WeexSocketEvent>(x => x.Symbol);
             AddTopicMapping<WeexSocketEvent<WeexKlineUpdate[]>>(x => x.Symbol + x.Data.First().IntervalString);
+            AddTopicMapping<WeexSocketEvent>(x => x.Symbol);
         }
 
         protected override MessageTypeDefinition[] TypeEvaluators { get; } = [

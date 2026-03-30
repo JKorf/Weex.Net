@@ -14,6 +14,7 @@ using CryptoExchange.Net.SharedApis;
 using CryptoExchange.Net.Objects.Errors;
 using CryptoExchange.Net.Converters.MessageParsing.DynamicConverters;
 using Weex.Net.Clients.MessageHandlers;
+using System.Collections.Generic;
 
 namespace Weex.Net.Clients.FuturesApi
 {
@@ -39,12 +40,17 @@ namespace Weex.Net.Clients.FuturesApi
         #endregion
 
         #region constructor/destructor
-        internal WeexRestClientFuturesApi(ILogger logger, HttpClient? httpClient, WeexRestOptions options)
-            : base(logger, httpClient, options.Environment.RestClientAddress, options, options.FuturesOptions)
+        internal WeexRestClientFuturesApi(WeexRestClient baseClient, ILogger logger, HttpClient? httpClient, WeexRestOptions options)
+            : base(logger, httpClient, options.Environment.RestClientFuturesAddress, options, options.FuturesOptions)
         {
             Account = new WeexRestClientFuturesApiAccount(this);
             ExchangeData = new WeexRestClientFuturesApiExchangeData(logger, this);
             Trading = new WeexRestClientFuturesApiTrading(logger, this);
+
+            StandardRequestHeaders = new Dictionary<string, string>
+            {
+                { "User-Agent", "CryptoExchange.Net/" + baseClient.CryptoExchangeLibVersion }
+            };
         }
         #endregion
 
@@ -71,6 +77,15 @@ namespace Weex.Net.Clients.FuturesApi
         internal async Task<WebCallResult<T>> SendToAddressAsync<T>(string baseAddress, RequestDefinition definition, ParameterCollection? parameters, CancellationToken cancellationToken, int? weight = null) where T : class
         {
             var result = await base.SendAsync<T>(baseAddress, definition, parameters, cancellationToken, null, weight).ConfigureAwait(false);
+            return result;
+        }
+
+        internal Task<WebCallResult<T>> SendAsync<T>(RequestDefinition definition, ParameterCollection? uriParameters, ParameterCollection? bodyParameters, CancellationToken cancellationToken, int? weight = null) where T : class
+            => SendToAddressAsync<T>(BaseAddress, definition, uriParameters, bodyParameters, cancellationToken, weight);
+
+        internal async Task<WebCallResult<T>> SendToAddressAsync<T>(string baseAddress, RequestDefinition definition, ParameterCollection? uriParameters, ParameterCollection? bodyParameters, CancellationToken cancellationToken, int? weight = null) where T : class
+        {
+            var result = await base.SendAsync<T>(baseAddress, definition, uriParameters, bodyParameters, cancellationToken, null, weight).ConfigureAwait(false);
             return result;
         }
 

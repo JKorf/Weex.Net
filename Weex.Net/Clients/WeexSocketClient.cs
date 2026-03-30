@@ -49,7 +49,7 @@ namespace Weex.Net.Clients
         {
             Initialize(options.Value);
                         
-            FuturesApi = AddApiClient(new WeexSocketClientFuturesApi(_logger, options.Value));
+            FuturesApi = AddApiClient(new WeexSocketClientFuturesApi(this, _logger, options.Value));
             SpotApi = AddApiClient(new WeexSocketClientSpotApi(this, _logger, options.Value));
         }
         #endregion

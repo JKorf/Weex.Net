@@ -1,0 +1,23 @@
+GET
+/capi/v3/openOrders
+true
+[{
+  "avgPrice": "68990.5",
+  "clientOrderId": "my-order-0001",
+  "cumQuote": "689.905",
+  "executedQty": "0.01",
+  "orderId": 702345678901234567,
+  "origQty": "0.01",
+  "price": "69000",
+  "reduceOnly": false,
+  "side": "BUY",
+  "positionSide": "LONG",
+  "status": "FILLED",
+  "stopPrice": "0",
+  "symbol": "BTCUSDT",
+  "time": 1764505700123,
+  "timeInForce": "GTC",
+  "type": "LIMIT",
+  "updateTime": 1764505701456,
+  "workingType": "CONTRACT_PRICE"
+}]

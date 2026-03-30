@@ -45,7 +45,7 @@ namespace Weex.Net.Clients.SpotApi
         /// ctor
         /// </summary>
         internal WeexSocketClientSpotApi(WeexSocketClient baseClient, ILogger logger, WeexSocketOptions options) :
-            base(logger, options.Environment.SocketClientAddress!, options, options.SpotOptions)
+            base(logger, options.Environment.SocketClientSpotAddress!, options, options.SpotOptions)
         {
             _baseClient = baseClient;
 

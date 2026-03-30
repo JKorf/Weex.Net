@@ -1,4 +1,3 @@
-using CryptoExchange.Net.Authentication;
 using CryptoExchange.Net.SharedApis;
 using CryptoExchange.Net.Trackers.Klines;
 using CryptoExchange.Net.Trackers.Trades;
@@ -35,14 +34,15 @@ namespace Weex.Net
             _serviceProvider = serviceProvider;
         }
 
+        /// <inheritdoc />
         public bool CanCreateKlineTracker(SharedSymbol symbol, SharedKlineInterval interval)
         {
             var client = _serviceProvider?.GetRequiredService<IWeexSocketClient>() ?? new WeexSocketClient();
-#warning TODO
-            SubscribeKlineOptions klineOptions = new SubscribeKlineOptions(true);
-            return klineOptions.IsSupported(interval); 
+            var options = symbol.TradingMode == TradingMode.Spot ? client.SpotApi.SharedClient.SubscribeKlineOptions : client.FuturesApi.SharedClient.SubscribeKlineOptions;
+            return options.IsSupported(interval); 
         }
 
+        /// <inheritdoc />
         public bool CanCreateTradeTracker(SharedSymbol symbol) => true;
 
         /// <inheritdoc />
@@ -51,30 +51,28 @@ namespace Weex.Net
             var restClient = _serviceProvider?.GetRequiredService<IWeexRestClient>() ?? new WeexRestClient();
             var socketClient = _serviceProvider?.GetRequiredService<IWeexSocketClient>() ?? new WeexSocketClient();
 
-#warning todo
-            throw new NotImplementedException();
-            //IKlineRestClient sharedRestClient;
-            //IKlineSocketClient sharedSocketClient;
-            //if (symbol.TradingMode == TradingMode.Spot)
-            //{
-            //    sharedRestClient = restClient.SpotApi.SharedClient;
-            //    sharedSocketClient = socketClient.SpotApi.SharedClient;
-            //}
-            //else
-            //{
-            //    sharedRestClient = restClient.FuturesApi.SharedClient;
-            //    sharedSocketClient = socketClient.FuturesApi.SharedClient;
-            //}
+            IKlineRestClient sharedRestClient;
+            IKlineSocketClient sharedSocketClient;
+            if (symbol.TradingMode == TradingMode.Spot)
+            {
+                sharedRestClient = restClient.SpotApi.SharedClient;
+                sharedSocketClient = socketClient.SpotApi.SharedClient;
+            }
+            else
+            {
+                sharedRestClient = restClient.FuturesApi.SharedClient;
+                sharedSocketClient = socketClient.FuturesApi.SharedClient;
+            }
 
-            //return new KlineTracker(
-            //    _serviceProvider?.GetRequiredService<ILoggerFactory>().CreateLogger(restClient.Exchange),
-            //    sharedRestClient,
-            //    sharedSocketClient,
-            //    symbol,
-            //    interval,
-            //    limit,
-            //    period
-            //    );
+            return new KlineTracker(
+                _serviceProvider?.GetRequiredService<ILoggerFactory>().CreateLogger(restClient.Exchange),
+                sharedRestClient,
+                sharedSocketClient,
+                symbol,
+                interval,
+                limit,
+                period
+                );
         }
         /// <inheritdoc />
         public ITradeTracker CreateTradeTracker(SharedSymbol symbol, int? limit = null, TimeSpan? period = null)
@@ -82,31 +80,28 @@ namespace Weex.Net
             var restClient = _serviceProvider?.GetRequiredService<IWeexRestClient>() ?? new WeexRestClient();
             var socketClient = _serviceProvider?.GetRequiredService<IWeexSocketClient>() ?? new WeexSocketClient();
 
-#warning todo
-            throw new NotImplementedException();
+            IRecentTradeRestClient? sharedRestClient;
+            ITradeSocketClient sharedSocketClient;
+            if (symbol.TradingMode == TradingMode.Spot)
+            {
+                sharedRestClient = restClient.SpotApi.SharedClient;
+                sharedSocketClient = socketClient.SpotApi.SharedClient;
+            }
+            else
+            {
+                sharedRestClient = restClient.FuturesApi.SharedClient;
+                sharedSocketClient = socketClient.FuturesApi.SharedClient;
+            }
 
-            //IRecentTradeRestClient? sharedRestClient;
-            //ITradeSocketClient sharedSocketClient;
-            //if (symbol.TradingMode == TradingMode.Spot)
-            //{
-            //    sharedRestClient = restClient.SpotApi.SharedClient;
-            //    sharedSocketClient = socketClient.SpotApi.SharedClient;
-            //}
-            //else
-            //{
-            //    sharedRestClient = restClient.FuturesApi.SharedClient;
-            //    sharedSocketClient = socketClient.FuturesApi.SharedClient;
-            //}
-
-            //return new TradeTracker(
-            //    _serviceProvider?.GetRequiredService<ILoggerFactory>().CreateLogger(restClient.Exchange),
-            //    sharedRestClient,
-            //    null,
-            //    sharedSocketClient,
-            //    symbol,
-            //    limit,
-            //    period
-            //    );
+            return new TradeTracker(
+                _serviceProvider?.GetRequiredService<ILoggerFactory>().CreateLogger(restClient.Exchange),
+                sharedRestClient,
+                null,
+                sharedSocketClient,
+                symbol,
+                limit,
+                period
+                );
         }
 
         /// <inheritdoc />

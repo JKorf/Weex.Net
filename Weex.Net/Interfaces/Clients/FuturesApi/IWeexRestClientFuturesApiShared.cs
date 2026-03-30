@@ -6,7 +6,21 @@ namespace Weex.Net.Interfaces.Clients.FuturesApi
     /// Shared interface for Futures rest API usage
     /// </summary>
     public interface IWeexRestClientFuturesApiShared :
-        ISharedClient
+        IBalanceRestClient,
+        IBookTickerRestClient,
+        IFeeRestClient,
+        IKlineRestClient,
+        IOrderBookRestClient,
+        IRecentTradeRestClient,
+        IFundingRateRestClient,
+        IFuturesSymbolRestClient,
+        IFuturesTickerRestClient,
+        IIndexPriceKlineRestClient,
+        IMarkPriceKlineRestClient,
+        ILeverageRestClient,
+        IOpenInterestRestClient,
+        IFuturesOrderRestClient,
+        IFuturesTriggerOrderRestClient
     {
     }
 }

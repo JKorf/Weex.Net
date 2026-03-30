@@ -24,9 +24,9 @@ namespace Weex.Net.UnitTests
                 "/api/v3/order",
                 (uriParams, bodyParams, headers) =>
                 {
-                    return bodyParams["signature"].ToString();
+                    return headers["ACCESS-SIGN"].ToString();
                 },
-                "c8db56825ae71d6d79447849e617115f4a920fa2acdcab2b053c4b2838bd6b71",
+                "AkV6bNpe7++1vpD331UuwdWXsGC8Qy2HheZ29ilIwOQ=",
                 new Dictionary<string, object>
                 {
                     { "symbol", "LTCBTC" },

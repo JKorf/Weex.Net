@@ -9,23 +9,36 @@ namespace Weex.Net
     public class WeexEnvironment : TradeEnvironment
     {
         /// <summary>
-        /// Rest API address
+        /// Rest Spot API address
         /// </summary>
-        public string RestClientAddress { get; }
+        public string RestClientSpotAddress { get; }
 
         /// <summary>
-        /// Socket API address
+        /// Socket Spot API address
         /// </summary>
-        public string SocketClientAddress { get; }
+        public string SocketClientSpotAddress { get; }
+        /// <summary>
+        /// Rest Futures API address
+        /// </summary>
+        public string RestClientFuturesAddress { get; }
+
+        /// <summary>
+        /// Socket Futures API address
+        /// </summary>
+        public string SocketClientFuturesAddress { get; }
 
         internal WeexEnvironment(
             string name,
-            string restAddress,
-            string streamAddress) :
+            string restSpotAddress,
+            string streamSpotAddress,
+            string restFuturesAddress,
+            string streamFuturesAddress) :
             base(name)
         {
-            RestClientAddress = restAddress;
-            SocketClientAddress = streamAddress;
+            RestClientSpotAddress = restSpotAddress;
+            SocketClientSpotAddress = streamSpotAddress;
+            RestClientFuturesAddress = restFuturesAddress;
+            SocketClientFuturesAddress = streamFuturesAddress;
         }
 
         /// <summary>
@@ -59,20 +72,20 @@ namespace Weex.Net
         /// </summary>
         public static WeexEnvironment Live { get; }
             = new WeexEnvironment(TradeEnvironmentNames.Live,
-                                     WeexApiAddresses.Default.RestClientAddress,
-                                     WeexApiAddresses.Default.SocketClientAddress);
+                                     WeexApiAddresses.Default.RestClientSpotAddress,
+                                     WeexApiAddresses.Default.SocketClientSpotAddress,
+                                     WeexApiAddresses.Default.RestClientFuturesAddress,
+                                     WeexApiAddresses.Default.SocketClientFuturesAddress);
 
         /// <summary>
         /// Create a custom environment
         /// </summary>
-        /// <param name="name"></param>
-        /// <param name="spotRestAddress"></param>
-        /// <param name="spotSocketStreamsAddress"></param>
-        /// <returns></returns>
         public static WeexEnvironment CreateCustom(
                         string name,
                         string spotRestAddress,
-                        string spotSocketStreamsAddress)
-            => new WeexEnvironment(name, spotRestAddress, spotSocketStreamsAddress);
+                        string spotSocketStreamAddress,
+                        string futuresRestAddress,
+                        string futuresSocketStreamAddress)
+            => new WeexEnvironment(name, spotRestAddress, spotSocketStreamAddress, futuresRestAddress, futuresSocketStreamAddress);
     }
 }

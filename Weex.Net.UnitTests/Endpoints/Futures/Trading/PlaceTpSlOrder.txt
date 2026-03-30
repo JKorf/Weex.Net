@@ -1,0 +1,11 @@
+POST
+/capi/v3/placeTpSlOrder
+true
+[
+  {
+    "success": true,
+    "orderId": 812345678901234900,
+    "errorCode": "",
+    "errorMessage": ""
+  }
+]

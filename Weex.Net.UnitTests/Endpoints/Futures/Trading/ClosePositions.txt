@@ -1,0 +1,11 @@
+POST
+/capi/v3/closePositions
+true
+[
+  {
+    "positionId": 689987235755328154,
+    "success": true,
+    "successOrderId": 702345678901234580,
+    "errorMessage": ""
+  }
+]

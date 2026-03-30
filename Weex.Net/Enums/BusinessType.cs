@@ -26,6 +26,11 @@ namespace Weex.Net.Enums
         [Map("trade_out")]
         TradeOut,
         /// <summary>
+        /// ["<c>trade_in</c>"] Trade in
+        /// </summary>
+        [Map("trade_in")]
+        TradeIn,
+        /// <summary>
         /// ["<c>transfer_in</c>"] Transfer in
         /// </summary>
         [Map("transfer_in")]

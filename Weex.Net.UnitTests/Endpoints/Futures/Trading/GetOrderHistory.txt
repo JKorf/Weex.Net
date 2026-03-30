@@ -1,0 +1,22 @@
+GET
+/capi/v3/order/history
+true
+[
+  {
+    "orderId": 702345678901234567,
+    "symbol": "BTCUSDT",
+    "side": "BUY",
+    "positionSide": "LONG",
+    "status": "FILLED",
+    "type": "LIMIT",
+    "time": 1764400000000,
+    "price": "65000",
+    "origQty": "0.01",
+    "executedQty": "0.01",
+    "avgPrice": "64999.5",
+    "updateTime": 1764400001234,
+    "clientOrderId": "hist-1",
+    "cumQuote": "649.995",
+    "timeInForce": "GTC"
+  }
+]

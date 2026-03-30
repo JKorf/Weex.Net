@@ -1,0 +1,14 @@
+GET
+/capi/v3/market/trades
+false
+[
+  {
+    "id": "1234567890",
+    "time": 1764505776123,
+    "price": "69350.8",
+    "qty": "0.005",
+    "quoteQty": "346.754",
+    "isBestMatch": true,
+    "isBuyerMaker": false
+  }
+]
