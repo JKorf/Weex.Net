@@ -1,0 +1,4 @@
+> { "method": "SUBSCRIBE", "params": [ "ETHUSDT@trade" ], "id": "|1|"}
+< { "id": "|1|", "result": true }
+= 
+{"e":"trade","E":1775118619709,"s":"ETHUSDT","d":[{"T":1775118619691,"t":"8cd20870-d3b0-41d8-91bb-ccdfbdd6576f","p":"2050.56","q":"0.02625","v":"53.8272000","m":true}]}

@@ -2,7 +2,7 @@
 
 [![.NET](https://img.shields.io/github/actions/workflow/status/JKorf/Weex.Net/dotnet.yml?style=for-the-badge)](https://github.com/JKorf/Weex.Net/actions/workflows/dotnet.yml) ![License](https://img.shields.io/github/license/JKorf/Weex.Net?style=for-the-badge)
 
-Weex.Net is a client library for accessing the [Weex REST and Websocket API](Weex). 
+Weex.Net is a client library for accessing the [Weex REST and Websocket API](https://www.weex.com/api-doc/spot/introduction/APIBriefIntroduction). 
 
 ## Features
 * Response data is mapped to descriptive models
@@ -50,24 +50,25 @@ The NuGet package files are added along side the source with the latest GitHub r
 ```csharp
 // Get the ETH/USDT ticker via rest request
 var restClient = new WeexRestClient();
-var tickerResult = await restClient.SpotApi.ExchangeData.GetTickerAsync("ETHUSDT");
-var lastPrice = tickerResult.Data.LastPrice;
+var tickerResult = await restClient.SpotApi.ExchangeData.GetTickersAsync(["ETHUSDT"]);
+var lastPrice = tickerResult.Data.Single().LastPrice;
 ```
 
 *Place order:*
 ```csharp
 var restClient = new WeexRestClient(opts => {
-	opts.ApiCredentials = new WeexCredentials("APIKEY", "APISECRET");
+    opts.ApiCredentials = new WeexCredentials("APIKEY", "APISECRET", "PASS");
 });
 
 // Place Limit order to go long 0.1 for ETH at 2000
-var orderResult = await restClient.UsdtFuturesApi.Trading.PlaceOrderAsync(
+var orderResult = await restClient.FuturesApi.Trading.PlaceOrderAsync(
     "ETH_USDT",
     OrderSide.Buy,
+    PositionSide.Long,
     OrderType.Limit,
     0.1m,
-    PositionSide.Long,
-    2000
+    price: 2000,
+    timeInForce: TimeInForce.GoodTillCanceled
     );
 ```
 
@@ -126,14 +127,32 @@ A Discord server is available [here](https://discord.gg/MSpeEtSY8t). For discuss
 
 ## Supported functionality
 
-### Spot
+### Spot REST
 |API|Supported|Location|
 |--|--:|--|
-|TODO|✓|`restClient.SpotApi.Account`|
-### Futures
+|Market|✓|`restClient.SpotApi.ExchangeData`|
+|Account|✓|`restClient.SpotApi.Account`|
+|Trade|✓|`restClient.SpotApi.Trading`|
+|Rebate|X||
+
+### Spot Websocket
 |API|Supported|Location|
 |--|--:|--|
-|TODO|✓|`restClient.FuturesApi.ExchangeData`|
+|Public|✓|`socketClient.SpotApi`|
+|Private|✓|`socketClient.SpotApi`|
+
+### Futures REST
+|API|Supported|Location|
+|--|--:|--|
+|Market|✓|`restClient.FuturesApi.ExchangeData`|
+|Account|✓|`restClient.FuturesApi.Account`|
+|Trade|✓|`restClient.FuturesApi.Trading`|
+
+### Futures Websocket
+|API|Supported|Location|
+|--|--:|--|
+|Public|✓|`socketClient.FuturesApi`|
+|Private|✓|`socketClient.FuturesApi`|
 
 ## Support the project
 Any support is greatly appreciated.

@@ -13,7 +13,7 @@ namespace Weex.Net.UnitTests
     [NonParallelizable]
     public class WeexRestIntegrationTests : RestIntegrationTest<WeexRestClient>
     {
-        public override bool Run { get; set; } = true;
+        public override bool Run { get; set; } = false;
 
         public override WeexRestClient GetClient(ILoggerFactory loggerFactory)
         {

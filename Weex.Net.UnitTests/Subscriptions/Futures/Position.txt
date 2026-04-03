@@ -1,0 +1,39 @@
+> { "method": "SUBSCRIBE", "params": [ "position" ], "id": "|1|"}
+< { "id": "|1|", "result": true }
+= 
+{
+  "e": "positions",
+  "E": 1773298805123,
+  "v": 55218,
+  "msgEvent": "PositionFundingSettle",
+  "d": [
+    {
+      "id": "615193369903104410",
+      "coin": "USDT",
+      "symbol": "BTCUSDT",
+      "side": "LONG",
+      "marginMode": "CROSSED",
+      "separatedMode": "COMBINED",
+      "separatedOpenOrderId": "0",
+      "leverage": "20",
+      "size": "0.01000",
+      "openValue": "992.405443",
+      "openFee": "0.595443",
+      "fundingFee": "157.475456",
+      "isolatedMargin": "0",
+      "autoAppendIsolatedMargin": false,
+      "cumOpenSize": "0.55061",
+      "cumOpenValue": "54642.836110",
+      "cumOpenFee": "32.785700",
+      "cumCloseSize": "0.54061",
+      "cumCloseValue": "53666.138456",
+      "cumCloseFee": "32.199683",
+      "cumFundingFee": "163.232384",
+      "cumLiquidateFee": "0",
+      "createdMatchSequenceId": "3647905144",
+      "updatedMatchSequenceId": "3656434385",
+      "createdTime": "1746673529125",
+      "updatedTime": "1747188961302"
+    }
+  ]
+}

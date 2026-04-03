@@ -5,7 +5,7 @@ false
   {
     "symbol": "BTCUSDT",
     "fundingRate": "0.00025",
-    "fundingTime": 1764499200000,
+    "fundingTime": 1764506000456,
     "markPrice": "69250.0"
   }
 ]

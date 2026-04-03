@@ -14,6 +14,6 @@ true
   "type": "LIMIT",
   "side": "BUY",
   "time": 1764506000456,
-  "updateTime": 1764506001556,
+  "updateTime": 1764506000456,
   "isWorking": false
 }

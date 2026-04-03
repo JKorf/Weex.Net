@@ -3,8 +3,8 @@ using Weex.Net.Clients;
 
 // REST
 var restClient = new WeexRestClient();
-var ticker = await restClient.SpotApi.ExchangeData.GetTickerAsync("ETHUSDT");
-Console.WriteLine($"Rest client ticker price for ETHUSDT: {ticker.Data.List.First().LastPrice}");
+var ticker = await restClient.SpotApi.ExchangeData.GetTickersAsync(["ETHUSDT"]);
+Console.WriteLine($"Rest client ticker price for ETHUSDT: {ticker.Data.Single().LastPrice}");
 
 Console.WriteLine();
 Console.WriteLine("Press enter to start websocket subscription");

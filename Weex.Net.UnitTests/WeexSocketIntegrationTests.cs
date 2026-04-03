@@ -5,6 +5,7 @@ using NUnit.Framework;
 using System;
 using System.Threading.Tasks;
 using Weex.Net.Clients;
+using Weex.Net.Objects.Models;
 using Weex.Net.Objects.Options;
 
 namespace Weex.Net.UnitTests
@@ -32,12 +33,14 @@ namespace Weex.Net.UnitTests
             }), loggerFactory);
         }
 
-        [TestCase(false)]
-        [TestCase(true)]
-        public async Task TestSubscriptions(bool newDeserialization)
+        [Test]
+        public async Task TestSubscriptions()
         {
-            //await RunAndCheckUpdate<>(newDeserialization , (client, updateHandler) => client.SpotApi.Account.SubscribeToUserDataUpdatesAsync(default, default, default, default, default, default, default, default), false, true);
-            //await RunAndCheckUpdate<>(newDeserialization, (client, updateHandler) => client.SpotApi.ExchangeData.SubscribeToTickerUpdatesAsync("ETHUSDT", updateHandler, default), true, false);
+            await RunAndCheckUpdate<WeexAccountUpdate>((client, updateHandler) => client.SpotApi.SubscribeToAccountUpdatesAsync(updateHandler, default), false, true);
+            await RunAndCheckUpdate<WeexTickerUpdate>((client, updateHandler) => client.SpotApi.SubscribeToTickerUpdatesAsync("ETHUSDT", updateHandler, default), true, false);
+
+            await RunAndCheckUpdate<WeexFuturesAccountUpdate>((client, updateHandler) => client.FuturesApi.SubscribeToAccountUpdatesAsync(updateHandler, default), false, true);
+            await RunAndCheckUpdate<WeexFuturesTickerUpdate>((client, updateHandler) => client.FuturesApi.SubscribeToTickerUpdatesAsync("ETHUSDT", updateHandler, default), true, false);
         } 
     }
 }

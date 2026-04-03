@@ -10,7 +10,7 @@ true
     "qty": "0.01",
     "quoteQty": "689.50",
     "commission": "0.138",
-    "time": 1764506001556,
+    "time": 1764506000456,
     "isBuyer": true
   }
 ]

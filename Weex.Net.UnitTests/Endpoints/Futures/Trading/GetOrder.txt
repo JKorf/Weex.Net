@@ -15,9 +15,9 @@ true
   "status": "FILLED",
   "stopPrice": "0",
   "symbol": "BTCUSDT",
-  "time": 1764505700123,
+  "time": 1764506000456,
   "timeInForce": "GTC",
   "type": "LIMIT",
-  "updateTime": 1764505701456,
+  "updateTime": 1764506000456,
   "workingType": "CONTRACT_PRICE"
 }

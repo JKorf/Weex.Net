@@ -1,0 +1,4 @@
+> { "method": "SUBSCRIBE", "params": [ "ETHUSDT@bookTicker" ], "id": "|1|"}
+< { "id": "|1|", "result": true }
+= 
+{"e":"bookTicker","E":1775117847999,"s":"ETHUSDT","u":1775117847996,"b":"2050.67","B":"0.89116","a":"2050.70","A":"2.26200"}

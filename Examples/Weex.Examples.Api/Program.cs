@@ -13,7 +13,7 @@ builder.Services.AddWeex();
 /*
 builder.Services.AddWeex(options =>
 {
-    options.ApiCredentials = new ApiCredentials("<APIKEY>", "<APISECRET>");
+    options.ApiCredentials = new ApiCredentials("<APIKEY>", "<APISECRET>", "<PASS>");
     options.Rest.RequestTimeout = TimeSpan.FromSeconds(5);
 });
 */
@@ -26,15 +26,15 @@ app.UseHttpsRedirection();
 // Map the endpoint and inject the rest client
 app.MapGet("/{Symbol}", async ([FromServices] IWeexRestClient client, string symbol) =>
 {
-    var result = await client.SpotApi.ExchangeData.GetTickerAsync(symbol);
-    return result.Data.LastPrice;
+    var result = await client.SpotApi.ExchangeData.GetTickersAsync([symbol]);
+    return result.Data.SingleOrDefault()?.LastPrice;
 })
 .WithOpenApi();
 
 
 app.MapGet("/Balances", async ([FromServices] IWeexRestClient client) =>
 {
-    var result = await client.SpotApi.Account.GetBalancesAsync();
+    var result = await client.SpotApi.Account.GetAccountInfoAsync();
     return (object)(result.Success ? result.Data : result.Error!);
 })
 .WithOpenApi();

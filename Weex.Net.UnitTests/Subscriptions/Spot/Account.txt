@@ -1,0 +1,4 @@
+> { "method": "SUBSCRIBE", "params": [ "account" ], "id": "|1|"}
+< { "id": "|1|", "result": true }
+= 
+{ "e": "account", "E": 1773295738123, "v": 1024, "msgEvent": "DepositUpdate", "d": [{ "coin": "USDT", "equity": "1200.00000000", "available": "950.00000000", "frozen": "250.00000000" }]}

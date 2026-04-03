@@ -1,0 +1,41 @@
+> { "method": "SUBSCRIBE", "params": [ "account" ], "id": "|1|"}
+< { "id": "|1|", "result": true }
+= 
+{
+  "e": "account",
+  "E": 1773298961302,
+  "v": 46571,
+  "msgEvent": "PositionFundingSettle",
+  "d": [
+    {
+      "coin": "USDT",
+      "marginMode": "CROSSED",
+      "crossSymbol": "",
+      "isolatedPositionId": "0",
+      "amount": "6625267.708162",
+      "pendingDepositAmount": "0.000000",
+      "pendingWithdrawAmount": "0.000000",
+      "pendingTransferInAmount": "0",
+      "pendingTransferOutAmount": "0",
+      "liquidating": false,
+      "legacyAmount": "6628108.535375",
+      "cumDepositAmount": "6850179.708361",
+      "cumWithdrawAmount": "118.284985",
+      "cumTransferInAmount": "151.912400",
+      "cumTransferOutAmount": "0",
+      "cumMarginMoveInAmount": "0",
+      "cumMarginMoveOutAmount": "114.587618",
+      "cumPositionOpenLongAmount": "3551408.796139",
+      "cumPositionOpenShortAmount": "287685.101200",
+      "cumPositionCloseLongAmount": "3406364.752975",
+      "cumPositionCloseShortAmount": "287789.808420",
+      "cumPositionFillFeeAmount": "32.199683",
+      "cumPositionLiquidateFeeAmount": "76.930498",
+      "cumPositionFundingAmount": "-5778.744009",
+      "cumOrderFillFeeIncomeAmount": "0",
+      "cumOrderLiquidateFeeIncomeAmount": "0",
+      "createdTime": "1728493664997",
+      "updatedTime": "1747188961302"
+    }
+  ]
+}

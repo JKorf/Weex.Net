@@ -1,0 +1,54 @@
+> { "method": "SUBSCRIBE", "params": [ "order" ], "id": "|1|"}
+< { "id": "|1|", "result": true }
+= 
+{
+  "e": "orders",
+  "E": 1773295738939,
+  "v": 46654,
+  "msgEvent": "OrderUpdate",
+  "d": [
+    {
+      "id": "617414920861909658",
+      "coin": "USDT",
+      "symbol": "BTCUSDT",
+      "marginMode": "CROSSED",
+      "separatedMode": "COMBINED",
+      "separatedOpenOrderId": "0",
+      "positionSide": "LONG",
+      "orderSide": "BUY",
+      "price": "0.0",
+      "size": "0.10000",
+      "clientOrderId": "1747203186927FPIZRP",
+      "type": "MARKET",
+      "timeInForce": "IOC",
+      "reduceOnly": false,
+      "triggerPrice": "0",
+      "triggerPriceType": "CONTRACT_PRICE",
+      "orderSource": "WEB",
+      "openTpslParentOrderId": "0",
+      "positionTpsl": false,
+      "setOpenTp": false,
+      "setOpenSl": false,
+      "leverage": "20",
+      "takerFeeRate": "0.0006",
+      "makerFeeRate": "0.0002",
+      "feeDiscount": "1",
+      "liquidateFeeRate": "0.01",
+      "status": "PENDING",
+      "triggerTime": "0",
+      "triggerPriceTime": "0",
+      "triggerPriceValue": "0",
+      "cancelReason": "UNKNOWN_ORDER_CANCEL_REASON",
+      "latestFillPrice": "0",
+      "maxFillPrice": "0",
+      "minFillPrice": "0",
+      "cumFillSize": "0",
+      "cumFillValue": "0",
+      "cumFillFee": "0",
+      "cumLiquidateFee": "0",
+      "cumRealizePnl": "0",
+      "createdTime": "1747203188148",
+      "updatedTime": "1747203188148"
+    }
+  ]
+}
