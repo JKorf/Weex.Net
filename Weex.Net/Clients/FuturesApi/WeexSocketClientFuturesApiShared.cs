@@ -17,7 +17,7 @@ namespace Weex.Net.Clients.FuturesApi
         private const string _topicId = "WeexFutures";
         public string Exchange => "Weex";
 
-        public TradingMode[] SupportedTradingModes => new[] { TradingMode.Spot };
+        public TradingMode[] SupportedTradingModes => new[] { TradingMode.PerpetualLinear };
 
         public void SetDefaultExchangeParameter(string key, object value) => ExchangeParameters.SetStaticParameter(Exchange, key, value);
         public void ResetDefaultExchangeParameters() => ExchangeParameters.ResetStaticParameters();
