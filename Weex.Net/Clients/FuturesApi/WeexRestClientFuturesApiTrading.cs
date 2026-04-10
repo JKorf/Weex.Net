@@ -59,6 +59,12 @@ namespace Weex.Net.Clients.FuturesApi
         /// <inheritdoc />
         public async Task<WebCallResult<WeexFuturesOrderResult>> PlaceOrderAsync(string symbol, OrderSide side, PositionSide positionSide, OrderType orderType, decimal quantity, decimal? price = null, TimeInForce? timeInForce = null, string? clientOrderId = null, decimal? takeProfitTriggerPrice = null, decimal? stopLossTriggerPrice = null, FuturesPriceType? takeProfitWorkingType = null, FuturesPriceType? stopLossWorkingType = null, CancellationToken ct = default)
         {
+            var clientOrderIdUpdated = LibraryHelpers.ApplyBrokerId(
+                clientOrderId,
+                _baseClient.ClientOptions.BrokerId ?? WeexExchange._clientReference,
+                36,
+                _baseClient.ClientOptions.AllowAppendingClientOrderId);
+
             var parameters = new ParameterCollection();
             parameters.Add("symbol", symbol);
             parameters.AddEnum("side", side);
@@ -67,7 +73,7 @@ namespace Weex.Net.Clients.FuturesApi
             parameters.AddString("quantity", quantity);
             parameters.AddOptionalString("price", price);
             parameters.AddOptionalEnum("timeInForce", timeInForce);
-            parameters.Add("newClientOrderId", clientOrderId ?? ExchangeHelpers.RandomString(20));
+            parameters.Add("newClientOrderId", clientOrderIdUpdated ?? ExchangeHelpers.RandomString(20));
             parameters.AddOptionalString("tpTriggerPrice", takeProfitTriggerPrice);
             parameters.AddOptionalString("slTriggerPrice", stopLossTriggerPrice);
             parameters.AddOptionalEnum("TpWorkingType", takeProfitWorkingType);
@@ -84,6 +90,15 @@ namespace Weex.Net.Clients.FuturesApi
         /// <inheritdoc />
         public async Task<WebCallResult<WeexFuturesOrderResult>> CancelOrderAsync(long? orderId = null, string? clientOrderId = null, CancellationToken ct = default)
         {
+            if (clientOrderId != null)
+            {
+                clientOrderId = LibraryHelpers.ApplyBrokerId(
+                    clientOrderId,
+                    _baseClient.ClientOptions.BrokerId ?? WeexExchange._clientReference,
+                    36,
+                    _baseClient.ClientOptions.AllowAppendingClientOrderId);
+            }
+
             var parameters = new ParameterCollection();
             parameters.AddOptional("orderId", orderId);
             parameters.AddOptional("origClientOrderId", clientOrderId);
@@ -113,6 +128,16 @@ namespace Weex.Net.Clients.FuturesApi
         /// <inheritdoc />
         public async Task<WebCallResult<WeexFuturesOrderResult[]>> CancelOrdersAsync(IEnumerable<long>? orderIds = null, IEnumerable<string>? clientOrderIds = null, CancellationToken ct = default)
         {
+            if (clientOrderIds?.Count() > 0)
+            {
+                clientOrderIds = clientOrderIds.Select(clientOrderId =>
+                     LibraryHelpers.ApplyBrokerId(
+                        clientOrderId,
+                        _baseClient.ClientOptions.BrokerId ?? WeexExchange._clientReference,
+                        36,
+                        _baseClient.ClientOptions.AllowAppendingClientOrderId)).ToArray();
+            }
+
             var parameters = new ParameterCollection();
             parameters.AddOptional("orderIdList", orderIds?.ToArray());
             parameters.AddOptional("origClientOrderIdList", clientOrderIds?.ToArray());
@@ -216,6 +241,15 @@ namespace Weex.Net.Clients.FuturesApi
         /// <inheritdoc />
         public async Task<WebCallResult<WeexFuturesOrderResult>> PlaceConditionalOrderAsync(string symbol, OrderSide side, PositionSide positionSide, FuturesOrderType type, decimal quantity, decimal triggerPrice, decimal? price = null, string? clientOrderId = null, decimal? takeProfitPrice = null, decimal? stopLossPrice = null, FuturesPriceType? takeProfitWorkingType = null, FuturesPriceType? stopLossWorkingType = null, CancellationToken ct = default)
         {
+            if (clientOrderId != null)
+            {
+                clientOrderId = LibraryHelpers.ApplyBrokerId(
+                    clientOrderId,
+                    _baseClient.ClientOptions.BrokerId ?? WeexExchange._clientReference,
+                    36,
+                    _baseClient.ClientOptions.AllowAppendingClientOrderId);
+            }
+
             var parameters = new ParameterCollection();
             parameters.Add("symbol", symbol);
             parameters.AddEnum("side", side);
@@ -224,7 +258,7 @@ namespace Weex.Net.Clients.FuturesApi
             parameters.AddString("quantity", quantity);
             parameters.Add("triggerPrice", triggerPrice);
             parameters.AddOptionalString("price", price);
-            parameters.AddOptional("clientAlgoId", clientOrderId ?? ExchangeHelpers.RandomString(20));
+            parameters.AddOptional("clientAlgoId", clientOrderId);
             parameters.AddOptional("presetTakeProfitPrice", takeProfitPrice);
             parameters.AddOptional("presetStopLossPrice", stopLossPrice);
             parameters.AddOptionalEnum("TpWorkingType", takeProfitWorkingType);
@@ -304,6 +338,15 @@ namespace Weex.Net.Clients.FuturesApi
         /// <inheritdoc />
         public async Task<WebCallResult<WeexFuturesOrderResult[]>> PlaceTpSlOrderAsync(string symbol, PlanType planType, decimal triggerPrice, decimal quantity, PositionSide positionSide, decimal? executePrice = null, string? clientOrderId = null, FuturesPriceType? triggerPriceType = null, CancellationToken ct = default)
         {
+            if (clientOrderId != null)
+            {
+                clientOrderId = LibraryHelpers.ApplyBrokerId(
+                    clientOrderId,
+                    _baseClient.ClientOptions.BrokerId ?? WeexExchange._clientReference,
+                    36,
+                    _baseClient.ClientOptions.AllowAppendingClientOrderId);
+            }
+
             var parameters = new ParameterCollection();
             parameters.Add("symbol", symbol);
             parameters.AddEnum("planType", planType);

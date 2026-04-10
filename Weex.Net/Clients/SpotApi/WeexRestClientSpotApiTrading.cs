@@ -1,3 +1,4 @@
+using CryptoExchange.Net;
 using CryptoExchange.Net.Objects;
 using Microsoft.Extensions.Logging;
 using System;
@@ -30,6 +31,12 @@ namespace Weex.Net.Clients.SpotApi
         /// <inheritdoc />
         public async Task<WebCallResult<WeexOrderResult>> PlaceOrderAsync(string symbol, OrderSide side, OrderType orderType, decimal quantity, decimal? price = null, TimeInForce? timeInForce = null, string? clientOrderId = null, CancellationToken ct = default)
         {
+            var clientOrderIdUpdated = LibraryHelpers.ApplyBrokerId(
+                clientOrderId,
+                _baseClient.ClientOptions.BrokerId ?? WeexExchange._clientReference,
+                36,
+                _baseClient.ClientOptions.AllowAppendingClientOrderId);
+
             var parameters = new ParameterCollection();
             parameters.Add("symbol", symbol);
             parameters.AddEnum("side", side);
@@ -37,7 +44,7 @@ namespace Weex.Net.Clients.SpotApi
             parameters.AddString("quantity", quantity);
             parameters.AddOptionalString("price", price);
             parameters.AddOptionalEnum("timeInForce", timeInForce);
-            parameters.AddOptional("newClientOrderId", clientOrderId);
+            parameters.AddOptional("newClientOrderId", clientOrderIdUpdated);
             var request = _definitions.GetOrCreate(HttpMethod.Post, "/api/v3/order", WeexExchange.RateLimiter.WeexRestUid, 5, true);
             var result = await _baseClient.SendAsync<WeexOrderResult>(request, parameters, ct).ConfigureAwait(false);
             return result;
@@ -50,6 +57,15 @@ namespace Weex.Net.Clients.SpotApi
         /// <inheritdoc />
         public async Task<WebCallResult<WeexCancelResult>> CancelOrderAsync(long? orderId = null, string? clientOrderId = null, CancellationToken ct = default)
         {
+            if (clientOrderId != null)
+            {
+                clientOrderId = LibraryHelpers.ApplyBrokerId(
+                    clientOrderId,
+                    _baseClient.ClientOptions.BrokerId ?? WeexExchange._clientReference,
+                    36,
+                    _baseClient.ClientOptions.AllowAppendingClientOrderId);
+            }
+
             var parameters = new ParameterCollection();
             parameters.AddOptional("orderId", orderId);
             parameters.AddOptional("origClientOrderId", clientOrderId);
@@ -79,6 +95,16 @@ namespace Weex.Net.Clients.SpotApi
         /// <inheritdoc />
         public async Task<WebCallResult<WeexCancelResult[]>> CancelOrdersAsync(IEnumerable<long>? orderIds = null, IEnumerable<string>? clientOrderIds = null, CancellationToken ct = default)
         {
+            if (clientOrderIds?.Count() > 0)
+            {
+                clientOrderIds = clientOrderIds.Select(clientOrderId => 
+                     LibraryHelpers.ApplyBrokerId(
+                        clientOrderId,
+                        _baseClient.ClientOptions.BrokerId ?? WeexExchange._clientReference,
+                        36,
+                        _baseClient.ClientOptions.AllowAppendingClientOrderId)).ToArray();
+            }
+
             var parameters = new ParameterCollection();
             parameters.AddOptional("orderIds", orderIds?.ToArray());
             parameters.AddOptional("origClientOrderIds", clientOrderIds?.ToArray());
@@ -94,6 +120,15 @@ namespace Weex.Net.Clients.SpotApi
         /// <inheritdoc />
         public async Task<WebCallResult<WeexOrder>> GetOrderAsync(long? orderId = null, string? clientOrderId = null, CancellationToken ct = default)
         {
+            if (clientOrderId != null)
+            {
+                clientOrderId = LibraryHelpers.ApplyBrokerId(
+                    clientOrderId,
+                    _baseClient.ClientOptions.BrokerId ?? WeexExchange._clientReference,
+                    36,
+                    _baseClient.ClientOptions.AllowAppendingClientOrderId);
+            }
+
             var parameters = new ParameterCollection();
             parameters.AddOptional("orderId", orderId);
             parameters.AddOptional("origClientOrderId", clientOrderId);

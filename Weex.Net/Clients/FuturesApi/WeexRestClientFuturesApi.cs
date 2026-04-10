@@ -25,6 +25,9 @@ namespace Weex.Net.Clients.FuturesApi
         protected override ErrorMapping ErrorMapping => WeexErrors.RestErrors;
 
         /// <inheritdoc />
+        public new WeexRestOptions ClientOptions => (WeexRestOptions)base.ClientOptions;
+
+        /// <inheritdoc />
         protected override IRestMessageHandler MessageHandler { get; } = new WeexRestMessageHandler(WeexErrors.RestErrors);
         #endregion
 

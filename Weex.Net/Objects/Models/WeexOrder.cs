@@ -4,12 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using Weex.Net.Converters;
 using Weex.Net.Enums;
 
 namespace Weex.Net.Objects.Models
 {
     /// <summary>
-    /// 
+    /// Order info
     /// </summary>
     public record WeexOrder
     {
@@ -27,6 +28,7 @@ namespace Weex.Net.Objects.Models
         /// ["<c>clientOrderId</c>"] Client order id
         /// </summary>
         [JsonPropertyName("clientOrderId")]
+        [JsonConverter(typeof(ClientOrderIdReplaceConverter))]
         public string? ClientOrderId { get; set; }
         /// <summary>
         /// ["<c>price</c>"] Price

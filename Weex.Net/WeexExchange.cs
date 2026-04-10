@@ -31,6 +31,7 @@ namespace Weex.Net
                 );
 
         internal static JsonSerializerOptions _serializerContext = SerializerOptions.WithConverters(JsonSerializerContextCache.GetOrCreate<WeexSourceGenerationContext>());
+        internal static string _clientReference = "b-WEEX111124-";
 
         /// <summary>
         /// Aliases for Weex assets

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text.Json.Serialization;
+using Weex.Net.Converters;
 
 namespace Weex.Net.Objects.Models
 {
@@ -22,6 +23,7 @@ namespace Weex.Net.Objects.Models
         /// ["<c>clientOrderId</c>"] Client order id
         /// </summary>
         [JsonPropertyName("clientOrderId")]
+        [JsonConverter(typeof(ClientOrderIdReplaceConverter))]
         public string? ClientOrderId { get; set; }
         /// <summary>
         /// ["<c>transactTime</c>"] Timestamp
