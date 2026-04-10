@@ -20,9 +20,9 @@ namespace Weex.Net.Objects.Sockets.Subscriptions
             var id = ExchangeHelpers.NextId();
             // Private connection doesn't send a response to out pong, no need to wait
             if (connection.ConnectionUri.PathAndQuery.Contains("/private"))
-                _ = connection.SendAsync(id, new WeexSocketRequest() { Id = id, Method = "PONG" }, 1);
+                _ = connection.SendAsync(id, new WeexSocketRequest() { Id = id, Method = "PONG" }, 0);
             else
-                _ = connection.SendAndWaitQueryAsync(new WeexQuery(new WeexSocketRequest() { Id = id, Method = "PONG" }, false));
+                _ = connection.SendAndWaitQueryAsync(new WeexQuery(new WeexSocketRequest() { Id = id, Method = "PONG" }, false, 0));
             return CallResult.SuccessResult;
         }
     }
