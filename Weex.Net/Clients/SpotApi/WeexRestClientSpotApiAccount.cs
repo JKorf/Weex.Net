@@ -5,7 +5,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Weex.Net.Enums;
 using Weex.Net.Interfaces.Clients.SpotApi;
-using Weex.Net.Objects;
 using Weex.Net.Objects.Models;
 
 namespace Weex.Net.Clients.SpotApi
@@ -21,6 +20,7 @@ namespace Weex.Net.Clients.SpotApi
             _baseClient = baseClient;
         }
 
+        #region Endpoints
         #region Get Trading Symbols
 
         /// <inheritdoc />
@@ -99,6 +99,6 @@ namespace Weex.Net.Clients.SpotApi
         }
 
         #endregion
-
+        #endregion
     }
 }

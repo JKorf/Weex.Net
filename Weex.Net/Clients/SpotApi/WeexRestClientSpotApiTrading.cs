@@ -26,6 +26,7 @@ namespace Weex.Net.Clients.SpotApi
             _logger = logger;
         }
 
+        #region Endpoints
         #region Place Order
 
         /// <inheritdoc />
@@ -188,6 +189,6 @@ namespace Weex.Net.Clients.SpotApi
         }
 
         #endregion
-
+        #endregion
     }
 }

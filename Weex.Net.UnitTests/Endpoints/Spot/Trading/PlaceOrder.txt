@@ -1,6 +1,7 @@
 POST
 /api/v3/order
 true
+BodyParams: {"symbol":"123","side":"BUY","type":"LIMIT","quantity":"0.1"}
 {
   "symbol": "BTCUSDT",
   "orderId": 702345678901234567,

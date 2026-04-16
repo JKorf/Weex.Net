@@ -21,6 +21,7 @@ namespace Weex.Net.Clients.FuturesApi
             _baseClient = baseClient;
         }
 
+        #region Endpoints
         #region Get Balances
 
         /// <inheritdoc />
@@ -174,6 +175,6 @@ namespace Weex.Net.Clients.FuturesApi
         }
 
         #endregion
-
+        #endregion
     }
 }

@@ -21,6 +21,7 @@ namespace Weex.Net.Clients.FuturesApi
             _baseClient = baseClient;
         }
 
+        #region Endpoints
         #region Get Server Time
 
         /// <inheritdoc />
@@ -243,6 +244,6 @@ namespace Weex.Net.Clients.FuturesApi
         }
 
         #endregion
-
+        #endregion
     }
 }

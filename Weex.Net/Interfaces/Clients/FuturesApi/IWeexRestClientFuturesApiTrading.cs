@@ -126,7 +126,7 @@ namespace Weex.Net.Interfaces.Clients.FuturesApi
         /// GET /capi/v3/order<br />
         /// </para>
         /// </summary>
-        /// <param name="orderId">["<c>orderId</c>"] </param>
+        /// <param name="orderId">["<c>orderId</c>"] Order id</param>
         /// <param name="ct">Cancellation token</param>
         Task<WebCallResult<WeexFuturesOrder>> GetOrderAsync(long orderId, CancellationToken ct = default);
 

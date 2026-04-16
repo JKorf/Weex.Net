@@ -1,6 +1,7 @@
 GET
 /api/v3/market/klines
 false
+UriParams: {"symbol":"123","interval":"1m"}
 [
   [
     1764505860000,

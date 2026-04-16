@@ -22,6 +22,7 @@ namespace Weex.Net.Clients.SpotApi
             _baseClient = baseClient;
         }
 
+        #region Endpoints
         #region Get Server Time
 
         /// <inheritdoc />
@@ -147,6 +148,6 @@ namespace Weex.Net.Clients.SpotApi
         }
 
         #endregion
-
+        #endregion
     }
 }

@@ -28,6 +28,7 @@ namespace Weex.Net.Clients.FuturesApi
             _logger = logger;
         }
 
+        #region Endpoints
         #region Get Positions
 
         /// <inheritdoc />
@@ -379,6 +380,6 @@ namespace Weex.Net.Clients.FuturesApi
         }
 
         #endregion
-
+        #endregion
     }
 }

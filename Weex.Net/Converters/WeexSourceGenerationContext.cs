@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
-using Weex.Net.Objects;
 using Weex.Net.Objects.Internal;
 using Weex.Net.Objects.Models;
 using Weex.Net.Objects.Sockets;
