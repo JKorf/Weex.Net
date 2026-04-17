@@ -19,6 +19,7 @@ using CryptoExchange.Net.SharedApis;
 using CryptoExchange.Net.Sockets;
 using CryptoExchange.Net.Sockets.Default;
 using Microsoft.Extensions.Logging;
+using Weex.Net.AuthProviders;
 using Weex.Net.Clients.MessageHandlers;
 using Weex.Net.Enums;
 using Weex.Net.Interfaces.Clients.SpotApi;

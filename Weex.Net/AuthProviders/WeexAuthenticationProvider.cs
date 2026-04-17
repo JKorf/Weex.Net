@@ -7,7 +7,7 @@ using CryptoExchange.Net.Sockets;
 using CryptoExchange.Net.Sockets.Default;
 using System.Collections.Generic;
 
-namespace Weex.Net
+namespace Weex.Net.AuthProviders
 {
     internal class WeexAuthenticationProvider : AuthenticationProvider<WeexCredentials, WeexCredentials>
     {
@@ -21,10 +21,21 @@ namespace Weex.Net
 
         public override void ProcessRequest(RestApiClient apiClient, RestRequestConfiguration requestConfig)
         {
+            // Authentication steps:
+            // 1. GetCurrentTimeMilliseconds
+            // 2. CreateSignString: =1 + Method + Path + QueryString + Body
+            // 3. Sign: HMACSHA256, Base64
+            // 4. AddHeader: ACCESS-Key, Key
+            // 5. AddHeader: ACCESS-SIGN, =3
+            // 6. AddHeader: ACCESS-TIMESTAMP, =1
+            // 7. AddHeader: ACCESS-PASSPHRASE, Pass
+
             if (!requestConfig.Authenticated)
                 return;
 
             var time = GetMillisecondTimestampLong(apiClient);
+            
+
             var signString = time + requestConfig.Method.ToString().ToUpper() + requestConfig.Path;
             if (requestConfig.QueryParameters?.Count > 0)
             {

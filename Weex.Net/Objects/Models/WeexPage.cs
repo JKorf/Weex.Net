@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Weex.Net.Objects
+namespace Weex.Net.Objects.Models
 {
     /// <summary>
     /// Data page

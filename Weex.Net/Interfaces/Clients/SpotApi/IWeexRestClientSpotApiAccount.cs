@@ -3,7 +3,6 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Weex.Net.Enums;
-using Weex.Net.Objects;
 using Weex.Net.Objects.Models;
 
 namespace Weex.Net.Interfaces.Clients.SpotApi

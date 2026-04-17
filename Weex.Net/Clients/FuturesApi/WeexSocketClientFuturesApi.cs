@@ -18,6 +18,7 @@ using System.Linq;
 using System.Net.WebSockets;
 using System.Threading;
 using System.Threading.Tasks;
+using Weex.Net.AuthProviders;
 using Weex.Net.Clients.MessageHandlers;
 using Weex.Net.Enums;
 using Weex.Net.Interfaces.Clients.FuturesApi;
