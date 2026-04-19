@@ -16,8 +16,7 @@ using Weex.Net.Objects.Models;
 namespace Weex.Net.Clients.FuturesApi
 {
     /// <inheritdoc />
-    internal class WeexRestClientFuturesApiTrading : IWeexRestClientFuturesApiTrading
-    {
+    internal class WeexRestClientFuturesApiTrading : IWeexRestClientFuturesApiTrading {
         private static readonly RequestDefinitionCache _definitions = new RequestDefinitionCache();
         private readonly WeexRestClientFuturesApi _baseClient;
         private readonly ILogger _logger;
@@ -58,7 +57,20 @@ namespace Weex.Net.Clients.FuturesApi
         #region Place Order
 
         /// <inheritdoc />
-        public async Task<WebCallResult<WeexFuturesOrderResult>> PlaceOrderAsync(string symbol, OrderSide side, PositionSide positionSide, OrderType orderType, decimal quantity, decimal? price = null, TimeInForce? timeInForce = null, string? clientOrderId = null, decimal? takeProfitTriggerPrice = null, decimal? stopLossTriggerPrice = null, FuturesPriceType? takeProfitWorkingType = null, FuturesPriceType? stopLossWorkingType = null, CancellationToken ct = default)
+        public async Task<WebCallResult<WeexFuturesOrderResult>> PlaceOrderAsync(
+            string symbol,
+            OrderSide side, 
+            PositionSide positionSide,
+            OrderType orderType, 
+            decimal quantity, 
+            decimal? price = null, 
+            TimeInForce? timeInForce = null,
+            string? clientOrderId = null,
+            decimal? takeProfitTriggerPrice = null, 
+            decimal? stopLossTriggerPrice = null,
+            FuturesPriceType? takeProfitWorkingType = null, 
+            FuturesPriceType? stopLossWorkingType = null, 
+            CancellationToken ct = default)
         {
             var clientOrderIdUpdated = LibraryHelpers.ApplyBrokerId(
                 clientOrderId,
