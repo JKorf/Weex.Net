@@ -13,11 +13,15 @@ namespace Weex.Net.Interfaces.Clients.FuturesApi
     public interface IWeexRestClientFuturesApiExchangeData
     {
         /// <summary>
-        /// 
-        /// <para><a href="XXX" /></para>
+        /// Get server time
+        /// <para>
+        /// Docs:<br />
+        /// <a href="https://www.weex.com/api-doc/spot/ConfigAPI/GetServerTime" /><br />
+        /// Endpoint:<br />
+        /// GET /api/v3/time<br />
+        /// </para>
         /// </summary>
         /// <param name="ct">Cancellation token</param>
-        /// <returns></returns>
         Task<WebCallResult<DateTime>> GetServerTimeAsync(CancellationToken ct = default);
 
         /// <summary>
