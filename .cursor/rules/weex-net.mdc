@@ -94,7 +94,7 @@ var ticker = await shared.GetSpotTickerAsync(
 
 ## Reference
 
-- `CLAUDE.md` in the repository root has fuller examples and pitfalls.
+- `AGENTS.md` in the repository root has fuller examples and pitfalls.
 - `llms.txt` and `llms-full.txt` in the repository root provide AI context.
 - `docs/ai-api-map.md` maps user intents to actual methods.
 - `Examples/ai-friendly/` contains compilable examples.
