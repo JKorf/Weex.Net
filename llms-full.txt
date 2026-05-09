@@ -1,0 +1,921 @@
+# Weex.Net Full LLM Context
+
+> Detailed AI/LLM reference for generating correct C#/.NET code with Weex.Net. Use this file when `llms.txt` is too brief and the task needs concrete examples, endpoint routing guidance, WebSocket patterns, SharedApis guidance, or anti-hallucination rules.
+
+Weex.Net is a strongly typed .NET client library for the Weex REST and WebSocket APIs. It is part of the CryptoExchange.Net ecosystem and uses the same result, shared API, logging, rate limiting, dependency injection, and socket subscription patterns as the other JKorf exchange libraries.
+
+Current package version in this repository: 1.0.0.
+CryptoExchange.Net dependency: 11.1.1.
+Target frameworks: netstandard2.0, netstandard2.1, net8.0, net9.0, net10.0.
+Native AOT: supported on compatible .NET targets.
+
+Primary documentation:
+- README.md: overview, installation, feature table, release notes, basic examples
+- docs site: https://cryptoexchange.jkorf.dev/Weex.Net/
+- API quick map: `docs/ai-api-map.md`
+- source interfaces: `Weex.Net/Interfaces/Clients/**`
+- AI examples: `Examples/ai-friendly/`
+- assistant skill: `CLAUDE.md`
+
+## Golden Rules For AI Code Generation
+
+- Use `WeexRestClient` for REST and `WeexSocketClient` for WebSocket. Do not generate raw `HttpClient` calls to Weex endpoints.
+- Use `WeexCredentials`, not generic `ApiCredentials`, for API key setup.
+- Weex credentials require three values: API key, API secret, and API passphrase.
+- Include `using Weex.Net;` when using `WeexCredentials` or `WeexEnvironment`.
+- Include `using Weex.Net.Clients;` when constructing `WeexRestClient` or `WeexSocketClient`.
+- Always check `.Success` before reading `.Data`.
+- REST methods return `WebCallResult<T>` or `WebCallResult`.
+- WebSocket subscriptions return `CallResult<UpdateSubscription>`.
+- Reuse clients. Do not instantiate a REST or socket client per request in production code.
+- Prefer dependency injection for long-running services.
+- Store WebSocket subscriptions and unsubscribe during shutdown.
+- Do not call `.Result` or `.Wait()` on async methods.
+- Do not invent endpoint names. If unsure, inspect `Weex.Net/Interfaces/Clients/**`.
+- Do not invent Binance-style API roots. Weex exposes `SpotApi` and `FuturesApi`; there is no `UsdFuturesApi`, `CoinFuturesApi`, or `GeneralApi`.
+- Do not invent a testnet. Current source exposes `WeexEnvironment.Live` and `WeexEnvironment.CreateCustom(...)`.
+- Do not use `FuturesOrderType` for regular futures orders. `FuturesApi.Trading.PlaceOrderAsync` takes `OrderType`; conditional futures orders take `FuturesOrderType`.
+- Do not pass custom client order IDs unless the user explicitly needs correlation with an external system. Let the library generate IDs in ordinary examples.
+- For multi-exchange code, use `CryptoExchange.Net.SharedApis` interfaces from each API surface's `.SharedClient`.
+
+## Installation
+
+```bash
+dotnet add package Weex.Net
+```
+
+## Required Usings
+
+Typical REST/trading code:
+
+```csharp
+using Weex.Net;
+using Weex.Net.Clients;
+using Weex.Net.Enums;
+```
+
+Shared API code:
+
+```csharp
+using Weex.Net.Clients;
+using CryptoExchange.Net.SharedApis;
+```
+
+Retry/error helper code may also need:
+
+```csharp
+using CryptoExchange.Net.Objects;
+```
+
+Dependency injection setup:
+
+```csharp
+using Weex.Net;
+using Microsoft.Extensions.DependencyInjection;
+```
+
+Interface injection code:
+
+```csharp
+using Weex.Net.Interfaces.Clients;
+```
+
+## Client Setup
+
+Public market data does not require credentials:
+
+```csharp
+var client = new WeexRestClient();
+
+var ticker = await client.SpotApi.ExchangeData.GetTickersAsync(new[] { "ETHUSDT" });
+if (!ticker.Success)
+{
+    Console.WriteLine(ticker.Error);
+    return;
+}
+
+Console.WriteLine(ticker.Data.Single().LastPrice);
+```
+
+Private account and trading endpoints require credentials:
+
+```csharp
+var client = new WeexRestClient(options =>
+{
+    options.ApiCredentials = new WeexCredentials("API_KEY", "API_SECRET", "API_PASSPHRASE");
+});
+```
+
+Socket client with credentials:
+
+```csharp
+var socketClient = new WeexSocketClient(options =>
+{
+    options.ApiCredentials = new WeexCredentials("API_KEY", "API_SECRET", "API_PASSPHRASE");
+});
+```
+
+Environments:
+
+```csharp
+var live = new WeexRestClient(options => options.Environment = WeexEnvironment.Live);
+
+var custom = new WeexRestClient(options =>
+{
+    options.Environment = WeexEnvironment.CreateCustom(
+        name: "custom",
+        spotRestAddress: "https://spot.example",
+        spotSocketStreamAddress: "wss://spot-ws.example",
+        futuresRestAddress: "https://futures.example",
+        futuresSocketStreamAddress: "wss://futures-ws.example");
+});
+```
+
+Important environment rule: the current source only defines `WeexEnvironment.Live` and `CreateCustom(...)`. Do not generate `WeexEnvironment.Testnet`.
+
+## Dependency Injection
+
+Current DI shape:
+
+```csharp
+services.AddWeex(options =>
+{
+    options.ApiCredentials = new WeexCredentials("API_KEY", "API_SECRET", "API_PASSPHRASE");
+});
+```
+
+You can configure REST and socket credentials separately:
+
+```csharp
+services.AddWeex(options =>
+{
+    options.Rest.ApiCredentials = new WeexCredentials("REST_KEY", "REST_SECRET", "REST_PASSPHRASE");
+    options.Socket.ApiCredentials = new WeexCredentials("SOCKET_KEY", "SOCKET_SECRET", "SOCKET_PASSPHRASE");
+});
+```
+
+Inject:
+
+```csharp
+public class MyService
+{
+    private readonly IWeexRestClient _restClient;
+    private readonly IWeexSocketClient _socketClient;
+
+    public MyService(IWeexRestClient restClient, IWeexSocketClient socketClient)
+    {
+        _restClient = restClient;
+        _socketClient = socketClient;
+    }
+}
+```
+
+Registered services include `IWeexRestClient`, `IWeexSocketClient`, `IWeexOrderBookFactory`, `IWeexTrackerFactory`, `IWeexUserClientProvider`, and the supported CryptoExchange.Net shared interfaces.
+
+## Result Handling Pattern
+
+Always branch on `.Success`.
+
+```csharp
+var result = await client.SpotApi.ExchangeData.GetTickersAsync(new[] { "ETHUSDT" });
+if (!result.Success)
+{
+    Console.WriteLine($"Code: {result.Error?.Code}");
+    Console.WriteLine($"Message: {result.Error?.Message}");
+    return;
+}
+
+var price = result.Data.Single().LastPrice;
+```
+
+For retry logic, only retry transient errors:
+
+```csharp
+async Task<WebCallResult<T>> WithRetry<T>(Func<Task<WebCallResult<T>>> call, int maxAttempts = 3)
+{
+    WebCallResult<T> last = default!;
+
+    for (var attempt = 1; attempt <= maxAttempts; attempt++)
+    {
+        last = await call();
+        if (last.Success)
+            return last;
+
+        if (last.Error?.IsTransient != true)
+            return last;
+
+        await Task.Delay(TimeSpan.FromMilliseconds(250 * Math.Pow(2, attempt)));
+    }
+
+    return last;
+}
+```
+
+Use `ct: cancellationToken` for cancellation:
+
+```csharp
+var orderBook = await client.SpotApi.ExchangeData.GetOrderBookAsync(
+    symbol: "ETHUSDT",
+    limit: 15,
+    ct: cancellationToken);
+```
+
+## Main API Surface
+
+REST:
+
+```text
+WeexRestClient
+  .SpotApi
+    .ExchangeData
+    .Account
+    .Trading
+    .SharedClient
+  .FuturesApi
+    .ExchangeData
+    .Account
+    .Trading
+    .SharedClient
+```
+
+WebSocket:
+
+```text
+WeexSocketClient
+  .SpotApi
+    public subscriptions
+    private subscriptions
+    .SharedClient
+  .FuturesApi
+    public subscriptions
+    private subscriptions
+    .SharedClient
+```
+
+Important: Weex.Net has a smaller API tree than Binance.Net. There is no `GeneralApi`, no sub-account root, no separate USD-M or COIN-M futures roots, and no separate `ExchangeData` child on the socket APIs. Spot socket subscriptions are directly on `socketClient.SpotApi`; futures socket subscriptions are directly on `socketClient.FuturesApi`.
+
+## Intent To Method Map
+
+For a broader quick reference, see `docs/ai-api-map.md`.
+
+Common Spot REST tasks:
+
+```text
+Get spot server time -> client.SpotApi.ExchangeData.GetServerTimeAsync()
+Get assets and network info -> client.SpotApi.ExchangeData.GetAssetsAsync()
+Get spot exchange info -> client.SpotApi.ExchangeData.GetExchangeInfoAsync()
+Get spot exchange info for symbols -> client.SpotApi.ExchangeData.GetExchangeInfoAsync(new[] { "ETHUSDT" })
+Get spot prices -> client.SpotApi.ExchangeData.GetPricesAsync(new[] { "ETHUSDT" })
+Get spot 24h ticker -> client.SpotApi.ExchangeData.GetTickersAsync(new[] { "ETHUSDT" })
+Get all spot 24h tickers -> client.SpotApi.ExchangeData.GetTickersAsync()
+Get recent spot trades -> client.SpotApi.ExchangeData.GetRecentTradesAsync("ETHUSDT")
+Get spot klines -> client.SpotApi.ExchangeData.GetKlinesAsync("ETHUSDT", KlineInterval.OneMinute)
+Get spot order book -> client.SpotApi.ExchangeData.GetOrderBookAsync("ETHUSDT", 15)
+Get spot book ticker -> client.SpotApi.ExchangeData.GetBookTickersAsync(new[] { "ETHUSDT" })
+Get spot trading symbols -> client.SpotApi.Account.GetTradingSymbolsAsync()
+Get spot balances -> client.SpotApi.Account.GetAccountInfoAsync()
+Get spot account bills -> client.SpotApi.Account.GetAccountBillsAsync(...)
+Get spot funding bills -> client.SpotApi.Account.GetFundingBillsAsync(...)
+Get spot transfer history -> client.SpotApi.Account.GetTransferHistoryAsync(...)
+Place spot order -> client.SpotApi.Trading.PlaceOrderAsync(...)
+Cancel spot order -> client.SpotApi.Trading.CancelOrderAsync(orderId: orderId)
+Cancel spot order by client id -> client.SpotApi.Trading.CancelOrderAsync(clientOrderId: clientOrderId)
+Cancel all symbol spot orders -> client.SpotApi.Trading.CancelAllSymbolOrdersAsync("ETHUSDT")
+Cancel multiple spot orders -> client.SpotApi.Trading.CancelOrdersAsync(orderIds: orderIds)
+Get spot order -> client.SpotApi.Trading.GetOrderAsync(orderId: orderId)
+Get spot order by client id -> client.SpotApi.Trading.GetOrderAsync(clientOrderId: clientOrderId)
+Get open spot orders -> client.SpotApi.Trading.GetOpenOrdersAsync("ETHUSDT")
+Get spot order history -> client.SpotApi.Trading.GetOrderHistoryAsync("ETHUSDT")
+Get spot user trades -> client.SpotApi.Trading.GetUserTradesAsync("ETHUSDT")
+```
+
+Common Futures REST tasks:
+
+```text
+Get futures server time -> client.FuturesApi.ExchangeData.GetServerTimeAsync()
+Get futures exchange info -> client.FuturesApi.ExchangeData.GetExchangeInfoAsync()
+Get futures symbol info -> client.FuturesApi.ExchangeData.GetExchangeInfoAsync("ETHUSDT")
+Get futures order book -> client.FuturesApi.ExchangeData.GetOrderBookAsync("ETHUSDT", 15)
+Get futures 24h ticker -> client.FuturesApi.ExchangeData.GetTickersAsync("ETHUSDT")
+Get all futures tickers -> client.FuturesApi.ExchangeData.GetTickersAsync()
+Get futures book ticker -> client.FuturesApi.ExchangeData.GetBookTickersAsync("ETHUSDT")
+Get futures recent trades -> client.FuturesApi.ExchangeData.GetRecentTradesAsync("ETHUSDT")
+Get futures klines -> client.FuturesApi.ExchangeData.GetKlinesAsync("ETHUSDT", FuturesKlineInterval.OneMinute)
+Get index price klines -> client.FuturesApi.ExchangeData.GetIndexPriceKlinesAsync("ETHUSDT", FuturesKlineInterval.OneMinute)
+Get mark price klines -> client.FuturesApi.ExchangeData.GetMarkPriceKlinesAsync("ETHUSDT", FuturesKlineInterval.OneMinute)
+Get historical futures klines -> client.FuturesApi.ExchangeData.GetKlineHistoryAsync("ETHUSDT", KlineInterval.OneMinute)
+Get futures index/mark price -> client.FuturesApi.ExchangeData.GetPriceAsync("ETHUSDT")
+Get open interest -> client.FuturesApi.ExchangeData.GetOpenInterestAsync("ETHUSDT")
+Get current funding rate -> client.FuturesApi.ExchangeData.GetFundingRateAsync("ETHUSDT")
+Get funding history -> client.FuturesApi.ExchangeData.GetFundingRateHistoryAsync("ETHUSDT")
+Get futures trading symbols -> client.FuturesApi.ExchangeData.GetTradingSymbolsAsync()
+Get futures balances -> client.FuturesApi.Account.GetBalancesAsync()
+Get futures trading fees -> client.FuturesApi.Account.GetTradingFeesAsync("ETHUSDT")
+Get futures account config -> client.FuturesApi.Account.GetAccountConfigAsync()
+Get futures symbol config -> client.FuturesApi.Account.GetSymbolConfigAsync("ETHUSDT")
+Get futures income bills -> client.FuturesApi.Account.GetAccountBillsAsync(...)
+Set margin mode -> client.FuturesApi.Account.SetMarginModeAsync("ETHUSDT", MarginType.Isolated)
+Set leverage -> client.FuturesApi.Account.SetLeverageAsync("ETHUSDT", marginMode: MarginType.Isolated, isolatedLongLeverage: 5, isolatedShortLeverage: 5)
+Adjust isolated margin -> client.FuturesApi.Account.AdjustIsolatedMarginAsync(positionId, quantity, MarginAdjustType.Increase)
+Set auto append margin -> client.FuturesApi.Account.SetAutoAppendMarginAsync(positionId, true)
+Get all positions -> client.FuturesApi.Trading.GetPositionsAsync()
+Get symbol positions -> client.FuturesApi.Trading.GetPositionAsync("ETHUSDT")
+Place futures order -> client.FuturesApi.Trading.PlaceOrderAsync(...)
+Cancel futures order -> client.FuturesApi.Trading.CancelOrderAsync(orderId: orderId)
+Cancel futures order by client id -> client.FuturesApi.Trading.CancelOrderAsync(clientOrderId: clientOrderId)
+Cancel all futures orders -> client.FuturesApi.Trading.CancelAllOrdersAsync("ETHUSDT")
+Cancel multiple futures orders -> client.FuturesApi.Trading.CancelOrdersAsync(orderIds: orderIds)
+Close positions -> client.FuturesApi.Trading.ClosePositionsAsync("ETHUSDT")
+Get futures order -> client.FuturesApi.Trading.GetOrderAsync(orderId)
+Get open futures orders -> client.FuturesApi.Trading.GetOpenOrdersAsync("ETHUSDT")
+Get futures order history -> client.FuturesApi.Trading.GetOrderHistoryAsync("ETHUSDT")
+Get futures user trades -> client.FuturesApi.Trading.GetUserTradesAsync("ETHUSDT")
+Place futures conditional order -> client.FuturesApi.Trading.PlaceConditionalOrderAsync(...)
+Cancel futures conditional order -> client.FuturesApi.Trading.CancelConditionalOrderAsync(orderId)
+Cancel all futures conditional orders -> client.FuturesApi.Trading.CancelAllConditionalOrdersAsync("ETHUSDT")
+Get open conditional orders -> client.FuturesApi.Trading.GetOpenConditionalOrdersAsync("ETHUSDT")
+Get conditional order history -> client.FuturesApi.Trading.GetConditionalOrderHistoryAsync("ETHUSDT")
+Place futures TP/SL order -> client.FuturesApi.Trading.PlaceTpSlOrderAsync(...)
+Edit futures TP/SL order -> client.FuturesApi.Trading.EditTpSlOrderAsync(orderId, triggerPrice)
+```
+
+Common WebSocket tasks:
+
+```text
+Subscribe spot ticker -> socketClient.SpotApi.SubscribeToTickerUpdatesAsync("ETHUSDT", handler)
+Subscribe many spot tickers -> socketClient.SpotApi.SubscribeToTickerUpdatesAsync(new[] { "ETHUSDT", "BTCUSDT" }, handler)
+Subscribe spot book ticker -> socketClient.SpotApi.SubscribeToBookTickerUpdatesAsync("ETHUSDT", handler)
+Subscribe spot order book -> socketClient.SpotApi.SubscribeToOrderBookUpdatesAsync("ETHUSDT", 15, handler)
+Subscribe spot klines -> socketClient.SpotApi.SubscribeToKlineUpdatesAsync("ETHUSDT", KlineInterval.OneMinute, handler)
+Subscribe spot trades -> socketClient.SpotApi.SubscribeToTradeUpdatesAsync("ETHUSDT", handler)
+Subscribe spot account updates -> socketClient.SpotApi.SubscribeToAccountUpdatesAsync(handler)
+Subscribe spot order updates -> socketClient.SpotApi.SubscribeToOrderUpdatesAsync(handler)
+Subscribe spot user trade updates -> socketClient.SpotApi.SubscribeToUserTradeUpdatesAsync(handler)
+Subscribe futures ticker -> socketClient.FuturesApi.SubscribeToTickerUpdatesAsync("ETHUSDT", handler)
+Subscribe futures klines -> socketClient.FuturesApi.SubscribeToKlineUpdatesAsync("ETHUSDT", KlineInterval.OneMinute, handler)
+Subscribe futures order book -> socketClient.FuturesApi.SubscribeToOrderBookUpdatesAsync("ETHUSDT", 15, handler)
+Subscribe futures trades -> socketClient.FuturesApi.SubscribeToTradeUpdatesAsync("ETHUSDT", handler)
+Subscribe futures account updates -> socketClient.FuturesApi.SubscribeToAccountUpdatesAsync(handler)
+Subscribe futures position updates -> socketClient.FuturesApi.SubscribeToPositionUpdatesAsync(handler)
+Subscribe futures order updates -> socketClient.FuturesApi.SubscribeToOrderUpdatesAsync(handler)
+Subscribe futures user trade updates -> socketClient.FuturesApi.SubscribeToUserTradeUpdatesAsync(handler)
+```
+
+## Spot Order Example
+
+```csharp
+using Weex.Net;
+using Weex.Net.Clients;
+using Weex.Net.Enums;
+
+var client = new WeexRestClient(options =>
+{
+    options.ApiCredentials = new WeexCredentials("API_KEY", "API_SECRET", "API_PASSPHRASE");
+});
+
+var order = await client.SpotApi.Trading.PlaceOrderAsync(
+    symbol: "ETHUSDT",
+    side: OrderSide.Buy,
+    orderType: OrderType.Limit,
+    quantity: 0.1m,
+    price: 2000m,
+    timeInForce: TimeInForce.GoodTillCanceled);
+
+if (!order.Success)
+{
+    Console.WriteLine(order.Error);
+    return;
+}
+
+Console.WriteLine(order.Data.OrderId);
+```
+
+For a spot market order, use `OrderType.Market` and omit price and time in force:
+
+```csharp
+var order = await client.SpotApi.Trading.PlaceOrderAsync(
+    symbol: "ETHUSDT",
+    side: OrderSide.Buy,
+    orderType: OrderType.Market,
+    quantity: 0.1m);
+```
+
+Spot cancellation does not take a symbol parameter:
+
+```csharp
+var cancel = await client.SpotApi.Trading.CancelOrderAsync(orderId: order.Data.OrderId);
+```
+
+## Futures Order Example
+
+```csharp
+using Weex.Net;
+using Weex.Net.Clients;
+using Weex.Net.Enums;
+
+var client = new WeexRestClient(options =>
+{
+    options.ApiCredentials = new WeexCredentials("API_KEY", "API_SECRET", "API_PASSPHRASE");
+});
+
+var leverage = await client.FuturesApi.Account.SetLeverageAsync(
+    symbol: "ETHUSDT",
+    marginMode: MarginType.Isolated,
+    isolatedLongLeverage: 5,
+    isolatedShortLeverage: 5);
+
+if (!leverage.Success)
+{
+    Console.WriteLine(leverage.Error);
+    return;
+}
+
+var order = await client.FuturesApi.Trading.PlaceOrderAsync(
+    symbol: "ETHUSDT",
+    side: OrderSide.Buy,
+    positionSide: PositionSide.Long,
+    orderType: OrderType.Market,
+    quantity: 0.01m);
+
+if (!order.Success)
+{
+    Console.WriteLine(order.Error);
+    return;
+}
+
+Console.WriteLine(order.Data.OrderId);
+```
+
+Regular futures orders use `OrderType.Limit` or `OrderType.Market`. Conditional futures orders use `FuturesOrderType`:
+
+```csharp
+var stop = await client.FuturesApi.Trading.PlaceConditionalOrderAsync(
+    symbol: "ETHUSDT",
+    side: OrderSide.Sell,
+    positionSide: PositionSide.Long,
+    type: FuturesOrderType.StopMarket,
+    quantity: 0.01m,
+    triggerPrice: 1800m);
+```
+
+Use `ClosePositionsAsync(symbol)` when the user asks to close an open futures position through the dedicated Weex endpoint:
+
+```csharp
+var close = await client.FuturesApi.Trading.ClosePositionsAsync("ETHUSDT");
+if (!close.Success)
+{
+    Console.WriteLine(close.Error);
+    return;
+}
+```
+
+## WebSocket Subscription Example
+
+```csharp
+using Weex.Net.Clients;
+
+var socketClient = new WeexSocketClient();
+
+var tickerSub = await socketClient.SpotApi.SubscribeToTickerUpdatesAsync(
+    "ETHUSDT",
+    update => Console.WriteLine(update.Data.LastPrice));
+
+if (!tickerSub.Success)
+{
+    Console.WriteLine(tickerSub.Error);
+    return;
+}
+
+Console.ReadLine();
+
+await socketClient.UnsubscribeAsync(tickerSub.Data);
+```
+
+Multiple subscriptions should all be checked before `.Data` is used:
+
+```csharp
+var klineSub = await socketClient.FuturesApi.SubscribeToKlineUpdatesAsync(
+    "ETHUSDT",
+    KlineInterval.OneMinute,
+    update =>
+    {
+        foreach (var kline in update.Data)
+            Console.WriteLine(kline.ClosePrice);
+    });
+
+if (!klineSub.Success)
+{
+    await socketClient.UnsubscribeAsync(tickerSub.Data);
+    Console.WriteLine(klineSub.Error);
+    return;
+}
+```
+
+Authenticated private streams require socket credentials:
+
+```csharp
+var authSocket = new WeexSocketClient(options =>
+{
+    options.ApiCredentials = new WeexCredentials("API_KEY", "API_SECRET", "API_PASSPHRASE");
+});
+
+var orderSub = await authSocket.FuturesApi.SubscribeToOrderUpdatesAsync(update =>
+{
+    foreach (var order in update.Data.Orders)
+        Console.WriteLine($"{order.Symbol} {order.Status}");
+});
+
+if (!orderSub.Success)
+{
+    Console.WriteLine(orderSub.Error);
+    return;
+}
+```
+
+## SharedApis Multi-Exchange Pattern
+
+Use CryptoExchange.Net.SharedApis when the user asks for code that can work against Weex and other exchanges.
+
+```csharp
+using Weex.Net.Clients;
+using CryptoExchange.Net.SharedApis;
+
+ISpotTickerRestClient tickerClient = new WeexRestClient().SpotApi.SharedClient;
+var symbol = new SharedSymbol(TradingMode.Spot, "ETH", "USDT");
+
+var ticker = await tickerClient.GetSpotTickerAsync(new GetTickerRequest(symbol));
+if (!ticker.Success)
+{
+    Console.WriteLine(ticker.Error);
+    return;
+}
+
+Console.WriteLine(ticker.Data.LastPrice);
+```
+
+Shared WebSocket subscriptions return an `UpdateSubscription` in `.Data`. For shared interface variables, unsubscribe through the concrete socket client:
+
+```csharp
+var socketClient = new WeexSocketClient();
+ITickerSocketClient tickerSocket = socketClient.SpotApi.SharedClient;
+
+var sub = await tickerSocket.SubscribeToTickerUpdatesAsync(
+    new SubscribeTickerRequest(new SharedSymbol(TradingMode.Spot, "ETH", "USDT")),
+    update => Console.WriteLine(update.Data.LastPrice));
+
+if (!sub.Success)
+{
+    Console.WriteLine(sub.Error);
+    return;
+}
+
+Console.ReadLine();
+
+await socketClient.UnsubscribeAsync(sub.Data);
+```
+
+Do not call `tickerSocket.UnsubscribeAsync(...)` on `ITickerSocketClient`; that shared interface does not expose the method.
+
+## SharedApis Support Matrix
+
+Spot REST shared interfaces implemented by `new WeexRestClient().SpotApi.SharedClient`:
+
+```text
+IAssetsRestClient
+IBalanceRestClient
+IBookTickerRestClient
+IDepositRestClient
+IFeeRestClient
+IKlineRestClient
+IOrderBookRestClient
+IRecentTradeRestClient
+IWithdrawalRestClient
+ISpotSymbolRestClient
+ISpotTickerRestClient
+ISpotOrderRestClient
+ISpotOrderClientIdRestClient
+```
+
+Futures REST shared interfaces implemented by `new WeexRestClient().FuturesApi.SharedClient`:
+
+```text
+IBalanceRestClient
+IBookTickerRestClient
+IFeeRestClient
+IKlineRestClient
+IOrderBookRestClient
+IRecentTradeRestClient
+IFundingRateRestClient
+IFuturesSymbolRestClient
+IFuturesTickerRestClient
+IIndexPriceKlineRestClient
+IMarkPriceKlineRestClient
+ILeverageRestClient
+IOpenInterestRestClient
+IFuturesOrderRestClient
+IFuturesTriggerOrderRestClient
+```
+
+Spot socket shared interfaces implemented by `new WeexSocketClient().SpotApi.SharedClient`:
+
+```text
+IBalanceSocketClient
+IBookTickerSocketClient
+IKlineSocketClient
+ITickerSocketClient
+ITradeSocketClient
+IUserTradeSocketClient
+ISpotOrderSocketClient
+```
+
+Futures socket shared interfaces implemented by `new WeexSocketClient().FuturesApi.SharedClient`:
+
+```text
+IBalanceSocketClient
+IKlineSocketClient
+ITickerSocketClient
+ITradeSocketClient
+IUserTradeSocketClient
+IFuturesOrderSocketClient
+IPositionSocketClient
+```
+
+## Symbol And Precision Handling
+
+For order quantities and prices, use exchange info. Do not manually round with ad hoc decimal string manipulation.
+
+Spot exchange info exposes `WeexSymbol.TickSize`, `StepSize`, `MinTradeQuantity`, and `MaxTradeQuantity`:
+
+```csharp
+var exchangeInfo = await client.SpotApi.ExchangeData.GetExchangeInfoAsync(new[] { "ETHUSDT" });
+if (!exchangeInfo.Success || exchangeInfo.Data.Symbols.Length == 0)
+{
+    Console.WriteLine(exchangeInfo.Error);
+    return;
+}
+
+var symbol = exchangeInfo.Data.Symbols.First();
+var rawQuantity = 0.12345678m;
+var rawPrice = 2000.123456m;
+
+decimal FloorToStep(decimal value, decimal step)
+{
+    if (step <= 0)
+        return value;
+
+    return Math.Floor(value / step) * step;
+}
+
+var validQuantity = FloorToStep(rawQuantity, symbol.StepSize);
+var validPrice = FloorToStep(rawPrice, symbol.TickSize);
+```
+
+Then use the adjusted values:
+
+```csharp
+var order = await client.SpotApi.Trading.PlaceOrderAsync(
+    symbol: "ETHUSDT",
+    side: OrderSide.Buy,
+    orderType: OrderType.Limit,
+    quantity: validQuantity,
+    price: validPrice,
+    timeInForce: TimeInForce.GoodTillCanceled);
+```
+
+Futures symbol details are available through:
+
+```csharp
+var futuresInfo = await client.FuturesApi.ExchangeData.GetExchangeInfoAsync("ETHUSDT");
+```
+
+When generating generic examples, prefer showing the principle and checking `.Success`; avoid inventing property names from futures symbol models unless you inspect the exact model in `Weex.Net/Objects/Models/WeexFuturesExchangeInfo.cs`.
+
+## Error Handling Notes
+
+Weex.Net returns API/network/rate-limit errors through `.Error` on result objects. It generally does not throw for normal API failures. Exceptions are for misconfiguration, disposal, cancellation, or programming errors.
+
+Common Weex.Net error categories:
+
+```text
+Authentication failure:
+  Use WeexCredentials("key", "secret", "passphrase"). All three values are required.
+
+Invalid symbol or unsupported product:
+  Query ExchangeData.GetExchangeInfoAsync(...) or Account.GetTradingSymbolsAsync() before placing orders for user input.
+
+Precision or minimum-size rejection:
+  Use spot WeexSymbol.TickSize, StepSize, MinTradeQuantity, and MaxTradeQuantity from exchange info.
+
+Order type confusion:
+  Spot and regular futures PlaceOrderAsync use OrderType. Futures conditional orders use FuturesOrderType.
+
+Environment mismatch:
+  Current source defines Live and custom environments only. Do not route examples to a testnet.
+
+Transient transport/rate-limit errors:
+  If result.Error?.IsTransient is true, retry with backoff if the operation is safe to retry.
+```
+
+For trading operations, be conservative with retries. Retrying an order placement after an unknown network failure can create duplicate orders unless the caller intentionally uses an idempotent client order id strategy.
+
+## AI-Friendly Examples
+
+Use these examples when generating code:
+
+```text
+Examples/ai-friendly/01-spot-quickstart.cs
+  Client setup, public spot ticker, authenticated account balance, limit spot order, order status, cancellation.
+
+Examples/ai-friendly/02-futures.cs
+  Futures leverage, market order, position lookup, close positions.
+
+Examples/ai-friendly/03-websocket.cs
+  Public spot ticker stream, futures kline stream, private account/order streams, success checks, teardown.
+
+Examples/ai-friendly/04-multi-exchange.cs
+  CryptoExchange.Net.SharedApis REST and socket patterns.
+
+Examples/ai-friendly/05-error-handling.cs
+  WebCallResult pattern, transient retry, credential notes, precision handling with exchange info.
+```
+
+These files are intended to be copied into a console `Program.cs` after `dotnet add package Weex.Net`.
+
+The repository includes `Weex.Net.UnitTests/Documentation/AiExampleCompileTests.cs`, which compiles every `Examples/ai-friendly/*.cs` file as a standalone console program.
+
+## Anti-Hallucination Checklist
+
+Before finalizing generated code:
+
+- Does it compile with the current package?
+- Does it include `using Weex.Net;` when using credentials or environments?
+- Does every REST/socket result check `.Success` before `.Data`?
+- Does it use the correct API branch: `SpotApi` or `FuturesApi`?
+- Does it avoid raw Weex URLs and manual signing?
+- Does it avoid nonexistent `WeexClient`?
+- Does it avoid generic `ApiCredentials`?
+- Does it provide API passphrase when configuring credentials?
+- Does it avoid Binance-only roots like `GeneralApi`, `UsdFuturesApi`, and `CoinFuturesApi`?
+- Does it avoid `WeexEnvironment.Testnet`?
+- Does it use `GetTickersAsync(new[] { symbol })` for spot ticker data?
+- Does it use `OrderType` for spot and regular futures orders?
+- Does it use `FuturesOrderType` only for futures conditional orders?
+- Does it avoid custom client order IDs unless requested?
+- Does it avoid `.Result` and `.Wait()`?
+- Are WebSocket subscriptions unsubscribed on shutdown?
+- For shared socket interfaces, does it keep the concrete socket client for `UnsubscribeAsync(sub.Data)`?
+- For order quantities/prices, does it use exchange info precision data or explain that precision must be checked?
+
+## Source Of Truth For Method Names
+
+When unsure, inspect these files instead of guessing:
+
+```text
+Weex.Net/Interfaces/Clients/IWeexRestClient.cs
+Weex.Net/Interfaces/Clients/IWeexSocketClient.cs
+Weex.Net/Interfaces/Clients/SpotApi/IWeexRestClientSpotApi.cs
+Weex.Net/Interfaces/Clients/SpotApi/IWeexRestClientSpotApiAccount.cs
+Weex.Net/Interfaces/Clients/SpotApi/IWeexRestClientSpotApiExchangeData.cs
+Weex.Net/Interfaces/Clients/SpotApi/IWeexRestClientSpotApiTrading.cs
+Weex.Net/Interfaces/Clients/SpotApi/IWeexRestClientSpotApiShared.cs
+Weex.Net/Interfaces/Clients/SpotApi/IWeexSocketClientSpotApi.cs
+Weex.Net/Interfaces/Clients/SpotApi/IWeexSocketClientSpotApiShared.cs
+Weex.Net/Interfaces/Clients/FuturesApi/IWeexRestClientFuturesApi.cs
+Weex.Net/Interfaces/Clients/FuturesApi/IWeexRestClientFuturesApiAccount.cs
+Weex.Net/Interfaces/Clients/FuturesApi/IWeexRestClientFuturesApiExchangeData.cs
+Weex.Net/Interfaces/Clients/FuturesApi/IWeexRestClientFuturesApiTrading.cs
+Weex.Net/Interfaces/Clients/FuturesApi/IWeexRestClientFuturesApiShared.cs
+Weex.Net/Interfaces/Clients/FuturesApi/IWeexSocketClientFuturesApi.cs
+Weex.Net/Interfaces/Clients/FuturesApi/IWeexSocketClientFuturesApiShared.cs
+```
+
+Prefer the interface files over memory when generating endpoint names, parameters, callback names, and return types.
+
+## Common Wrong Patterns To Avoid
+
+Wrong:
+
+```csharp
+var client = new WeexClient();
+```
+
+Use:
+
+```csharp
+var client = new WeexRestClient();
+```
+
+Wrong:
+
+```csharp
+options.ApiCredentials = new ApiCredentials("key", "secret");
+```
+
+Use:
+
+```csharp
+options.ApiCredentials = new WeexCredentials("key", "secret", "passphrase");
+```
+
+Wrong:
+
+```csharp
+var result = await client.SpotApi.ExchangeData.GetTickerAsync("ETHUSDT");
+Console.WriteLine(result.Data.LastPrice);
+```
+
+Use:
+
+```csharp
+var result = await client.SpotApi.ExchangeData.GetTickersAsync(new[] { "ETHUSDT" });
+if (!result.Success)
+{
+    Console.WriteLine(result.Error);
+    return;
+}
+Console.WriteLine(result.Data.Single().LastPrice);
+```
+
+Wrong:
+
+```csharp
+await sharedTickerSocket.UnsubscribeAsync(sub.Data);
+```
+
+Use:
+
+```csharp
+await socketClient.UnsubscribeAsync(sub.Data);
+```
+
+Wrong:
+
+```csharp
+restClient.UsdFuturesApi.Trading.PlaceOrderAsync(...);
+```
+
+Use:
+
+```csharp
+restClient.FuturesApi.Trading.PlaceOrderAsync(...);
+```
+
+Wrong:
+
+```csharp
+await client.FuturesApi.Trading.PlaceOrderAsync(
+    "ETHUSDT",
+    OrderSide.Buy,
+    PositionSide.Long,
+    FuturesOrderType.Market,
+    0.01m);
+```
+
+Use:
+
+```csharp
+await client.FuturesApi.Trading.PlaceOrderAsync(
+    "ETHUSDT",
+    OrderSide.Buy,
+    PositionSide.Long,
+    OrderType.Market,
+    0.01m);
+```
+
+Wrong:
+
+```csharp
+await client.SpotApi.Trading.CancelOrderAsync("ETHUSDT", orderId);
+```
+
+Use:
+
+```csharp
+await client.SpotApi.Trading.CancelOrderAsync(orderId: orderId);
+```
+
+Wrong:
+
+```csharp
+var testnet = new WeexRestClient(options => options.Environment = WeexEnvironment.Testnet);
+```
+
+Use:
+
+```csharp
+var live = new WeexRestClient(options => options.Environment = WeexEnvironment.Live);
+```
+
+or, for non-standard endpoints:
+
+```csharp
+var custom = new WeexRestClient(options =>
+{
+    options.Environment = WeexEnvironment.CreateCustom(
+        "custom",
+        "https://spot.example",
+        "wss://spot-ws.example",
+        "https://futures.example",
+        "wss://futures-ws.example");
+});
+```

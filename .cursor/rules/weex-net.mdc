@@ -1,0 +1,100 @@
+---
+description: Conventions for using Weex.Net when working with the Weex cryptocurrency exchange in C#/.NET. Apply when generating code that interacts with the Weex API.
+globs:
+  - "**/*.cs"
+  - "**/*.csproj"
+alwaysApply: false
+---
+
+# Weex.Net Conventions
+
+This codebase uses **Weex.Net** for Weex exchange access. Do not write raw `HttpClient` calls to Weex endpoints.
+
+## Client Setup Pattern
+
+```csharp
+using Weex.Net;
+using Weex.Net.Clients;
+
+var restClient = new WeexRestClient(options =>
+{
+    options.ApiCredentials = new WeexCredentials("API_KEY", "API_SECRET", "API_PASSPHRASE");
+});
+```
+
+For public market data only, no credentials are needed: `new WeexRestClient()`.
+
+## Result Pattern
+
+All REST methods return `WebCallResult<T>` and socket subscriptions return `CallResult<UpdateSubscription>`. Always check `.Success` before reading `.Data`.
+
+```csharp
+var ticker = await restClient.SpotApi.ExchangeData.GetTickersAsync(new[] { "ETHUSDT" });
+if (!ticker.Success) { Console.WriteLine(ticker.Error); return; }
+var price = ticker.Data.Single().LastPrice;
+```
+
+## API Surface
+
+- `restClient.SpotApi.{ExchangeData|Account|Trading}`
+- `restClient.FuturesApi.{ExchangeData|Account|Trading}`
+- `socketClient.SpotApi` for spot streams
+- `socketClient.FuturesApi` for futures streams
+
+## Order Placement
+
+Use `OrderType` for spot and regular futures orders:
+
+```csharp
+var order = await restClient.FuturesApi.Trading.PlaceOrderAsync(
+    "ETHUSDT",
+    OrderSide.Buy,
+    PositionSide.Long,
+    OrderType.Market,
+    0.01m);
+```
+
+Use `FuturesOrderType` only for `PlaceConditionalOrderAsync`.
+
+## WebSocket Pattern
+
+```csharp
+var socketClient = new WeexSocketClient();
+var sub = await socketClient.SpotApi.SubscribeToTickerUpdatesAsync(
+    "ETHUSDT",
+    update => Console.WriteLine(update.Data.LastPrice));
+if (!sub.Success) { Console.WriteLine(sub.Error); return; }
+
+await socketClient.UnsubscribeAsync(sub.Data);
+```
+
+## Multi-Exchange Code
+
+For exchange-agnostic code, use `CryptoExchange.Net.SharedApis`:
+
+```csharp
+using CryptoExchange.Net.SharedApis;
+
+var shared = new WeexRestClient().SpotApi.SharedClient;
+var ticker = await shared.GetSpotTickerAsync(
+    new GetTickerRequest(new SharedSymbol(TradingMode.Spot, "ETH", "USDT")));
+```
+
+## Hard Rules
+
+- Never write raw HTTP to Weex endpoints.
+- Never use `.Result` or `.Wait()`.
+- Never instantiate clients per request; reuse or inject them.
+- Never skip checking `WebCallResult.Success`.
+- Never use `ApiCredentials`; use `WeexCredentials("key", "secret", "passphrase")`.
+- Never invent `UsdFuturesApi`, `CoinFuturesApi`, or a testnet environment.
+- Always use `FuturesApi` for Weex futures.
+- Always store WebSocket subscriptions and unsubscribe on shutdown.
+- Always consult `docs/ai-api-map.md` before using a method not already in the examples.
+
+## Reference
+
+- `CLAUDE.md` in the repository root has fuller examples and pitfalls.
+- `llms.txt` and `llms-full.txt` in the repository root provide AI context.
+- `docs/ai-api-map.md` maps user intents to actual methods.
+- `Examples/ai-friendly/` contains compilable examples.

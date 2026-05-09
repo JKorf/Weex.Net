@@ -1,0 +1,39 @@
+# Weex.Net
+
+> Strongly typed .NET client library for the Weex REST and WebSocket APIs. Supports Spot and Futures trading through typed REST clients, WebSocket subscriptions, local order book helpers, dependency injection, Native AOT, and CryptoExchange.Net SharedApis for multi-exchange code.
+
+Weex.Net exposes `WeexRestClient` and `WeexSocketClient` with `SpotApi` and `FuturesApi` roots. REST methods return `WebCallResult<T>`; socket subscriptions return `CallResult<UpdateSubscription>`. Always check `.Success` before using `.Data`. Current source version: 1.0.0. Targets netstandard2.0, netstandard2.1, net8.0, net9.0, net10.0.
+
+## Documentation
+
+- [README](https://github.com/JKorf/Weex.Net/blob/main/README.md): Overview, installation, supported features, usage examples, release notes
+- [Documentation Site](https://cryptoexchange.jkorf.dev/Weex.Net/): Full documentation hub and generated client reference
+- [AI API Quick Map](https://github.com/JKorf/Weex.Net/blob/main/docs/ai-api-map.md): Intent-to-method routing table for common Weex.Net requests
+- [Full LLM Context](https://github.com/JKorf/Weex.Net/blob/main/llms-full.txt): Detailed AI guide with patterns, endpoint map, examples, and anti-hallucination rules
+- [Assistant Skill](https://github.com/JKorf/Weex.Net/blob/main/CLAUDE.md): Compact skill-style guidance for assistants
+
+## Examples
+
+- [AI-friendly examples directory](https://github.com/JKorf/Weex.Net/tree/main/Examples/ai-friendly): Compact, compilable examples optimized for AI assistants and quick onboarding
+- [Spot Quickstart](https://github.com/JKorf/Weex.Net/blob/main/Examples/ai-friendly/01-spot-quickstart.cs): Client setup, ticker, balances, limit order, order lookup
+- [Futures Trading](https://github.com/JKorf/Weex.Net/blob/main/Examples/ai-friendly/02-futures.cs): Futures leverage, market order, positions, close positions
+- [WebSocket Streams](https://github.com/JKorf/Weex.Net/blob/main/Examples/ai-friendly/03-websocket.cs): Public ticker/kline streams and private order/account streams
+- [Multi-Exchange Pattern](https://github.com/JKorf/Weex.Net/blob/main/Examples/ai-friendly/04-multi-exchange.cs): SharedApis for exchange-agnostic code
+- [Error Handling](https://github.com/JKorf/Weex.Net/blob/main/Examples/ai-friendly/05-error-handling.cs): WebCallResult pattern, retry, validation
+
+## Critical Usage Rules
+
+- Use `WeexCredentials("key", "secret", "passphrase")`, not generic `ApiCredentials`.
+- Use `restClient.SpotApi.*` and `restClient.FuturesApi.*`; there is no Weex `UsdFuturesApi` or `CoinFuturesApi`.
+- Use `SpotApi.ExchangeData.GetTickersAsync(new[] { "ETHUSDT" })` for spot 24h ticker data.
+- Use `FuturesApi.ExchangeData.GetTickersAsync("ETHUSDT")` for futures 24h ticker data.
+- Use `OrderType` for spot and regular futures orders; use `FuturesOrderType` only for futures conditional orders.
+- Use `WeexEnvironment.Live` or `WeexEnvironment.CreateCustom(...)`; no testnet environment is present in the current source.
+- Use `.SharedClient` for multi-exchange code.
+
+## Reference
+
+- [CryptoExchange.Net base library](https://github.com/JKorf/CryptoExchange.Net): Base abstractions used by Weex.Net and other exchange libraries
+- [CryptoClients.Net](https://github.com/JKorf/CryptoClients.Net): Bundle package providing unified access to exchange libraries
+- [NuGet Package](https://www.nuget.org/packages/Weex.Net): Stable package on NuGet
+- [Discord Community](https://discord.gg/MSpeEtSY8t): Maintainer-supported Discord
