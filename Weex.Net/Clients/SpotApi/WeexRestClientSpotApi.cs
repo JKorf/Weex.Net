@@ -15,7 +15,6 @@ using CryptoExchange.Net.Objects.Errors;
 using CryptoExchange.Net.Converters.MessageParsing.DynamicConverters;
 using Weex.Net.Clients.MessageHandlers;
 using System.Collections.Generic;
-using Weex.Net.AuthProviders;
 
 namespace Weex.Net.Clients.SpotApi
 {

@@ -7,7 +7,7 @@ using CryptoExchange.Net.Sockets;
 using CryptoExchange.Net.Sockets.Default;
 using System.Collections.Generic;
 
-namespace Weex.Net.AuthProviders
+namespace Weex.Net
 {
     internal class WeexAuthenticationProvider : AuthenticationProvider<WeexCredentials, WeexCredentials>
     {
