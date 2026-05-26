@@ -52,6 +52,11 @@ namespace Weex.Net.Objects.Models
         [JsonPropertyName("symbol")]
         public string Symbol { get; set; } = string.Empty;
         /// <summary>
+        /// ["<c>displaySymbol</c>"] Display symbol name
+        /// </summary>
+        [JsonPropertyName("displaySymbol")]
+        public string DisplaySymbol { get; set; } = string.Empty;
+        /// <summary>
         /// ["<c>baseAsset</c>"] Base asset
         /// </summary>
         [JsonPropertyName("baseAsset")]
