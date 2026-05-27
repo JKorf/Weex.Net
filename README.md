@@ -182,6 +182,9 @@ Make a one time donation in a crypto currency of your choice. If you prefer to d
 Alternatively, sponsor me on Github using [Github Sponsors](https://github.com/sponsors/JKorf). 
 
 ## Release notes
+* Version 1.1.1 - 27 May 2026
+    * Fixed WeexFuturesSymbolOrderBook pointing to Spot API
+
 * Version 1.1.0 - 26 May 2026
     * Updated CryptoExchange.Net to version 11.2.0
     * Added DisplaySymbol property on WeexFuturesSymbol model
