@@ -44,7 +44,7 @@ namespace Weex.Net.Clients.FuturesApi
         /// ctor
         /// </summary>
         internal WeexSocketClientFuturesApi(WeexSocketClient baseClient, ILogger logger, WeexSocketOptions options) :
-            base(logger, options.Environment.SocketClientFuturesAddress!, options, options.FuturesOptions)
+            base(logger, WeexExchange.Metadata.Id, options.Environment.SocketClientFuturesAddress!, options, options.FuturesOptions)
         {
             _baseClient = baseClient;
 
@@ -65,11 +65,11 @@ namespace Weex.Net.Clients.FuturesApi
             => new WeexAuthenticationProvider(credentials);
 
         /// <inheritdoc />
-        public Task<CallResult<UpdateSubscription>> SubscribeToTickerUpdatesAsync(string symbol, Action<DataEvent<WeexFuturesTickerUpdate>> onMessage, CancellationToken ct = default)
+        public Task<WebSocketResult<UpdateSubscription>> SubscribeToTickerUpdatesAsync(string symbol, Action<DataEvent<WeexFuturesTickerUpdate>> onMessage, CancellationToken ct = default)
             => SubscribeToTickerUpdatesAsync([symbol], onMessage, ct);
 
         /// <inheritdoc />
-        public async Task<CallResult<UpdateSubscription>> SubscribeToTickerUpdatesAsync(IEnumerable<string> symbols, Action<DataEvent<WeexFuturesTickerUpdate>> onMessage, CancellationToken ct = default)
+        public async Task<WebSocketResult<UpdateSubscription>> SubscribeToTickerUpdatesAsync(IEnumerable<string> symbols, Action<DataEvent<WeexFuturesTickerUpdate>> onMessage, CancellationToken ct = default)
         {
             var internalHandler = new Action<DateTime, string?, WeexSocketEvent<WeexFuturesTickerUpdate[]>>((receiveTime, originalData, data) =>
             {
@@ -89,11 +89,11 @@ namespace Weex.Net.Clients.FuturesApi
         }
 
         /// <inheritdoc />
-        public Task<CallResult<UpdateSubscription>> SubscribeToKlineUpdatesAsync(string symbol, KlineInterval interval, Action<DataEvent<WeexKlineUpdate[]>> onMessage, CancellationToken ct = default)
+        public Task<WebSocketResult<UpdateSubscription>> SubscribeToKlineUpdatesAsync(string symbol, KlineInterval interval, Action<DataEvent<WeexKlineUpdate[]>> onMessage, CancellationToken ct = default)
             => SubscribeToKlineUpdatesAsync([symbol], interval, onMessage, ct);
 
         /// <inheritdoc />
-        public async Task<CallResult<UpdateSubscription>> SubscribeToKlineUpdatesAsync(IEnumerable<string> symbols, KlineInterval interval, Action<DataEvent<WeexKlineUpdate[]>> onMessage, CancellationToken ct = default)
+        public async Task<WebSocketResult<UpdateSubscription>> SubscribeToKlineUpdatesAsync(IEnumerable<string> symbols, KlineInterval interval, Action<DataEvent<WeexKlineUpdate[]>> onMessage, CancellationToken ct = default)
         {
             var internalHandler = new Action<DateTime, string?, WeexSocketEvent<WeexKlineUpdate[]>>((receiveTime, originalData, data) =>
             {
@@ -120,11 +120,11 @@ namespace Weex.Net.Clients.FuturesApi
         }
 
         /// <inheritdoc />
-        public Task<CallResult<UpdateSubscription>> SubscribeToOrderBookUpdatesAsync(string symbol, int depth, Action<DataEvent<WeexOrderBookUpdate>> onMessage, CancellationToken ct = default)
+        public Task<WebSocketResult<UpdateSubscription>> SubscribeToOrderBookUpdatesAsync(string symbol, int depth, Action<DataEvent<WeexOrderBookUpdate>> onMessage, CancellationToken ct = default)
             => SubscribeToOrderBookUpdatesAsync([symbol], depth, onMessage, ct);
 
         /// <inheritdoc />
-        public async Task<CallResult<UpdateSubscription>> SubscribeToOrderBookUpdatesAsync(IEnumerable<string> symbols, int depth, Action<DataEvent<WeexOrderBookUpdate>> onMessage, CancellationToken ct = default)
+        public async Task<WebSocketResult<UpdateSubscription>> SubscribeToOrderBookUpdatesAsync(IEnumerable<string> symbols, int depth, Action<DataEvent<WeexOrderBookUpdate>> onMessage, CancellationToken ct = default)
         {
             var internalHandler = new Action<DateTime, string?, WeexOrderBookUpdate>((receiveTime, originalData, data) =>
             {
@@ -144,11 +144,11 @@ namespace Weex.Net.Clients.FuturesApi
         }
 
         /// <inheritdoc />
-        public Task<CallResult<UpdateSubscription>> SubscribeToTradeUpdatesAsync(string symbol, Action<DataEvent<WeexTradeUpdate[]>> onMessage, CancellationToken ct = default)
+        public Task<WebSocketResult<UpdateSubscription>> SubscribeToTradeUpdatesAsync(string symbol, Action<DataEvent<WeexTradeUpdate[]>> onMessage, CancellationToken ct = default)
             => SubscribeToTradeUpdatesAsync([symbol], onMessage, ct);
 
         /// <inheritdoc />
-        public async Task<CallResult<UpdateSubscription>> SubscribeToTradeUpdatesAsync(IEnumerable<string> symbols, Action<DataEvent<WeexTradeUpdate[]>> onMessage, CancellationToken ct = default)
+        public async Task<WebSocketResult<UpdateSubscription>> SubscribeToTradeUpdatesAsync(IEnumerable<string> symbols, Action<DataEvent<WeexTradeUpdate[]>> onMessage, CancellationToken ct = default)
         {
             var internalHandler = new Action<DateTime, string?, WeexSocketEvent<WeexTradeUpdate[]>>((receiveTime, originalData, data) =>
             {
@@ -168,7 +168,7 @@ namespace Weex.Net.Clients.FuturesApi
         }
 
         /// <inheritdoc />
-        public async Task<CallResult<UpdateSubscription>> SubscribeToAccountUpdatesAsync(Action<DataEvent<WeexFuturesAccountUpdate>> onMessage, CancellationToken ct = default)
+        public async Task<WebSocketResult<UpdateSubscription>> SubscribeToAccountUpdatesAsync(Action<DataEvent<WeexFuturesAccountUpdate>> onMessage, CancellationToken ct = default)
         {
             var internalHandler = new Action<DateTime, string?, WeexFuturesAccountUpdate>((receiveTime, originalData, data) =>
             {
@@ -188,7 +188,7 @@ namespace Weex.Net.Clients.FuturesApi
         }
 
         /// <inheritdoc />
-        public async Task<CallResult<UpdateSubscription>> SubscribeToPositionUpdatesAsync(Action<DataEvent<WeexPositionUpdate>> onMessage, CancellationToken ct = default)
+        public async Task<WebSocketResult<UpdateSubscription>> SubscribeToPositionUpdatesAsync(Action<DataEvent<WeexPositionUpdate>> onMessage, CancellationToken ct = default)
         {
             var internalHandler = new Action<DateTime, string?, WeexPositionUpdate>((receiveTime, originalData, data) =>
             {
@@ -208,7 +208,7 @@ namespace Weex.Net.Clients.FuturesApi
         }
 
         /// <inheritdoc />
-        public async Task<CallResult<UpdateSubscription>> SubscribeToOrderUpdatesAsync(Action<DataEvent<WeexFuturesOrderUpdate>> onMessage, CancellationToken ct = default)
+        public async Task<WebSocketResult<UpdateSubscription>> SubscribeToOrderUpdatesAsync(Action<DataEvent<WeexFuturesOrderUpdate>> onMessage, CancellationToken ct = default)
         {
             var internalHandler = new Action<DateTime, string?, WeexFuturesOrderUpdate>((receiveTime, originalData, data) =>
             {
@@ -228,7 +228,7 @@ namespace Weex.Net.Clients.FuturesApi
         }
 
         /// <inheritdoc />
-        public async Task<CallResult<UpdateSubscription>> SubscribeToUserTradeUpdatesAsync(Action<DataEvent<WeexFuturesUserTradeUpdate>> onMessage, CancellationToken ct = default)
+        public async Task<WebSocketResult<UpdateSubscription>> SubscribeToUserTradeUpdatesAsync(Action<DataEvent<WeexFuturesUserTradeUpdate>> onMessage, CancellationToken ct = default)
         {
             var internalHandler = new Action<DateTime, string?, WeexFuturesUserTradeUpdate>((receiveTime, originalData, data) =>
             {

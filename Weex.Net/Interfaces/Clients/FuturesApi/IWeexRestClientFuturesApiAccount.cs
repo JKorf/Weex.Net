@@ -23,7 +23,7 @@ namespace Weex.Net.Interfaces.Clients.FuturesApi
         /// </para>
         /// </summary>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult<WeexFuturesBalance[]>> GetBalancesAsync(CancellationToken ct = default);
+        Task<HttpResult<WeexFuturesBalance[]>> GetBalancesAsync(CancellationToken ct = default);
 
         /// <summary>
         /// Get trading fees for a symbol
@@ -36,7 +36,7 @@ namespace Weex.Net.Interfaces.Clients.FuturesApi
         /// </summary>
         /// <param name="symbol">["<c>symbol</c>"] The symbol, for example `ETHUSDT`</param>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult<WeexTradingFee>> GetTradingFeesAsync(string symbol, CancellationToken ct = default);
+        Task<HttpResult<WeexTradingFee>> GetTradingFeesAsync(string symbol, CancellationToken ct = default);
 
         /// <summary>
         /// Get account configuration
@@ -48,7 +48,7 @@ namespace Weex.Net.Interfaces.Clients.FuturesApi
         /// </para>
         /// </summary>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult<WeexAccountConfig>> GetAccountConfigAsync(CancellationToken ct = default);
+        Task<HttpResult<WeexAccountConfig>> GetAccountConfigAsync(CancellationToken ct = default);
 
         /// <summary>
         /// Get symbol configuration
@@ -61,7 +61,7 @@ namespace Weex.Net.Interfaces.Clients.FuturesApi
         /// </summary>
         /// <param name="symbol">["<c>symbol</c>"] Filter by symbol, for example `ETHUSDT`</param>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult<WeexSymbolConfig[]>> GetSymbolConfigAsync(string? symbol = null, CancellationToken ct = default);
+        Task<HttpResult<WeexSymbolConfig[]>> GetSymbolConfigAsync(string? symbol = null, CancellationToken ct = default);
 
         /// <summary>
         /// Get account income bills
@@ -79,7 +79,7 @@ namespace Weex.Net.Interfaces.Clients.FuturesApi
         /// <param name="endTime">["<c>endTime</c>"] Filter by end time</param>
         /// <param name="limit">["<c>limit</c>"] Max number of results, max 100</param>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult<WeexFuturesBillPage>> GetAccountBillsAsync(string? asset = null, string? symbol = null, IncomeType? incomeType = null, DateTime? startTime = null, DateTime? endTime = null, int? limit = null, CancellationToken ct = default);
+        Task<HttpResult<WeexFuturesBillPage>> GetAccountBillsAsync(string? asset = null, string? symbol = null, IncomeType? incomeType = null, DateTime? startTime = null, DateTime? endTime = null, int? limit = null, CancellationToken ct = default);
 
         /// <summary>
         /// Set margin mode
@@ -94,7 +94,7 @@ namespace Weex.Net.Interfaces.Clients.FuturesApi
         /// <param name="marginType">["<c>marginType</c>"] New margin mode</param>
         /// <param name="combineType">["<c>separatedType</c>"] New combine type</param>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult> SetMarginModeAsync(string symbol, MarginType marginType, PositionCombineType? combineType = null, CancellationToken ct = default);
+        Task<HttpResult<Unit>> SetMarginModeAsync(string symbol, MarginType marginType, PositionCombineType? combineType = null, CancellationToken ct = default);
 
         /// <summary>
         /// Set leverage configuration
@@ -111,7 +111,7 @@ namespace Weex.Net.Interfaces.Clients.FuturesApi
         /// <param name="isolatedLongLeverage">["<c>isolatedLongLeverage</c>"] Isolated margin long leverage</param>
         /// <param name="isolatedShortLeverage">["<c>isolatedShortLeverage</c>"] Isolated margin short leverage</param>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult<WeexLeverageResult>> SetLeverageAsync(string symbol, MarginType? marginMode = null, decimal? crossLeverage = null, decimal? isolatedLongLeverage = null, decimal? isolatedShortLeverage = null, CancellationToken ct = default);
+        Task<HttpResult<WeexLeverageResult>> SetLeverageAsync(string symbol, MarginType? marginMode = null, decimal? crossLeverage = null, decimal? isolatedLongLeverage = null, decimal? isolatedShortLeverage = null, CancellationToken ct = default);
 
         /// <summary>
         /// Adjust isolated margin for a position
@@ -126,7 +126,7 @@ namespace Weex.Net.Interfaces.Clients.FuturesApi
         /// <param name="quantity">["<c>amount</c>"] Adjust quantity</param>
         /// <param name="adjustType">["<c>type</c>"] Adjust type</param>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult> AdjustIsolatedMarginAsync(long positionId, decimal quantity, MarginAdjustType adjustType, CancellationToken ct = default);
+        Task<HttpResult<Unit>> AdjustIsolatedMarginAsync(long positionId, decimal quantity, MarginAdjustType adjustType, CancellationToken ct = default);
 
         /// <summary>
         /// Set auto append margin setting for a position
@@ -140,7 +140,7 @@ namespace Weex.Net.Interfaces.Clients.FuturesApi
         /// <param name="positionId">["<c>positionId</c>"] Id of the position</param>
         /// <param name="autoAppendMargin">["<c>autoAppendMargin</c>"] Auto append margin</param>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult> SetAutoAppendMarginAsync(long positionId, bool autoAppendMargin, CancellationToken ct = default);
+        Task<HttpResult<Unit>> SetAutoAppendMarginAsync(long positionId, bool autoAppendMargin, CancellationToken ct = default);
 
     }
 }

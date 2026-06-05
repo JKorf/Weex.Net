@@ -31,7 +31,7 @@ namespace Weex.Net.Interfaces.Clients.SpotApi
         /// <param name="timeInForce">["<c>timeInForce</c>"] Time in force, required for limit orders</param>
         /// <param name="clientOrderId">["<c>newClientOrderId</c>"] Client order id</param>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult<WeexOrderResult>> PlaceOrderAsync(string symbol, OrderSide side, OrderType orderType, decimal quantity, decimal? price = null, TimeInForce? timeInForce = null, string? clientOrderId = null, CancellationToken ct = default);
+        Task<HttpResult<WeexOrderResult>> PlaceOrderAsync(string symbol, OrderSide side, OrderType orderType, decimal quantity, decimal? price = null, TimeInForce? timeInForce = null, string? clientOrderId = null, CancellationToken ct = default);
 
         /// <summary>
         /// Cancel an active order
@@ -45,7 +45,7 @@ namespace Weex.Net.Interfaces.Clients.SpotApi
         /// <param name="orderId">["<c>orderId</c>"] Id of the order to cancel, either this or clientOrderId should be provided</param>
         /// <param name="clientOrderId">["<c>origClientOrderId</c>"] Client order id of the order to cancel. Either this or orderId should be provided</param>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult<WeexCancelResult>> CancelOrderAsync(long? orderId = null, string? clientOrderId = null, CancellationToken ct = default);
+        Task<HttpResult<WeexCancelResult>> CancelOrderAsync(long? orderId = null, string? clientOrderId = null, CancellationToken ct = default);
 
         /// <summary>
         /// Cancel all active orders for a symbol
@@ -58,7 +58,7 @@ namespace Weex.Net.Interfaces.Clients.SpotApi
         /// </summary>
         /// <param name="symbol">["<c>symbol</c>"] The symbol, for example `ETHUSDT`</param>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult<WeexCancelResult[]>> CancelAllSymbolOrdersAsync(string symbol, CancellationToken ct = default);
+        Task<HttpResult<WeexCancelResult[]>> CancelAllSymbolOrdersAsync(string symbol, CancellationToken ct = default);
 
         /// <summary>
         /// Cancel multiple orders
@@ -72,7 +72,7 @@ namespace Weex.Net.Interfaces.Clients.SpotApi
         /// <param name="orderIds">["<c>orderIds</c>"] Order ids to cancel</param>
         /// <param name="clientOrderIds">["<c>origClientOrderIds</c>"] Client order ids to cancel</param>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult<WeexCancelResult[]>> CancelOrdersAsync(IEnumerable<long>? orderIds = null, IEnumerable<string>? clientOrderIds = null, CancellationToken ct = default);
+        Task<HttpResult<WeexCancelResult[]>> CancelOrdersAsync(IEnumerable<long>? orderIds = null, IEnumerable<string>? clientOrderIds = null, CancellationToken ct = default);
 
         /// <summary>
         /// Get an order by id
@@ -86,7 +86,7 @@ namespace Weex.Net.Interfaces.Clients.SpotApi
         /// <param name="orderId">["<c>orderId</c>"] Order id, either this or clientOrderId should be provided</param>
         /// <param name="clientOrderId">["<c>origClientOrderId</c>"] Client order id, either this or orderId should be provided</param>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult<WeexOrder>> GetOrderAsync(long? orderId = null, string? clientOrderId = null, CancellationToken ct = default);
+        Task<HttpResult<WeexOrder>> GetOrderAsync(long? orderId = null, string? clientOrderId = null, CancellationToken ct = default);
 
         /// <summary>
         /// Get open orders
@@ -99,7 +99,7 @@ namespace Weex.Net.Interfaces.Clients.SpotApi
         /// </summary>
         /// <param name="symbol">["<c>symbol</c>"] Filter by symbol, for example `ETHUSDT`</param>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult<WeexOrder[]>> GetOpenOrdersAsync(string? symbol = null, CancellationToken ct = default);
+        Task<HttpResult<WeexOrder[]>> GetOpenOrdersAsync(string? symbol = null, CancellationToken ct = default);
 
         /// <summary>
         /// Get order history
@@ -116,7 +116,7 @@ namespace Weex.Net.Interfaces.Clients.SpotApi
         /// <param name="page">["<c>page</c>"] Page number</param>
         /// <param name="limit">["<c>limit</c>"] Max number of results, max 1000</param>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult<WeexOrder[]>> GetOrderHistoryAsync(string symbol, DateTime? startTime = null, DateTime? endTime = null, int? page = null, int? limit = null, CancellationToken ct = default);
+        Task<HttpResult<WeexOrder[]>> GetOrderHistoryAsync(string symbol, DateTime? startTime = null, DateTime? endTime = null, int? page = null, int? limit = null, CancellationToken ct = default);
 
         /// <summary>
         /// Get user trade history
@@ -133,7 +133,7 @@ namespace Weex.Net.Interfaces.Clients.SpotApi
         /// <param name="endTime">["<c>endTime</c>"] Filter by end time</param>
         /// <param name="limit">["<c>limit</c>"] Max number of results</param>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult<WeexUserTrade[]>> GetUserTradesAsync(string symbol, long? orderId = null, DateTime? startTime = null, DateTime? endTime = null, int? limit = null, CancellationToken ct = default);
+        Task<HttpResult<WeexUserTrade[]>> GetUserTradesAsync(string symbol, long? orderId = null, DateTime? startTime = null, DateTime? endTime = null, int? limit = null, CancellationToken ct = default);
 
     }
 }

@@ -24,7 +24,7 @@ namespace Weex.Net.Interfaces.Clients.FuturesApi
         /// </para>
         /// </summary>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult<WeexPosition[]>> GetPositionsAsync(CancellationToken ct = default);
+        Task<HttpResult<WeexPosition[]>> GetPositionsAsync(CancellationToken ct = default);
 
         /// <summary>
         /// Get positions for a symbol
@@ -37,7 +37,7 @@ namespace Weex.Net.Interfaces.Clients.FuturesApi
         /// </summary>
         /// <param name="symbol">["<c>symbol</c>"] The symbol, for example `ETHUSDT`</param>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult<WeexPosition[]>> GetPositionAsync(string symbol, CancellationToken ct = default);
+        Task<HttpResult<WeexPosition[]>> GetPositionAsync(string symbol, CancellationToken ct = default);
 
         /// <summary>
         /// Place a new order
@@ -61,7 +61,7 @@ namespace Weex.Net.Interfaces.Clients.FuturesApi
         /// <param name="takeProfitWorkingType">["<c>TpWorkingType</c>"] Take profit trigger price type</param>
         /// <param name="stopLossWorkingType">["<c>SlWorkingType</c>"] Stop loss trigger price type</param>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult<WeexFuturesOrderResult>> PlaceOrderAsync(string symbol, OrderSide side, PositionSide positionSide, OrderType orderType, decimal quantity, decimal? price = null, TimeInForce? timeInForce = null, string? clientOrderId = null, decimal? takeProfitTriggerPrice = null, decimal? stopLossTriggerPrice = null, FuturesPriceType? takeProfitWorkingType = null, FuturesPriceType? stopLossWorkingType = null, CancellationToken ct = default);
+        Task<HttpResult<WeexFuturesOrderResult>> PlaceOrderAsync(string symbol, OrderSide side, PositionSide positionSide, OrderType orderType, decimal quantity, decimal? price = null, TimeInForce? timeInForce = null, string? clientOrderId = null, decimal? takeProfitTriggerPrice = null, decimal? stopLossTriggerPrice = null, FuturesPriceType? takeProfitWorkingType = null, FuturesPriceType? stopLossWorkingType = null, CancellationToken ct = default);
 
         /// <summary>
         /// Cancel order
@@ -75,7 +75,7 @@ namespace Weex.Net.Interfaces.Clients.FuturesApi
         /// <param name="orderId">["<c>orderId</c>"] Order id, either this or clientOrderId should be provided</param>
         /// <param name="clientOrderId">["<c>origClientOrderId</c>"] Client order id, either this or orderId should be provided</param>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult<WeexFuturesOrderResult>> CancelOrderAsync(long? orderId = null, string? clientOrderId = null, CancellationToken ct = default);
+        Task<HttpResult<WeexFuturesOrderResult>> CancelOrderAsync(long? orderId = null, string? clientOrderId = null, CancellationToken ct = default);
 
         /// <summary>
         /// Cancel all active orders
@@ -88,7 +88,7 @@ namespace Weex.Net.Interfaces.Clients.FuturesApi
         /// </summary>
         /// <param name="symbol">["<c>symbol</c>"] Filter by symbol, for example `ETHUSDT`</param>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult<WeexFuturesOrderResult[]>> CancelAllOrdersAsync(string? symbol = null, CancellationToken ct = default);
+        Task<HttpResult<WeexFuturesOrderResult[]>> CancelAllOrdersAsync(string? symbol = null, CancellationToken ct = default);
 
         /// <summary>
         /// Cancel multiple orders
@@ -102,7 +102,7 @@ namespace Weex.Net.Interfaces.Clients.FuturesApi
         /// <param name="orderIds">["<c>orderIds</c>"] Order ids to cancel</param>
         /// <param name="clientOrderIds">["<c>origClientOrderIds</c>"] Client order ids to cancel</param>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult<WeexFuturesOrderResult[]>> CancelOrdersAsync(IEnumerable<long>? orderIds = null, IEnumerable<string>? clientOrderIds = null, CancellationToken ct = default);
+        Task<HttpResult<WeexFuturesOrderResult[]>> CancelOrdersAsync(IEnumerable<long>? orderIds = null, IEnumerable<string>? clientOrderIds = null, CancellationToken ct = default);
 
         /// <summary>
         /// Close all positions
@@ -115,7 +115,7 @@ namespace Weex.Net.Interfaces.Clients.FuturesApi
         /// </summary>
         /// <param name="symbol">["<c>symbol</c>"] Filter by symbol, for example `ETHUSDT`</param>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult<WeexPositionResult[]>> ClosePositionsAsync(string? symbol = null, CancellationToken ct = default);
+        Task<HttpResult<WeexPositionResult[]>> ClosePositionsAsync(string? symbol = null, CancellationToken ct = default);
 
         /// <summary>
         /// Get order info by id
@@ -128,7 +128,7 @@ namespace Weex.Net.Interfaces.Clients.FuturesApi
         /// </summary>
         /// <param name="orderId">["<c>orderId</c>"] </param>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult<WeexFuturesOrder>> GetOrderAsync(long orderId, CancellationToken ct = default);
+        Task<HttpResult<WeexFuturesOrder>> GetOrderAsync(long orderId, CancellationToken ct = default);
 
         /// <summary>
         /// Get open orders
@@ -146,7 +146,7 @@ namespace Weex.Net.Interfaces.Clients.FuturesApi
         /// <param name="limit">["<c>limit</c>"] Max number of results</param>
         /// <param name="page">["<c>page</c>"] Page</param>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult<WeexFuturesOrder[]>> GetOpenOrdersAsync(string? symbol = null, long? fromId = null, DateTime? startTime = null, DateTime? endTime = null, int? limit = null, int? page = null, CancellationToken ct = default);
+        Task<HttpResult<WeexFuturesOrder[]>> GetOpenOrdersAsync(string? symbol = null, long? fromId = null, DateTime? startTime = null, DateTime? endTime = null, int? limit = null, int? page = null, CancellationToken ct = default);
 
         /// <summary>
         /// Get order history
@@ -163,7 +163,7 @@ namespace Weex.Net.Interfaces.Clients.FuturesApi
         /// <param name="limit">["<c>limit</c>"] Max number of results</param>
         /// <param name="page">["<c>page</c>"] Page</param>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult<WeexFuturesOrder[]>> GetOrderHistoryAsync(string? symbol = null, DateTime? startTime = null, DateTime? endTime = null, int? limit = null, int? page = null, CancellationToken ct = default);
+        Task<HttpResult<WeexFuturesOrder[]>> GetOrderHistoryAsync(string? symbol = null, DateTime? startTime = null, DateTime? endTime = null, int? limit = null, int? page = null, CancellationToken ct = default);
 
         /// <summary>
         /// Get user trades
@@ -180,7 +180,7 @@ namespace Weex.Net.Interfaces.Clients.FuturesApi
         /// <param name="endTime">["<c>endTime</c>"] Filter by end time</param>
         /// <param name="limit">["<c>limit</c>"] Max number of results, max 100</param>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult<WeexFuturesUserTrade[]>> GetUserTradesAsync(string? symbol = null, long? orderId = null, DateTime? startTime = null, DateTime? endTime = null, int? limit = null, CancellationToken ct = default);
+        Task<HttpResult<WeexFuturesUserTrade[]>> GetUserTradesAsync(string? symbol = null, long? orderId = null, DateTime? startTime = null, DateTime? endTime = null, int? limit = null, CancellationToken ct = default);
 
         /// <summary>
         /// Place a new conditional order
@@ -204,7 +204,7 @@ namespace Weex.Net.Interfaces.Clients.FuturesApi
         /// <param name="takeProfitWorkingType">["<c>TpWorkingType</c>"] Take profit trigger price type</param>
         /// <param name="stopLossWorkingType">["<c>SlWorkingType</c>"] Stop loss trigger price type</param>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult<WeexFuturesOrderResult>> PlaceConditionalOrderAsync(string symbol, OrderSide side, PositionSide positionSide, FuturesOrderType type, decimal quantity, decimal triggerPrice, decimal? price = null, string? clientOrderId = null, decimal? takeProfitPrice = null, decimal? stopLossPrice = null, FuturesPriceType? takeProfitWorkingType = null, FuturesPriceType? stopLossWorkingType = null, CancellationToken ct = default);
+        Task<HttpResult<WeexFuturesOrderResult>> PlaceConditionalOrderAsync(string symbol, OrderSide side, PositionSide positionSide, FuturesOrderType type, decimal quantity, decimal triggerPrice, decimal? price = null, string? clientOrderId = null, decimal? takeProfitPrice = null, decimal? stopLossPrice = null, FuturesPriceType? takeProfitWorkingType = null, FuturesPriceType? stopLossWorkingType = null, CancellationToken ct = default);
 
         /// <summary>
         /// Cancel an open conditional order
@@ -217,7 +217,7 @@ namespace Weex.Net.Interfaces.Clients.FuturesApi
         /// </summary>
         /// <param name="orderId">["<c>orderId</c>"] Order id</param>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult<WeexFuturesOrderResult>> CancelConditionalOrderAsync(long orderId, CancellationToken ct = default);
+        Task<HttpResult<WeexFuturesOrderResult>> CancelConditionalOrderAsync(long orderId, CancellationToken ct = default);
 
         /// <summary>
         /// Cancel all open orders
@@ -230,7 +230,7 @@ namespace Weex.Net.Interfaces.Clients.FuturesApi
         /// </summary>
         /// <param name="symbol">["<c>symbol</c>"] The symbol, for example `ETHUSDT`</param>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult<WeexFuturesOrderResult[]>> CancelAllConditionalOrdersAsync(string? symbol = null, CancellationToken ct = default);
+        Task<HttpResult<WeexFuturesOrderResult[]>> CancelAllConditionalOrdersAsync(string? symbol = null, CancellationToken ct = default);
 
         /// <summary>
         /// Get open conditional orders
@@ -247,7 +247,7 @@ namespace Weex.Net.Interfaces.Clients.FuturesApi
         /// <param name="limit">["<c>limit</c>"] Max number of results</param>
         /// <param name="page">["<c>page</c>"] Page</param>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult<WeexFuturesConditionalOrder[]>> GetOpenConditionalOrdersAsync(string? symbol = null, DateTime? startTime = null, DateTime? endTime = null, int? limit = null, int? page = null, CancellationToken ct = default);
+        Task<HttpResult<WeexFuturesConditionalOrder[]>> GetOpenConditionalOrdersAsync(string? symbol = null, DateTime? startTime = null, DateTime? endTime = null, int? limit = null, int? page = null, CancellationToken ct = default);
 
         /// <summary>
         /// Get conditional order history
@@ -263,7 +263,7 @@ namespace Weex.Net.Interfaces.Clients.FuturesApi
         /// <param name="endTime">["<c>endTime</c>"] Filter by end time</param>
         /// <param name="limit">["<c>limit</c>"] Max number of results</param>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult<WeexConditionalOrderPage>> GetConditionalOrderHistoryAsync(string? symbol = null, DateTime? startTime = null, DateTime? endTime = null, int? limit = null, CancellationToken ct = default);
+        Task<HttpResult<WeexConditionalOrderPage>> GetConditionalOrderHistoryAsync(string? symbol = null, DateTime? startTime = null, DateTime? endTime = null, int? limit = null, CancellationToken ct = default);
 
         /// <summary>
         /// Place a new take profit/stop loss order
@@ -283,7 +283,7 @@ namespace Weex.Net.Interfaces.Clients.FuturesApi
         /// <param name="clientOrderId">["<c>clientAlgoId</c>"] Client order id</param>
         /// <param name="triggerPriceType">["<c>triggerPriceType</c>"] Trigger price type</param>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult<WeexFuturesOrderResult[]>> PlaceTpSlOrderAsync(string symbol, PlanType planType, decimal triggerPrice, decimal quantity, PositionSide positionSide, decimal? executePrice = null, string? clientOrderId = null, FuturesPriceType? triggerPriceType = null, CancellationToken ct = default);
+        Task<HttpResult<WeexFuturesOrderResult[]>> PlaceTpSlOrderAsync(string symbol, PlanType planType, decimal triggerPrice, decimal quantity, PositionSide positionSide, decimal? executePrice = null, string? clientOrderId = null, FuturesPriceType? triggerPriceType = null, CancellationToken ct = default);
 
         /// <summary>
         /// Edit an existing take profit/stop loss order
@@ -299,7 +299,7 @@ namespace Weex.Net.Interfaces.Clients.FuturesApi
         /// <param name="executePrice">["<c>executePrice</c>"] Executing order limit price</param>
         /// <param name="triggerPriceType">["<c>triggerPriceType</c>"] Trigger price type</param>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult> EditTpSlOrderAsync(long orderId, decimal triggerPrice, decimal? executePrice = null, FuturesPriceType? triggerPriceType = null, CancellationToken ct = default);
+        Task<HttpResult<Unit>> EditTpSlOrderAsync(long orderId, decimal triggerPrice, decimal? executePrice = null, FuturesPriceType? triggerPriceType = null, CancellationToken ct = default);
 
     }
 }

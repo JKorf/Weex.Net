@@ -31,6 +31,11 @@ namespace Weex.Net
                 );
 
         internal static JsonSerializerOptions _serializerContext = SerializerOptions.WithConverters(JsonSerializerContextCache.GetOrCreate<WeexSourceGenerationContext>());
+        internal static ParameterSerializationSettings _parameterSerializationSettings = new ParameterSerializationSettings
+        {
+            Decimal = DecimalSerialization.String,
+            DateTimes = DateTimeSerialization.MillisecondsString
+        };
         internal static string _clientReference = "b-WEEX111124-";
 
         /// <summary>

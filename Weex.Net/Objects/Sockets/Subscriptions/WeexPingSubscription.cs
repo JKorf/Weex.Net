@@ -23,7 +23,7 @@ namespace Weex.Net.Objects.Sockets.Subscriptions
                 _ = connection.SendAsync(id, new WeexSocketRequest() { Id = id, Method = "PONG" }, 0);
             else
                 _ = connection.SendAndWaitQueryAsync(new WeexQuery(new WeexSocketRequest() { Id = id, Method = "PONG" }, false, 0));
-            return CallResult.SuccessResult;
+            return CallResult.Ok();
         }
     }
 }

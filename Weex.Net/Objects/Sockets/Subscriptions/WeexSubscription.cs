@@ -73,7 +73,7 @@ namespace Weex.Net.Objects.Sockets.Subscriptions
         public CallResult DoHandleMessage(SocketConnection connection, DateTime receiveTime, string? originalData, T message)
         {
             _handler.Invoke(receiveTime, originalData, message);
-            return new CallResult(null);
+            return CallResult.Ok();
         }
     }
 }

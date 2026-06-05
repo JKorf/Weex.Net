@@ -38,13 +38,11 @@ namespace Weex.Net.Clients.FuturesApi
         public IWeexRestClientFuturesApiExchangeData ExchangeData { get; }
         /// <inheritdoc />
         public IWeexRestClientFuturesApiTrading Trading { get; }
-        /// <inheritdoc />
-        public string ExchangeName => "Weex";
         #endregion
 
         #region constructor/destructor
         internal WeexRestClientFuturesApi(WeexRestClient baseClient, ILogger logger, HttpClient? httpClient, WeexRestOptions options)
-            : base(logger, httpClient, options.Environment.RestClientFuturesAddress, options, options.FuturesOptions)
+            : base(logger, WeexExchange.Metadata.Id, httpClient, options.Environment.RestClientFuturesAddress, options, options.FuturesOptions)
         {
             Account = new WeexRestClientFuturesApiAccount(this);
             ExchangeData = new WeexRestClientFuturesApiExchangeData(logger, this);
@@ -65,35 +63,35 @@ namespace Weex.Net.Clients.FuturesApi
         protected override WeexAuthenticationProvider CreateAuthenticationProvider(WeexCredentials credentials)
             => new WeexAuthenticationProvider(credentials);
 
-        internal Task<WebCallResult> SendAsync(RequestDefinition definition, ParameterCollection? parameters, CancellationToken cancellationToken, int? weight = null)
+        internal Task<HttpResult<Unit>> SendAsync(RequestDefinition definition, Parameters? parameters, CancellationToken cancellationToken, int? weight = null)
             => SendToAddressAsync(BaseAddress, definition, parameters, cancellationToken, weight);
 
-        internal async Task<WebCallResult> SendToAddressAsync(string baseAddress, RequestDefinition definition, ParameterCollection? parameters, CancellationToken cancellationToken, int? weight = null)
+        internal async Task<HttpResult<Unit>> SendToAddressAsync(string baseAddress, RequestDefinition definition, Parameters? parameters, CancellationToken cancellationToken, int? weight = null)
         {
-            var result = await base.SendAsync(baseAddress, definition, parameters, cancellationToken, null, weight).ConfigureAwait(false);
+            var result = await base.SendAsync<Unit>(baseAddress, definition, parameters, cancellationToken, null, weight).ConfigureAwait(false);
             return result;
         }
 
-        internal Task<WebCallResult<T>> SendAsync<T>(RequestDefinition definition, ParameterCollection? parameters, CancellationToken cancellationToken, int? weight = null) where T : class
+        internal Task<HttpResult<T>> SendAsync<T>(RequestDefinition definition, Parameters? parameters, CancellationToken cancellationToken, int? weight = null) where T : class
             => SendToAddressAsync<T>(BaseAddress, definition, parameters, cancellationToken, weight);
 
-        internal async Task<WebCallResult<T>> SendToAddressAsync<T>(string baseAddress, RequestDefinition definition, ParameterCollection? parameters, CancellationToken cancellationToken, int? weight = null) where T : class
+        internal async Task<HttpResult<T>> SendToAddressAsync<T>(string baseAddress, RequestDefinition definition, Parameters? parameters, CancellationToken cancellationToken, int? weight = null) where T : class
         {
             var result = await base.SendAsync<T>(baseAddress, definition, parameters, cancellationToken, null, weight).ConfigureAwait(false);
             return result;
         }
 
-        internal Task<WebCallResult<T>> SendAsync<T>(RequestDefinition definition, ParameterCollection? uriParameters, ParameterCollection? bodyParameters, CancellationToken cancellationToken, int? weight = null) where T : class
+        internal Task<HttpResult<T>> SendAsync<T>(RequestDefinition definition, Parameters? uriParameters, Parameters? bodyParameters, CancellationToken cancellationToken, int? weight = null) where T : class
             => SendToAddressAsync<T>(BaseAddress, definition, uriParameters, bodyParameters, cancellationToken, weight);
 
-        internal async Task<WebCallResult<T>> SendToAddressAsync<T>(string baseAddress, RequestDefinition definition, ParameterCollection? uriParameters, ParameterCollection? bodyParameters, CancellationToken cancellationToken, int? weight = null) where T : class
+        internal async Task<HttpResult<T>> SendToAddressAsync<T>(string baseAddress, RequestDefinition definition, Parameters? uriParameters, Parameters? bodyParameters, CancellationToken cancellationToken, int? weight = null) where T : class
         {
             var result = await base.SendAsync<T>(baseAddress, definition, uriParameters, bodyParameters, cancellationToken, null, weight).ConfigureAwait(false);
             return result;
         }
 
         /// <inheritdoc />
-        protected override Task<WebCallResult<DateTime>> GetServerTimestampAsync()
+        protected override Task<HttpResult<DateTime>> GetServerTimestampAsync()
             => ExchangeData.GetServerTimeAsync();
 
         /// <inheritdoc />
