@@ -26,7 +26,7 @@ namespace Weex.Net.Clients.FuturesApi
         /// <inheritdoc />
         public async Task<HttpResult<WeexFuturesBalance[]>> GetBalancesAsync(CancellationToken ct = default)
         {
-            var request = _definitions.GetOrCreate(HttpMethod.Get, "/capi/v3/account/balance", WeexExchange.RateLimiter.WeexRestUid, 10, true);
+            var request = _definitions.GetOrCreate(HttpMethod.Get, _baseClient.BaseAddress, "/capi/v3/account/balance", WeexExchange.RateLimiter.WeexRestUid, 10, true);
             var result = await _baseClient.SendAsync<WeexFuturesBalance[]>(request, null, ct).ConfigureAwait(false);
             return result;
         }
@@ -40,7 +40,7 @@ namespace Weex.Net.Clients.FuturesApi
         {
             var parameters = new Parameters(WeexExchange._parameterSerializationSettings);
             parameters.Add("symbol", symbol);
-            var request = _definitions.GetOrCreate(HttpMethod.Get, "/capi/v3/account/commissionRate", WeexExchange.RateLimiter.WeexRestUid, 10, true);
+            var request = _definitions.GetOrCreate(HttpMethod.Get, _baseClient.BaseAddress, "/capi/v3/account/commissionRate", WeexExchange.RateLimiter.WeexRestUid, 10, true);
             var result = await _baseClient.SendAsync<WeexTradingFee>(request, parameters, ct).ConfigureAwait(false);
             return result;
         }
@@ -52,7 +52,7 @@ namespace Weex.Net.Clients.FuturesApi
         /// <inheritdoc />
         public async Task<HttpResult<WeexAccountConfig>> GetAccountConfigAsync(CancellationToken ct = default)
         {
-            var request = _definitions.GetOrCreate(HttpMethod.Get, "/capi/v3/account/accountConfig", WeexExchange.RateLimiter.WeexRestUid, 10, true);
+            var request = _definitions.GetOrCreate(HttpMethod.Get, _baseClient.BaseAddress, "/capi/v3/account/accountConfig", WeexExchange.RateLimiter.WeexRestUid, 10, true);
             var result = await _baseClient.SendAsync<WeexAccountConfig>(request, null, ct).ConfigureAwait(false);
             return result;
         }
@@ -66,7 +66,7 @@ namespace Weex.Net.Clients.FuturesApi
         {
             var parameters = new Parameters(WeexExchange._parameterSerializationSettings);
             parameters.Add("symbol", symbol);
-            var request = _definitions.GetOrCreate(HttpMethod.Get, "/capi/v3/account/symbolConfig", WeexExchange.RateLimiter.WeexRestUid, 10, true);
+            var request = _definitions.GetOrCreate(HttpMethod.Get, _baseClient.BaseAddress, "/capi/v3/account/symbolConfig", WeexExchange.RateLimiter.WeexRestUid, 10, true);
             var result = await _baseClient.SendAsync<WeexSymbolConfig[]>(request, parameters, ct).ConfigureAwait(false);
             return result;
         }
@@ -85,7 +85,7 @@ namespace Weex.Net.Clients.FuturesApi
             parameters.Add("startTime", startTime);
             parameters.Add("endTime", endTime);
             parameters.Add("limit", limit);
-            var request = _definitions.GetOrCreate(HttpMethod.Post, "/capi/v3/account/income", WeexExchange.RateLimiter.WeexRestUid, 5, true);
+            var request = _definitions.GetOrCreate(HttpMethod.Post, _baseClient.BaseAddress, "/capi/v3/account/income", WeexExchange.RateLimiter.WeexRestUid, 5, true);
             var result = await _baseClient.SendAsync<WeexFuturesBillPage>(request, parameters, ct).ConfigureAwait(false);
             return result;
         }
@@ -101,7 +101,7 @@ namespace Weex.Net.Clients.FuturesApi
             parameters.Add("symbol", symbol);
             parameters.Add("marginType", marginType);
             parameters.Add("separatedType", combineType);
-            var request = _definitions.GetOrCreate(HttpMethod.Post, "/capi/v3/account/marginType", WeexExchange.RateLimiter.WeexRestUid, 1, true);
+            var request = _definitions.GetOrCreate(HttpMethod.Post, _baseClient.BaseAddress, "/capi/v3/account/marginType", WeexExchange.RateLimiter.WeexRestUid, 1, true);
             var result = await _baseClient.SendAsync<WeexResult>(request, parameters, ct).ConfigureAwait(false);
             if (!result.Success)
                 return HttpResult.Fail<Unit>(result);
@@ -125,7 +125,7 @@ namespace Weex.Net.Clients.FuturesApi
             parameters.Add("crossLeverage", crossLeverage);
             parameters.Add("isolatedLongLeverage", isolatedLongLeverage);
             parameters.Add("isolatedShortLeverage", isolatedShortLeverage);
-            var request = _definitions.GetOrCreate(HttpMethod.Post, "/capi/v3/account/leverage", WeexExchange.RateLimiter.WeexRestUid, 10, true);
+            var request = _definitions.GetOrCreate(HttpMethod.Post, _baseClient.BaseAddress, "/capi/v3/account/leverage", WeexExchange.RateLimiter.WeexRestUid, 10, true);
             var result = await _baseClient.SendAsync<WeexLeverageResult>(request, parameters, ct).ConfigureAwait(false);
             return result;
         }
@@ -141,7 +141,7 @@ namespace Weex.Net.Clients.FuturesApi
             parameters.Add("isolatedPositionId", positionId);
             parameters.Add("amount", quantity);
             parameters.Add("type", adjustType);
-            var request = _definitions.GetOrCreate(HttpMethod.Post, "/capi/v3/account/positionMargin", WeexExchange.RateLimiter.WeexRestUid, 30, true);
+            var request = _definitions.GetOrCreate(HttpMethod.Post, _baseClient.BaseAddress, "/capi/v3/account/positionMargin", WeexExchange.RateLimiter.WeexRestUid, 30, true);
             var result = await _baseClient.SendAsync<WeexResult>(request, parameters, ct).ConfigureAwait(false);
             if (!result.Success)
                 return HttpResult.Fail<Unit>(result);
@@ -162,7 +162,7 @@ namespace Weex.Net.Clients.FuturesApi
             var parameters = new Parameters(WeexExchange._parameterSerializationSettings);
             parameters.Add("positionId", positionId);
             parameters.Add("autoAppendMargin", autoAppendMargin);
-            var request = _definitions.GetOrCreate(HttpMethod.Post, "/capi/v3/account/modifyAutoAppendMargin", WeexExchange.RateLimiter.WeexRestUid, 30, true);
+            var request = _definitions.GetOrCreate(HttpMethod.Post, _baseClient.BaseAddress, "/capi/v3/account/modifyAutoAppendMargin", WeexExchange.RateLimiter.WeexRestUid, 30, true);
             var result = await _baseClient.SendAsync<WeexResult>(request, parameters, ct).ConfigureAwait(false);
             if (!result.Success)
                 return HttpResult.Fail<Unit>(result);

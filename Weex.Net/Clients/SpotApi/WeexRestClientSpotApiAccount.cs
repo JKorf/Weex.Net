@@ -26,7 +26,7 @@ namespace Weex.Net.Clients.SpotApi
         /// <inheritdoc />
         public async Task<HttpResult<string[]>> GetTradingSymbolsAsync(CancellationToken ct = default)
         {
-            var request = _definitions.GetOrCreate(HttpMethod.Get, "/api/v3/apiTradingSymbols", WeexExchange.RateLimiter.WeexRestUid, 5, true);
+            var request = _definitions.GetOrCreate(HttpMethod.Get, _baseClient.BaseAddress, "/api/v3/apiTradingSymbols", WeexExchange.RateLimiter.WeexRestUid, 5, true);
             var result = await _baseClient.SendAsync<string[]>(request, null, ct).ConfigureAwait(false);
             return result;
         }
@@ -38,7 +38,7 @@ namespace Weex.Net.Clients.SpotApi
         /// <inheritdoc />
         public async Task<HttpResult<WeexAccountInfo>> GetAccountInfoAsync(CancellationToken ct = default)
         {
-            var request = _definitions.GetOrCreate(HttpMethod.Get, "/api/v3/account/", WeexExchange.RateLimiter.WeexRestUid, 5, true, forcePathEndWithSlash: true);
+            var request = _definitions.GetOrCreate(HttpMethod.Get, _baseClient.BaseAddress, "/api/v3/account/", WeexExchange.RateLimiter.WeexRestUid, 5, true, forcePathEndWithSlash: true);
             var result = await _baseClient.SendAsync<WeexAccountInfo>(request, null, ct).ConfigureAwait(false);
             return result;
         }
@@ -56,7 +56,7 @@ namespace Weex.Net.Clients.SpotApi
             parameters.Add("after", startTime);
             parameters.Add("before", endTime);
             parameters.Add("limit", limit);
-            var request = _definitions.GetOrCreate(HttpMethod.Post, "/api/v3/account/bills", WeexExchange.RateLimiter.WeexRestUid, 5, true);
+            var request = _definitions.GetOrCreate(HttpMethod.Post, _baseClient.BaseAddress, "/api/v3/account/bills", WeexExchange.RateLimiter.WeexRestUid, 5, true);
             var result = await _baseClient.SendAsync<WeexBill[]>(request, parameters, ct).ConfigureAwait(false);
             return result;
         }
@@ -75,7 +75,7 @@ namespace Weex.Net.Clients.SpotApi
             parameters.Add("endTime", endTime);
             parameters.Add("pageIndex", page);
             parameters.Add("pageSize", limit);
-            var request = _definitions.GetOrCreate(HttpMethod.Post, "/api/v3/account/fundingBills", WeexExchange.RateLimiter.WeexRestUid, 5, true);
+            var request = _definitions.GetOrCreate(HttpMethod.Post, _baseClient.BaseAddress, "/api/v3/account/fundingBills", WeexExchange.RateLimiter.WeexRestUid, 5, true);
             var result = await _baseClient.SendAsync<WeexPage<WeexFundingBill>>(request, parameters, ct).ConfigureAwait(false);
             return result;
         }
@@ -93,7 +93,7 @@ namespace Weex.Net.Clients.SpotApi
             parameters.Add("after", startTime);
             parameters.Add("before", endTime);
             parameters.Add("limit", limit);
-            var request = _definitions.GetOrCreate(HttpMethod.Get, "/api/v3/account/transferRecords", WeexExchange.RateLimiter.WeexRestUid, 3, true);
+            var request = _definitions.GetOrCreate(HttpMethod.Get, _baseClient.BaseAddress, "/api/v3/account/transferRecords", WeexExchange.RateLimiter.WeexRestUid, 3, true);
             var result = await _baseClient.SendAsync<WeexTransfer[]>(request, parameters, ct).ConfigureAwait(false);
             return result;
         }

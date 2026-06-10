@@ -26,7 +26,7 @@ namespace Weex.Net.Clients.FuturesApi
         /// <inheritdoc />
         public async Task<HttpResult<DateTime>> GetServerTimeAsync(CancellationToken ct = default)
         {
-            var request = _definitions.GetOrCreate(HttpMethod.Get, "/capi/v3/market/time", WeexExchange.RateLimiter.WeexRestIp, 1, false);
+            var request = _definitions.GetOrCreate(HttpMethod.Get, _baseClient.BaseAddress, "/capi/v3/market/time", WeexExchange.RateLimiter.WeexRestIp, 1, false);
             var result = await _baseClient.SendAsync<WeexServerTime>(request, null, ct).ConfigureAwait(false);
             if (!result.Success)
                 return HttpResult.Fail<DateTime>(result);
@@ -43,7 +43,7 @@ namespace Weex.Net.Clients.FuturesApi
         {
             var parameters = new Parameters(WeexExchange._parameterSerializationSettings);
             parameters.Add("symbol", symbol);
-            var request = _definitions.GetOrCreate(HttpMethod.Get, "/capi/v3/market/exchangeInfo", WeexExchange.RateLimiter.WeexRestIp, 1, false);
+            var request = _definitions.GetOrCreate(HttpMethod.Get, _baseClient.BaseAddress, "/capi/v3/market/exchangeInfo", WeexExchange.RateLimiter.WeexRestIp, 1, false);
             var result = await _baseClient.SendAsync<WeexFuturesExchangeInfo>(request, parameters, ct).ConfigureAwait(false);
             return result;
         }
@@ -58,7 +58,7 @@ namespace Weex.Net.Clients.FuturesApi
             var parameters = new Parameters(WeexExchange._parameterSerializationSettings);
             parameters.Add("symbol", symbol);
             parameters.Add("limit", depth);
-            var request = _definitions.GetOrCreate(HttpMethod.Get, "/capi/v3/market/depth", WeexExchange.RateLimiter.WeexRestIp, 1, false);
+            var request = _definitions.GetOrCreate(HttpMethod.Get, _baseClient.BaseAddress, "/capi/v3/market/depth", WeexExchange.RateLimiter.WeexRestIp, 1, false);
             var result = await _baseClient.SendAsync<WeexOrderBook>(request, parameters, ct).ConfigureAwait(false);
             return result;
         }
@@ -72,7 +72,7 @@ namespace Weex.Net.Clients.FuturesApi
         {
             var parameters = new Parameters(WeexExchange._parameterSerializationSettings);
             parameters.Add("symbol", symbol);
-            var request = _definitions.GetOrCreate(HttpMethod.Get, "/capi/v3/market/ticker/24hr", WeexExchange.RateLimiter.WeexRestIp, 40, false);
+            var request = _definitions.GetOrCreate(HttpMethod.Get, _baseClient.BaseAddress, "/capi/v3/market/ticker/24hr", WeexExchange.RateLimiter.WeexRestIp, 40, false);
             var result = await _baseClient.SendAsync<WeexFuturesTicker[]>(request, parameters, ct).ConfigureAwait(false);
             return result;
         }
@@ -86,7 +86,7 @@ namespace Weex.Net.Clients.FuturesApi
         {
             var parameters = new Parameters(WeexExchange._parameterSerializationSettings);
             parameters.Add("symbol", symbol);
-            var request = _definitions.GetOrCreate(HttpMethod.Get, "/capi/v3/market/ticker/bookTicker", WeexExchange.RateLimiter.WeexRestIp, 1, false);
+            var request = _definitions.GetOrCreate(HttpMethod.Get, _baseClient.BaseAddress, "/capi/v3/market/ticker/bookTicker", WeexExchange.RateLimiter.WeexRestIp, 1, false);
             var result = await _baseClient.SendAsync<WeexFuturesBookTicker[]>(request, parameters, ct).ConfigureAwait(false);
             return result;
         }
@@ -101,7 +101,7 @@ namespace Weex.Net.Clients.FuturesApi
             var parameters = new Parameters(WeexExchange._parameterSerializationSettings);
             parameters.Add("symbol", symbol);
             parameters.Add("limit", limit);
-            var request = _definitions.GetOrCreate(HttpMethod.Get, "/capi/v3/market/trades", WeexExchange.RateLimiter.WeexRestIp, 5, false);
+            var request = _definitions.GetOrCreate(HttpMethod.Get, _baseClient.BaseAddress, "/capi/v3/market/trades", WeexExchange.RateLimiter.WeexRestIp, 5, false);
             var result = await _baseClient.SendAsync<WeexTrade[]>(request, parameters, ct).ConfigureAwait(false);
             return result;
         }
@@ -117,7 +117,7 @@ namespace Weex.Net.Clients.FuturesApi
             parameters.Add("symbol", symbol);
             parameters.Add("interval", interval);
             parameters.Add("limit", limit);
-            var request = _definitions.GetOrCreate(HttpMethod.Get, "/capi/v3/market/klines", WeexExchange.RateLimiter.WeexRestIp, 1, false);
+            var request = _definitions.GetOrCreate(HttpMethod.Get, _baseClient.BaseAddress, "/capi/v3/market/klines", WeexExchange.RateLimiter.WeexRestIp, 1, false);
             var result = await _baseClient.SendAsync<WeexKline[]>(request, parameters, ct).ConfigureAwait(false);
             return result;
         }
@@ -133,7 +133,7 @@ namespace Weex.Net.Clients.FuturesApi
             parameters.Add("symbol", symbol);
             parameters.Add("interval", interval);
             parameters.Add("limit", limit);
-            var request = _definitions.GetOrCreate(HttpMethod.Get, "/capi/v3/market/indexPriceKlines", WeexExchange.RateLimiter.WeexRestIp, 1, false);
+            var request = _definitions.GetOrCreate(HttpMethod.Get, _baseClient.BaseAddress, "/capi/v3/market/indexPriceKlines", WeexExchange.RateLimiter.WeexRestIp, 1, false);
             var result = await _baseClient.SendAsync<WeexKline[]>(request, parameters, ct).ConfigureAwait(false);
             return result;
         }
@@ -149,7 +149,7 @@ namespace Weex.Net.Clients.FuturesApi
             parameters.Add("symbol", symbol);
             parameters.Add("interval", interval);
             parameters.Add("limit", limit);
-            var request = _definitions.GetOrCreate(HttpMethod.Get, "/capi/v3/market/markPriceKlines", WeexExchange.RateLimiter.WeexRestIp, 1, false);
+            var request = _definitions.GetOrCreate(HttpMethod.Get, _baseClient.BaseAddress, "/capi/v3/market/markPriceKlines", WeexExchange.RateLimiter.WeexRestIp, 1, false);
             var result = await _baseClient.SendAsync<WeexKline[]>(request, parameters, ct).ConfigureAwait(false);
             return result;
         }
@@ -168,7 +168,7 @@ namespace Weex.Net.Clients.FuturesApi
             parameters.Add("endTime", endTime);
             parameters.Add("limit", limit);
             parameters.Add("priceType", priceType);
-            var request = _definitions.GetOrCreate(HttpMethod.Get, "/capi/v3/market/historyKlines", WeexExchange.RateLimiter.WeexRestIp, 5, false);
+            var request = _definitions.GetOrCreate(HttpMethod.Get, _baseClient.BaseAddress, "/capi/v3/market/historyKlines", WeexExchange.RateLimiter.WeexRestIp, 5, false);
             var result = await _baseClient.SendAsync<WeexKline[]>(request, parameters, ct).ConfigureAwait(false);
             return result;
         }
@@ -183,7 +183,7 @@ namespace Weex.Net.Clients.FuturesApi
             var parameters = new Parameters(WeexExchange._parameterSerializationSettings);
             parameters.Add("symbol", symbol);
             parameters.Add("priceType", priceType);
-            var request = _definitions.GetOrCreate(HttpMethod.Get, "/capi/v3/market/symbolPrice", WeexExchange.RateLimiter.WeexRestIp, 1, false);
+            var request = _definitions.GetOrCreate(HttpMethod.Get, _baseClient.BaseAddress, "/capi/v3/market/symbolPrice", WeexExchange.RateLimiter.WeexRestIp, 1, false);
             var result = await _baseClient.SendAsync<WeexFuturesPrice>(request, parameters, ct).ConfigureAwait(false);
             return result;
         }
@@ -197,7 +197,7 @@ namespace Weex.Net.Clients.FuturesApi
         {
             var parameters = new Parameters(WeexExchange._parameterSerializationSettings);
             parameters.Add("symbol", symbol);
-            var request = _definitions.GetOrCreate(HttpMethod.Get, "/capi/v3/market/openInterest", WeexExchange.RateLimiter.WeexRestIp, 2, false);
+            var request = _definitions.GetOrCreate(HttpMethod.Get, _baseClient.BaseAddress, "/capi/v3/market/openInterest", WeexExchange.RateLimiter.WeexRestIp, 2, false);
             var result = await _baseClient.SendAsync<WeexOpenInterest>(request, parameters, ct).ConfigureAwait(false);
             return result;
         }
@@ -211,7 +211,7 @@ namespace Weex.Net.Clients.FuturesApi
         {
             var parameters = new Parameters(WeexExchange._parameterSerializationSettings);
             parameters.Add("symbol", symbol);
-            var request = _definitions.GetOrCreate(HttpMethod.Get, "/capi/v3/market/premiumIndex", WeexExchange.RateLimiter.WeexRestIp, 1, false);
+            var request = _definitions.GetOrCreate(HttpMethod.Get, _baseClient.BaseAddress, "/capi/v3/market/premiumIndex", WeexExchange.RateLimiter.WeexRestIp, 1, false);
             var result = await _baseClient.SendAsync<WeexFundingInfo[]>(request, parameters, ct).ConfigureAwait(false);
             return result;
         }
@@ -228,7 +228,7 @@ namespace Weex.Net.Clients.FuturesApi
             parameters.Add("startTime", startTime);
             parameters.Add("endTime", endTime);
             parameters.Add("limit", limit);
-            var request = _definitions.GetOrCreate(HttpMethod.Get, "/capi/v3/market/fundingRate", WeexExchange.RateLimiter.WeexRestIp, 5, false);
+            var request = _definitions.GetOrCreate(HttpMethod.Get, _baseClient.BaseAddress, "/capi/v3/market/fundingRate", WeexExchange.RateLimiter.WeexRestIp, 5, false);
             var result = await _baseClient.SendAsync<WeexFundingHistory[]>(request, parameters, ct).ConfigureAwait(false);
             return result;
         }
@@ -240,7 +240,7 @@ namespace Weex.Net.Clients.FuturesApi
         /// <inheritdoc />
         public async Task<HttpResult<string[]>> GetTradingSymbolsAsync(CancellationToken ct = default)
         {
-            var request = _definitions.GetOrCreate(HttpMethod.Get, "/capi/v3/market/apiTradingSymbols", WeexExchange.RateLimiter.WeexRestIp, 5, false);
+            var request = _definitions.GetOrCreate(HttpMethod.Get, _baseClient.BaseAddress, "/capi/v3/market/apiTradingSymbols", WeexExchange.RateLimiter.WeexRestIp, 5, false);
             var result = await _baseClient.SendAsync<string[]>(request, null, ct).ConfigureAwait(false);
             return result;
         }

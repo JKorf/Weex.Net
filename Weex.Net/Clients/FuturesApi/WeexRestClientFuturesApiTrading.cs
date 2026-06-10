@@ -33,7 +33,7 @@ namespace Weex.Net.Clients.FuturesApi
         /// <inheritdoc />
         public async Task<HttpResult<WeexPosition[]>> GetPositionsAsync(CancellationToken ct = default)
         {
-            var request = _definitions.GetOrCreate(HttpMethod.Get, "/capi/v3/account/position/allPosition", WeexExchange.RateLimiter.WeexRestUid, 15, true);
+            var request = _definitions.GetOrCreate(HttpMethod.Get, _baseClient.BaseAddress, "/capi/v3/account/position/allPosition", WeexExchange.RateLimiter.WeexRestUid, 15, true);
             var result = await _baseClient.SendAsync<WeexPosition[]>(request, null, ct).ConfigureAwait(false);
             return result;
         }
@@ -47,7 +47,7 @@ namespace Weex.Net.Clients.FuturesApi
         {
             var parameters = new Parameters(WeexExchange._parameterSerializationSettings);
             parameters.Add("symbol", symbol);
-            var request = _definitions.GetOrCreate(HttpMethod.Get, "/capi/v3/account/position/singlePosition", WeexExchange.RateLimiter.WeexRestUid, 3, true);
+            var request = _definitions.GetOrCreate(HttpMethod.Get, _baseClient.BaseAddress, "/capi/v3/account/position/singlePosition", WeexExchange.RateLimiter.WeexRestUid, 3, true);
             var result = await _baseClient.SendAsync<WeexPosition[]>(request, parameters, ct).ConfigureAwait(false);
             return result;
         }
@@ -78,7 +78,7 @@ namespace Weex.Net.Clients.FuturesApi
             parameters.Add("slTriggerPrice", stopLossTriggerPrice);
             parameters.Add("TpWorkingType", takeProfitWorkingType);
             parameters.Add("SlWorkingType", stopLossWorkingType);
-            var request = _definitions.GetOrCreate(HttpMethod.Post, "/capi/v3/order", WeexExchange.RateLimiter.WeexRestUid, 5, true);
+            var request = _definitions.GetOrCreate(HttpMethod.Post, _baseClient.BaseAddress, "/capi/v3/order", WeexExchange.RateLimiter.WeexRestUid, 5, true);
             var result = await _baseClient.SendAsync<WeexFuturesOrderResult>(request, parameters, ct).ConfigureAwait(false);
             return result;
         }
@@ -102,7 +102,7 @@ namespace Weex.Net.Clients.FuturesApi
             var parameters = new Parameters(WeexExchange._parameterSerializationSettings);
             parameters.Add("orderId", orderId);
             parameters.Add("origClientOrderId", clientOrderId);
-            var request = _definitions.GetOrCreate(HttpMethod.Delete, "/capi/v3/order", WeexExchange.RateLimiter.WeexRestUid, 3, true);
+            var request = _definitions.GetOrCreate(HttpMethod.Delete, _baseClient.BaseAddress, "/capi/v3/order", WeexExchange.RateLimiter.WeexRestUid, 3, true);
             var result = await _baseClient.SendAsync<WeexFuturesOrderResult>(request, parameters, new Parameters(WeexExchange._parameterSerializationSettings), ct).ConfigureAwait(false);
             return result;
         }
@@ -116,7 +116,7 @@ namespace Weex.Net.Clients.FuturesApi
         {
             var parameters = new Parameters(WeexExchange._parameterSerializationSettings);
             parameters.Add("symbol", symbol);
-            var request = _definitions.GetOrCreate(HttpMethod.Delete, "/capi/v3/allOpenOrders", WeexExchange.RateLimiter.WeexRestUid, 10, true);
+            var request = _definitions.GetOrCreate(HttpMethod.Delete, _baseClient.BaseAddress, "/capi/v3/allOpenOrders", WeexExchange.RateLimiter.WeexRestUid, 10, true);
             var result = await _baseClient.SendAsync<WeexFuturesOrderResult[]>(request, parameters, new Parameters(WeexExchange._parameterSerializationSettings), ct).ConfigureAwait(false);
             return result;
         }
@@ -139,9 +139,9 @@ namespace Weex.Net.Clients.FuturesApi
             }
 
             var parameters = new Parameters(WeexExchange._parameterSerializationSettings);
-            parameters.Add("orderIdList", orderIds?.ToArray());
-            parameters.Add("origClientOrderIdList", clientOrderIds?.ToArray());
-            var request = _definitions.GetOrCreate(HttpMethod.Delete, "/capi/v3/batchOrders", WeexExchange.RateLimiter.WeexRestUid, 10, true);
+            parameters.AddRaw("orderIdList", orderIds?.ToArray());
+            parameters.AddRaw("origClientOrderIdList", clientOrderIds?.ToArray());
+            var request = _definitions.GetOrCreate(HttpMethod.Delete, _baseClient.BaseAddress, "/capi/v3/batchOrders", WeexExchange.RateLimiter.WeexRestUid, 10, true);
             return await _baseClient.SendAsync<WeexFuturesOrderResult[]>(request, parameters, ct).ConfigureAwait(false);
         }
 
@@ -154,7 +154,7 @@ namespace Weex.Net.Clients.FuturesApi
         {
             var parameters = new Parameters(WeexExchange._parameterSerializationSettings);
             parameters.Add("symbol", symbol);
-            var request = _definitions.GetOrCreate(HttpMethod.Post, "/capi/v3/closePositions", WeexExchange.RateLimiter.WeexRestUid, 50, true);
+            var request = _definitions.GetOrCreate(HttpMethod.Post, _baseClient.BaseAddress, "/capi/v3/closePositions", WeexExchange.RateLimiter.WeexRestUid, 50, true);
             var result = await _baseClient.SendAsync<WeexPositionResult[]>(request, parameters, ct).ConfigureAwait(false);
             if (!result.Success)
                 return result;
@@ -174,7 +174,7 @@ namespace Weex.Net.Clients.FuturesApi
         {
             var parameters = new Parameters(WeexExchange._parameterSerializationSettings);
             parameters.Add("orderId", orderId);
-            var request = _definitions.GetOrCreate(HttpMethod.Get, "/capi/v3/order", WeexExchange.RateLimiter.WeexRestUid, 3, true);
+            var request = _definitions.GetOrCreate(HttpMethod.Get, _baseClient.BaseAddress, "/capi/v3/order", WeexExchange.RateLimiter.WeexRestUid, 3, true);
             var result = await _baseClient.SendAsync<WeexFuturesOrder>(request, parameters, ct).ConfigureAwait(false);
             return result;
         }
@@ -193,7 +193,7 @@ namespace Weex.Net.Clients.FuturesApi
             parameters.Add("endTime", endTime);
             parameters.Add("limit", limit);
             parameters.Add("page", page);
-            var request = _definitions.GetOrCreate(HttpMethod.Get, "/capi/v3/openOrders", WeexExchange.RateLimiter.WeexRestUid, 10, true);
+            var request = _definitions.GetOrCreate(HttpMethod.Get, _baseClient.BaseAddress, "/capi/v3/openOrders", WeexExchange.RateLimiter.WeexRestUid, 10, true);
             var result = await _baseClient.SendAsync<WeexFuturesOrder[]>(request, parameters, ct).ConfigureAwait(false);
             return result;
         }
@@ -211,7 +211,7 @@ namespace Weex.Net.Clients.FuturesApi
             parameters.Add("endTime", endTime);
             parameters.Add("limit", limit);
             parameters.Add("page", page);
-            var request = _definitions.GetOrCreate(HttpMethod.Get, "/capi/v3/order/history", WeexExchange.RateLimiter.WeexRestUid, 10, true);
+            var request = _definitions.GetOrCreate(HttpMethod.Get, _baseClient.BaseAddress, "/capi/v3/order/history", WeexExchange.RateLimiter.WeexRestUid, 10, true);
             var result = await _baseClient.SendAsync<WeexFuturesOrder[]>(request, parameters, ct).ConfigureAwait(false);
             return result;
         }
@@ -229,7 +229,7 @@ namespace Weex.Net.Clients.FuturesApi
             parameters.Add("startTime", startTime);
             parameters.Add("endTime", endTime);
             parameters.Add("limit", limit);
-            var request = _definitions.GetOrCreate(HttpMethod.Get, "/capi/v3/userTrades", WeexExchange.RateLimiter.WeexRestUid, 5, true);
+            var request = _definitions.GetOrCreate(HttpMethod.Get, _baseClient.BaseAddress, "/capi/v3/userTrades", WeexExchange.RateLimiter.WeexRestUid, 5, true);
             var result = await _baseClient.SendAsync<WeexFuturesUserTrade[]>(request, parameters, ct).ConfigureAwait(false);
             return result;
         }
@@ -263,7 +263,7 @@ namespace Weex.Net.Clients.FuturesApi
             parameters.Add("presetStopLossPrice", stopLossPrice);
             parameters.Add("TpWorkingType", takeProfitWorkingType);
             parameters.Add("SlWorkingType", stopLossWorkingType);
-            var request = _definitions.GetOrCreate(HttpMethod.Post, "/capi/v3/algoOrder", WeexExchange.RateLimiter.WeexRestUid, 5, true);
+            var request = _definitions.GetOrCreate(HttpMethod.Post, _baseClient.BaseAddress, "/capi/v3/algoOrder", WeexExchange.RateLimiter.WeexRestUid, 5, true);
             var result = await _baseClient.SendAsync<WeexFuturesOrderResult>(request, parameters, ct).ConfigureAwait(false);
             return result;
         }
@@ -277,7 +277,7 @@ namespace Weex.Net.Clients.FuturesApi
         {
             var parameters = new Parameters(WeexExchange._parameterSerializationSettings);
             parameters.Add("orderId", orderId);
-            var request = _definitions.GetOrCreate(HttpMethod.Delete, "/capi/v3/algoOrder", WeexExchange.RateLimiter.WeexRestUid, 3, true);
+            var request = _definitions.GetOrCreate(HttpMethod.Delete, _baseClient.BaseAddress, "/capi/v3/algoOrder", WeexExchange.RateLimiter.WeexRestUid, 3, true);
             var result = await _baseClient.SendAsync<WeexFuturesOrderResult>(request, parameters, new Parameters(WeexExchange._parameterSerializationSettings), ct).ConfigureAwait(false);
             return result;
         }
@@ -291,7 +291,7 @@ namespace Weex.Net.Clients.FuturesApi
         {
             var parameters = new Parameters(WeexExchange._parameterSerializationSettings);
             parameters.Add("symbol", symbol);
-            var request = _definitions.GetOrCreate(HttpMethod.Delete, "/capi/v3/algoOpenOrders", WeexExchange.RateLimiter.WeexRestUid, 10, true);
+            var request = _definitions.GetOrCreate(HttpMethod.Delete, _baseClient.BaseAddress, "/capi/v3/algoOpenOrders", WeexExchange.RateLimiter.WeexRestUid, 10, true);
             var result = await _baseClient.SendAsync<WeexFuturesOrderResult[]>(request, parameters, new Parameters(WeexExchange._parameterSerializationSettings), ct).ConfigureAwait(false);
             return result;
         }
@@ -309,7 +309,7 @@ namespace Weex.Net.Clients.FuturesApi
             parameters.Add("endTime", endTime);
             parameters.Add("limit", limit);
             parameters.Add("page", page);
-            var request = _definitions.GetOrCreate(HttpMethod.Get, "/capi/v3/openAlgoOrders", WeexExchange.RateLimiter.WeexRestUid, 3, true);
+            var request = _definitions.GetOrCreate(HttpMethod.Get, _baseClient.BaseAddress, "/capi/v3/openAlgoOrders", WeexExchange.RateLimiter.WeexRestUid, 3, true);
             var result = await _baseClient.SendAsync<WeexFuturesConditionalOrder[]>(request, parameters, ct).ConfigureAwait(false);
             return result;
         }
@@ -326,7 +326,7 @@ namespace Weex.Net.Clients.FuturesApi
             parameters.Add("startTime", startTime);
             parameters.Add("endTime", endTime);
             parameters.Add("limit", limit);
-            var request = _definitions.GetOrCreate(HttpMethod.Get, "/capi/v3/allAlgoOrders", WeexExchange.RateLimiter.WeexRestUid, 10, true);
+            var request = _definitions.GetOrCreate(HttpMethod.Get, _baseClient.BaseAddress, "/capi/v3/allAlgoOrders", WeexExchange.RateLimiter.WeexRestUid, 10, true);
             var result = await _baseClient.SendAsync<WeexConditionalOrderPage>(request, parameters, ct).ConfigureAwait(false);
             return result;
         }
@@ -356,7 +356,7 @@ namespace Weex.Net.Clients.FuturesApi
             parameters.Add("executePrice", executePrice);
             parameters.Add("clientAlgoId", clientOrderId);
             parameters.Add("triggerPriceType", triggerPriceType);
-            var request = _definitions.GetOrCreate(HttpMethod.Post, "/capi/v3/placeTpSlOrder", WeexExchange.RateLimiter.WeexRestUid, 5, true);
+            var request = _definitions.GetOrCreate(HttpMethod.Post, _baseClient.BaseAddress, "/capi/v3/placeTpSlOrder", WeexExchange.RateLimiter.WeexRestUid, 5, true);
             var result = await _baseClient.SendAsync<WeexFuturesOrderResult[]>(request, parameters, ct).ConfigureAwait(false);
             return result;
         }
@@ -373,7 +373,7 @@ namespace Weex.Net.Clients.FuturesApi
             parameters.Add("triggerPrice", triggerPrice);
             parameters.Add("executePrice", executePrice);
             parameters.Add("triggerPriceType", triggerPriceType);
-            var request = _definitions.GetOrCreate(HttpMethod.Post, "/capi/v3/modifyTpSlOrder", WeexExchange.RateLimiter.WeexRestUid, 5, true);
+            var request = _definitions.GetOrCreate(HttpMethod.Post, _baseClient.BaseAddress, "/capi/v3/modifyTpSlOrder", WeexExchange.RateLimiter.WeexRestUid, 5, true);
             var result = await _baseClient.SendAsync<WeexResult>(request, parameters, ct).ConfigureAwait(false);
             if (!result.Success)
                 return HttpResult.Fail<Unit>(result);

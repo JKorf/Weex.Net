@@ -45,7 +45,7 @@ namespace Weex.Net.Clients.SpotApi
             parameters.Add("price", price);
             parameters.Add("timeInForce", timeInForce);
             parameters.Add("newClientOrderId", clientOrderIdUpdated);
-            var request = _definitions.GetOrCreate(HttpMethod.Post, "/api/v3/order", WeexExchange.RateLimiter.WeexRestUid, 5, true);
+            var request = _definitions.GetOrCreate(HttpMethod.Post, _baseClient.BaseAddress, "/api/v3/order", WeexExchange.RateLimiter.WeexRestUid, 5, true);
             var result = await _baseClient.SendAsync<WeexOrderResult>(request, parameters, ct).ConfigureAwait(false);
             return result;
         }
@@ -69,7 +69,7 @@ namespace Weex.Net.Clients.SpotApi
             var parameters = new Parameters(WeexExchange._parameterSerializationSettings);
             parameters.Add("orderId", orderId);
             parameters.Add("origClientOrderId", clientOrderId);
-            var request = _definitions.GetOrCreate(HttpMethod.Delete, "/api/v3/order", WeexExchange.RateLimiter.WeexRestUid, 1, true);
+            var request = _definitions.GetOrCreate(HttpMethod.Delete, _baseClient.BaseAddress, "/api/v3/order", WeexExchange.RateLimiter.WeexRestUid, 1, true);
             var result = await _baseClient.SendAsync<WeexCancelResult>(request, parameters, new Parameters(WeexExchange._parameterSerializationSettings), ct).ConfigureAwait(false);
             return result;
         }
@@ -83,7 +83,7 @@ namespace Weex.Net.Clients.SpotApi
         {
             var parameters = new Parameters(WeexExchange._parameterSerializationSettings);
             parameters.Add("symbol", symbol);
-            var request = _definitions.GetOrCreate(HttpMethod.Delete, "/api/v3/openOrders", WeexExchange.RateLimiter.WeexRestUid, 1, true);
+            var request = _definitions.GetOrCreate(HttpMethod.Delete, _baseClient.BaseAddress, "/api/v3/openOrders", WeexExchange.RateLimiter.WeexRestUid, 1, true);
             var result = await _baseClient.SendAsync<WeexCancelResult[]>(request, parameters, new Parameters(WeexExchange._parameterSerializationSettings), ct).ConfigureAwait(false);
             return result;
         }
@@ -106,9 +106,9 @@ namespace Weex.Net.Clients.SpotApi
             }
 
             var parameters = new Parameters(WeexExchange._parameterSerializationSettings);
-            parameters.Add("orderIds", orderIds?.ToArray());
-            parameters.Add("origClientOrderIds", clientOrderIds?.ToArray());
-            var request = _definitions.GetOrCreate(HttpMethod.Delete, "/api/v3/order/batch", WeexExchange.RateLimiter.WeexRestUid, 10, true);
+            parameters.AddRaw("orderIds", orderIds?.ToArray());
+            parameters.AddRaw("origClientOrderIds", clientOrderIds?.ToArray());
+            var request = _definitions.GetOrCreate(HttpMethod.Delete, _baseClient.BaseAddress, "/api/v3/order/batch", WeexExchange.RateLimiter.WeexRestUid, 10, true);
             var result = await _baseClient.SendAsync<WeexCancelResultWrapper>(request, parameters, ct).ConfigureAwait(false);
             if (!result.Success)
                 return HttpResult.Fail<WeexCancelResult[]>(result);
@@ -135,7 +135,7 @@ namespace Weex.Net.Clients.SpotApi
             var parameters = new Parameters(WeexExchange._parameterSerializationSettings);
             parameters.Add("orderId", orderId);
             parameters.Add("origClientOrderId", clientOrderId);
-            var request = _definitions.GetOrCreate(HttpMethod.Get, "/api/v3/order", WeexExchange.RateLimiter.WeexRestUid, 2, true);
+            var request = _definitions.GetOrCreate(HttpMethod.Get, _baseClient.BaseAddress, "/api/v3/order", WeexExchange.RateLimiter.WeexRestUid, 2, true);
             var result = await _baseClient.SendAsync<WeexOrder>(request, parameters, ct).ConfigureAwait(false);
             return result;
         }
@@ -149,7 +149,7 @@ namespace Weex.Net.Clients.SpotApi
         {
             var parameters = new Parameters(WeexExchange._parameterSerializationSettings);
             parameters.Add("symbol", symbol);
-            var request = _definitions.GetOrCreate(HttpMethod.Get, "/api/v3/openOrders", WeexExchange.RateLimiter.WeexRestUid, 3, true);
+            var request = _definitions.GetOrCreate(HttpMethod.Get, _baseClient.BaseAddress, "/api/v3/openOrders", WeexExchange.RateLimiter.WeexRestUid, 3, true);
             var result = await _baseClient.SendAsync<WeexOrder[]>(request, parameters, ct).ConfigureAwait(false);
             return result;
         }
@@ -167,7 +167,7 @@ namespace Weex.Net.Clients.SpotApi
             parameters.Add("endTime", endTime);
             parameters.Add("page", page);
             parameters.Add("limit", limit);
-            var request = _definitions.GetOrCreate(HttpMethod.Get, "/api/v3/allOrders", WeexExchange.RateLimiter.WeexRestUid, 10, true);
+            var request = _definitions.GetOrCreate(HttpMethod.Get, _baseClient.BaseAddress, "/api/v3/allOrders", WeexExchange.RateLimiter.WeexRestUid, 10, true);
             var result = await _baseClient.SendAsync<WeexOrder[]>(request, parameters, ct).ConfigureAwait(false);
             return result;
         }
@@ -185,7 +185,7 @@ namespace Weex.Net.Clients.SpotApi
             parameters.Add("startTime", startTime);
             parameters.Add("endTime", endTime);
             parameters.Add("limit", limit);
-            var request = _definitions.GetOrCreate(HttpMethod.Get, "/api/v3/myTrades", WeexExchange.RateLimiter.WeexRestUid, 5, true);
+            var request = _definitions.GetOrCreate(HttpMethod.Get, _baseClient.BaseAddress, "/api/v3/myTrades", WeexExchange.RateLimiter.WeexRestUid, 5, true);
             var result = await _baseClient.SendAsync<WeexUserTrade[]>(request, parameters, ct).ConfigureAwait(false);
             return result;
         }

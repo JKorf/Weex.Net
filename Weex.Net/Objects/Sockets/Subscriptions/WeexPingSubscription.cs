@@ -12,7 +12,7 @@ namespace Weex.Net.Objects.Sockets.Subscriptions
     {
         public WeexPingSubscription(ILogger logger) : base(logger, false)
         {
-            MessageRouter = MessageRouter.CreateWithoutTopicFilter<WeexPing>("ping", HandlePing);
+            MessageRouter = MessageRouter.CreateForEvent<WeexPing>("ping", HandlePing);
         }
 
         private CallResult? HandlePing(SocketConnection connection, DateTime time, string? arg3, WeexPing ping)

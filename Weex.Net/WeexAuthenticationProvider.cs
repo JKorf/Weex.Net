@@ -21,11 +21,11 @@ namespace Weex.Net
 
         public override void ProcessRequest(RestApiClient apiClient, RestRequestConfiguration requestConfig)
         {
-            if (!requestConfig.Authenticated)
+            if (!requestConfig.RequestDefinition.Authenticated)
                 return;
 
             var time = GetMillisecondTimestampLong(apiClient);
-            var signString = time + requestConfig.Method.ToString().ToUpper() + requestConfig.Path;
+            var signString = time + requestConfig.RequestDefinition.Method.ToString().ToUpper() + requestConfig.RequestDefinition.Path;
             if (requestConfig.QueryParameters?.Count > 0)
             {
                 var queryString = "?" + requestConfig.GetQueryString();
