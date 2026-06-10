@@ -366,7 +366,7 @@ namespace Weex.Net.Clients.FuturesApi
         #region Edit Tp Sl Order
 
         /// <inheritdoc />
-        public async Task<HttpResult<Unit>> EditTpSlOrderAsync(long orderId, decimal triggerPrice, decimal? executePrice = null, FuturesPriceType? triggerPriceType = null, CancellationToken ct = default)
+        public async Task<HttpResult> EditTpSlOrderAsync(long orderId, decimal triggerPrice, decimal? executePrice = null, FuturesPriceType? triggerPriceType = null, CancellationToken ct = default)
         {
             var parameters = new Parameters(WeexExchange._parameterSerializationSettings);
             parameters.Add("orderId", orderId);
@@ -376,9 +376,9 @@ namespace Weex.Net.Clients.FuturesApi
             var request = _definitions.GetOrCreate(HttpMethod.Post, _baseClient.BaseAddress, "/capi/v3/modifyTpSlOrder", WeexExchange.RateLimiter.WeexRestUid, 5, true);
             var result = await _baseClient.SendAsync<WeexResult>(request, parameters, ct).ConfigureAwait(false);
             if (!result.Success)
-                return HttpResult.Fail<Unit>(result);
+                return HttpResult.Fail(result);
 
-            return HttpResult.Ok(result, Unit.Value);
+            return HttpResult.Ok(result);
         }
 
         #endregion

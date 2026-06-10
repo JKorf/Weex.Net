@@ -94,7 +94,7 @@ namespace Weex.Net.Interfaces.Clients.FuturesApi
         /// <param name="marginType">["<c>marginType</c>"] New margin mode</param>
         /// <param name="combineType">["<c>separatedType</c>"] New combine type</param>
         /// <param name="ct">Cancellation token</param>
-        Task<HttpResult<Unit>> SetMarginModeAsync(string symbol, MarginType marginType, PositionCombineType? combineType = null, CancellationToken ct = default);
+        Task<HttpResult> SetMarginModeAsync(string symbol, MarginType marginType, PositionCombineType? combineType = null, CancellationToken ct = default);
 
         /// <summary>
         /// Set leverage configuration
@@ -126,7 +126,7 @@ namespace Weex.Net.Interfaces.Clients.FuturesApi
         /// <param name="quantity">["<c>amount</c>"] Adjust quantity</param>
         /// <param name="adjustType">["<c>type</c>"] Adjust type</param>
         /// <param name="ct">Cancellation token</param>
-        Task<HttpResult<Unit>> AdjustIsolatedMarginAsync(long positionId, decimal quantity, MarginAdjustType adjustType, CancellationToken ct = default);
+        Task<HttpResult> AdjustIsolatedMarginAsync(long positionId, decimal quantity, MarginAdjustType adjustType, CancellationToken ct = default);
 
         /// <summary>
         /// Set auto append margin setting for a position
@@ -140,7 +140,7 @@ namespace Weex.Net.Interfaces.Clients.FuturesApi
         /// <param name="positionId">["<c>positionId</c>"] Id of the position</param>
         /// <param name="autoAppendMargin">["<c>autoAppendMargin</c>"] Auto append margin</param>
         /// <param name="ct">Cancellation token</param>
-        Task<HttpResult<Unit>> SetAutoAppendMarginAsync(long positionId, bool autoAppendMargin, CancellationToken ct = default);
+        Task<HttpResult> SetAutoAppendMarginAsync(long positionId, bool autoAppendMargin, CancellationToken ct = default);
 
     }
 }

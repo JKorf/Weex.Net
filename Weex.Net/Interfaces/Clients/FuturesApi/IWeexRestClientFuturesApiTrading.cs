@@ -299,7 +299,7 @@ namespace Weex.Net.Interfaces.Clients.FuturesApi
         /// <param name="executePrice">["<c>executePrice</c>"] Executing order limit price</param>
         /// <param name="triggerPriceType">["<c>triggerPriceType</c>"] Trigger price type</param>
         /// <param name="ct">Cancellation token</param>
-        Task<HttpResult<Unit>> EditTpSlOrderAsync(long orderId, decimal triggerPrice, decimal? executePrice = null, FuturesPriceType? triggerPriceType = null, CancellationToken ct = default);
+        Task<HttpResult> EditTpSlOrderAsync(long orderId, decimal triggerPrice, decimal? executePrice = null, FuturesPriceType? triggerPriceType = null, CancellationToken ct = default);
 
     }
 }

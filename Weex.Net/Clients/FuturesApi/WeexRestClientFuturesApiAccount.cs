@@ -95,7 +95,7 @@ namespace Weex.Net.Clients.FuturesApi
         #region Set Margin Mode
 
         /// <inheritdoc />
-        public async Task<HttpResult<Unit>> SetMarginModeAsync(string symbol, MarginType marginType, PositionCombineType? combineType = null, CancellationToken ct = default)
+        public async Task<HttpResult> SetMarginModeAsync(string symbol, MarginType marginType, PositionCombineType? combineType = null, CancellationToken ct = default)
         {
             var parameters = new Parameters(WeexExchange._parameterSerializationSettings);
             parameters.Add("symbol", symbol);
@@ -104,12 +104,12 @@ namespace Weex.Net.Clients.FuturesApi
             var request = _definitions.GetOrCreate(HttpMethod.Post, _baseClient.BaseAddress, "/capi/v3/account/marginType", WeexExchange.RateLimiter.WeexRestUid, 1, true);
             var result = await _baseClient.SendAsync<WeexResult>(request, parameters, ct).ConfigureAwait(false);
             if (!result.Success)
-                return HttpResult.Fail<Unit>(result);
+                return HttpResult.Fail(result);
 
             if (result.Data.Code != 200)
-                return HttpResult.Fail<Unit>(result, new ServerError(result.Data.Code, _baseClient.GetErrorInfo(result.Data.Code, result.Data.Message)));
+                return HttpResult.Fail(result, new ServerError(result.Data.Code, _baseClient.GetErrorInfo(result.Data.Code, result.Data.Message)));
 
-            return HttpResult.Ok(result, Unit.Value);
+            return HttpResult.Ok(result);
         }
 
         #endregion
@@ -135,7 +135,7 @@ namespace Weex.Net.Clients.FuturesApi
         #region Adjust Isolated Margin
 
         /// <inheritdoc />
-        public async Task<HttpResult<Unit>> AdjustIsolatedMarginAsync(long positionId, decimal quantity, MarginAdjustType adjustType, CancellationToken ct = default)
+        public async Task<HttpResult> AdjustIsolatedMarginAsync(long positionId, decimal quantity, MarginAdjustType adjustType, CancellationToken ct = default)
         {
             var parameters = new Parameters(WeexExchange._parameterSerializationSettings);
             parameters.Add("isolatedPositionId", positionId);
@@ -144,12 +144,12 @@ namespace Weex.Net.Clients.FuturesApi
             var request = _definitions.GetOrCreate(HttpMethod.Post, _baseClient.BaseAddress, "/capi/v3/account/positionMargin", WeexExchange.RateLimiter.WeexRestUid, 30, true);
             var result = await _baseClient.SendAsync<WeexResult>(request, parameters, ct).ConfigureAwait(false);
             if (!result.Success)
-                return HttpResult.Fail<Unit>(result);
+                return HttpResult.Fail(result);
 
             if (result.Data.Code != 200)
-                return HttpResult.Fail<Unit>(result, new ServerError(result.Data.Code, _baseClient.GetErrorInfo(result.Data.Code, result.Data.Message)));
+                return HttpResult.Fail(result, new ServerError(result.Data.Code, _baseClient.GetErrorInfo(result.Data.Code, result.Data.Message)));
 
-            return HttpResult.Ok(result, Unit.Value);
+            return HttpResult.Ok(result);
         }
 
         #endregion
@@ -157,7 +157,7 @@ namespace Weex.Net.Clients.FuturesApi
         #region Set Auto Append Margin
 
         /// <inheritdoc />
-        public async Task<HttpResult<Unit>> SetAutoAppendMarginAsync(long positionId, bool autoAppendMargin, CancellationToken ct = default)
+        public async Task<HttpResult> SetAutoAppendMarginAsync(long positionId, bool autoAppendMargin, CancellationToken ct = default)
         {
             var parameters = new Parameters(WeexExchange._parameterSerializationSettings);
             parameters.Add("positionId", positionId);
@@ -165,12 +165,12 @@ namespace Weex.Net.Clients.FuturesApi
             var request = _definitions.GetOrCreate(HttpMethod.Post, _baseClient.BaseAddress, "/capi/v3/account/modifyAutoAppendMargin", WeexExchange.RateLimiter.WeexRestUid, 30, true);
             var result = await _baseClient.SendAsync<WeexResult>(request, parameters, ct).ConfigureAwait(false);
             if (!result.Success)
-                return HttpResult.Fail<Unit>(result);
+                return HttpResult.Fail(result);
 
             if (result.Data.Code != 200)
-                return HttpResult.Fail<Unit>(result, new ServerError(result.Data.Code, _baseClient.GetErrorInfo(result.Data.Code, result.Data.Message)));
+                return HttpResult.Fail(result, new ServerError(result.Data.Code, _baseClient.GetErrorInfo(result.Data.Code, result.Data.Message)));
 
-            return HttpResult.Ok(result, Unit.Value);
+            return HttpResult.Ok(result);
         }
 
         #endregion

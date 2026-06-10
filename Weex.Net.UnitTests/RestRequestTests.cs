@@ -137,7 +137,7 @@ namespace Weex.Net.UnitTests
 
         }
 
-        private bool IsAuthenticated(WebCallResult result)
+        private bool IsAuthenticated(IHttpResult result)
         {
             return result.RequestHeaders.Contains("ACCESS-SIGN");
         }
