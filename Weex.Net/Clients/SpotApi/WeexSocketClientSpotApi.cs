@@ -44,15 +44,15 @@ namespace Weex.Net.Clients.SpotApi
         /// <summary>
         /// ctor
         /// </summary>
-        internal WeexSocketClientSpotApi(WeexSocketClient baseClient, ILogger logger, WeexSocketOptions options) :
-            base(logger, WeexExchange.Metadata.Id, options.Environment.SocketClientSpotAddress!, options, options.SpotOptions)
+        internal WeexSocketClientSpotApi(WeexSocketClient baseClient, ILoggerFactory? loggerFactory, WeexSocketOptions options) :
+            base(loggerFactory, WeexExchange.Metadata.Id, options.Environment.SocketClientSpotAddress!, options, options.SpotOptions)
         {
             _baseClient = baseClient;
 
             RateLimiter = WeexExchange.RateLimiter.WeexSocket;
 
-            AddSystemSubscription(new WeexConnectedSubscription(logger));
-            AddSystemSubscription(new WeexPingSubscription(logger));
+            AddSystemSubscription(new WeexConnectedSubscription(_logger));
+            AddSystemSubscription(new WeexPingSubscription(_logger));
         }
         #endregion
 

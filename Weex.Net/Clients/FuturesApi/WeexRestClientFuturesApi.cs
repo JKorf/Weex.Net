@@ -41,12 +41,12 @@ namespace Weex.Net.Clients.FuturesApi
         #endregion
 
         #region constructor/destructor
-        internal WeexRestClientFuturesApi(WeexRestClient baseClient, ILogger logger, HttpClient? httpClient, WeexRestOptions options)
-            : base(logger, WeexExchange.Metadata.Id, httpClient, options.Environment.RestClientFuturesAddress, options, options.FuturesOptions)
+        internal WeexRestClientFuturesApi(WeexRestClient baseClient, ILoggerFactory? loggerFactory, HttpClient? httpClient, WeexRestOptions options)
+            : base(loggerFactory, WeexExchange.Metadata.Id, httpClient, options.Environment.RestClientFuturesAddress, options, options.FuturesOptions)
         {
             Account = new WeexRestClientFuturesApiAccount(this);
-            ExchangeData = new WeexRestClientFuturesApiExchangeData(logger, this);
-            Trading = new WeexRestClientFuturesApiTrading(logger, this);
+            ExchangeData = new WeexRestClientFuturesApiExchangeData(_logger, this);
+            Trading = new WeexRestClientFuturesApiTrading(_logger, this);
 
             StandardRequestHeaders = new Dictionary<string, string>
             {

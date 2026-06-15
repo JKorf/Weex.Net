@@ -43,15 +43,15 @@ namespace Weex.Net.Clients.FuturesApi
         /// <summary>
         /// ctor
         /// </summary>
-        internal WeexSocketClientFuturesApi(WeexSocketClient baseClient, ILogger logger, WeexSocketOptions options) :
-            base(logger, WeexExchange.Metadata.Id, options.Environment.SocketClientFuturesAddress!, options, options.FuturesOptions)
+        internal WeexSocketClientFuturesApi(WeexSocketClient baseClient, ILoggerFactory? loggerFactory, WeexSocketOptions options) :
+            base(loggerFactory, WeexExchange.Metadata.Id, options.Environment.SocketClientFuturesAddress!, options, options.FuturesOptions)
         {
             _baseClient = baseClient;
 
             RateLimiter = WeexExchange.RateLimiter.WeexSocket;
 
-            AddSystemSubscription(new WeexConnectedSubscription(logger));
-            AddSystemSubscription(new WeexPingSubscription(logger));
+            AddSystemSubscription(new WeexConnectedSubscription(_logger));
+            AddSystemSubscription(new WeexPingSubscription(_logger));
         }
         #endregion
 

@@ -48,8 +48,8 @@ namespace Weex.Net.Clients
         {
             Initialize(options.Value);
             
-            FuturesApi = AddApiClient(new WeexRestClientFuturesApi(this, _logger, httpClient, options.Value));
-            SpotApi = AddApiClient(new WeexRestClientSpotApi(this, _logger, httpClient, options.Value));
+            FuturesApi = AddApiClient(new WeexRestClientFuturesApi(this, loggerFactory, httpClient, options.Value));
+            SpotApi = AddApiClient(new WeexRestClientSpotApi(this, loggerFactory, httpClient, options.Value));
         }
 
         #endregion
