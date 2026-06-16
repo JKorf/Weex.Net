@@ -1,6 +1,6 @@
 // 05-error-handling.cs
 //
-// Demonstrates: WebCallResult patterns, retry logic, common Weex.Net validation.
+// Demonstrates: HttpResult patterns, retry logic, common Weex.Net validation.
 //
 // Setup: dotnet add package Weex.Net
 
@@ -15,7 +15,7 @@ var client = new WeexRestClient(options =>
 });
 
 // ---- 1. THE BASIC PATTERN ----
-// REST methods return WebCallResult<T>; socket subscriptions return CallResult<T>.
+// REST methods return HttpResult<T>; socket subscriptions return WebSocketResult<T>.
 // .Success is true/false. .Data is only valid when .Success is true.
 // .Error contains Code, Message, ErrorType, and IsTransient.
 
@@ -36,11 +36,11 @@ else
 // ---- 2. SIMPLE RETRY WITH BACKOFF ----
 // Retry only transient errors such as rate limits, network blips, or server overload.
 
-async Task<WebCallResult<T>> WithRetry<T>(
-    Func<Task<WebCallResult<T>>> call,
+async Task<HttpResult<T>> WithRetry<T>(
+    Func<Task<HttpResult<T>>> call,
     int maxAttempts = 3)
 {
-    WebCallResult<T> last = default!;
+    HttpResult<T> last = default!;
     for (var attempt = 1; attempt <= maxAttempts; attempt++)
     {
         last = await call();
@@ -122,7 +122,7 @@ if (!order.Success)
 //   The current source exposes WeexEnvironment.Live and custom environments only.
 
 // ---- 5. EXCEPTIONS VS ERROR RESULTS ----
-// Exchange/API errors are returned through WebCallResult.Error, not thrown.
+// Exchange/API errors are returned through HttpResult.Error, not thrown.
 // Exceptions are typically configuration, cancellation, disposal, or programmer errors.
 
 // Common variations:

@@ -62,7 +62,7 @@ namespace Weex.Net.UnitTests
                 OutputOriginalData = true
             }), logger);
 
-            var tester = new SocketSubscriptionValidator<WeexSocketClient>(client, "Subscriptions/Spot", "wss://ws-spot.weex.com");
+            var tester = new SocketSubscriptionValidator<WeexSocketClient>(client, "Subscriptions/Spot", "wss://ws-spot.weex.com/v3/ws/public");
             await tester.ValidateConcurrentAsync<WeexKlineUpdate[]>(
                 (client, handler) => client.SpotApi.SubscribeToKlineUpdatesAsync("ETHUSDT", Enums.KlineInterval.OneDay, handler),
                 (client, handler) => client.SpotApi.SubscribeToKlineUpdatesAsync("ETHUSDT", Enums.KlineInterval.OneHour, handler),
