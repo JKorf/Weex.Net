@@ -15,7 +15,8 @@ var client = new WeexRestClient(options =>
 });
 
 // ---- 1. THE BASIC PATTERN ----
-// REST methods return HttpResult<T>; socket subscriptions return WebSocketResult<T>.
+// Direct and SharedApis REST methods return HttpResult<T> or HttpResult.
+// Direct and SharedApis WebSocket subscriptions return WebSocketResult<UpdateSubscription>.
 // .Success is true/false. .Data is only valid when .Success is true.
 // .Error contains Code, Message, ErrorType, and IsTransient.
 

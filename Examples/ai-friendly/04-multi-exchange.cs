@@ -13,6 +13,7 @@ using Weex.Net.Clients;
 
 // ---- THE PATTERN ----
 // Each exchange client exposes a SharedClient property on supported API surfaces.
+// Use SharedClient.Discover() when you need runtime capability metadata.
 ISpotTickerRestClient weexShared = new WeexRestClient().SpotApi.SharedClient;
 
 // To add other exchanges, install their packages and assign their SharedClient:
@@ -53,6 +54,7 @@ async Task PrintTicker(ISpotTickerRestClient client, SharedSymbol symbol)
 //   ISpotOrderSocketClient, IFuturesOrderSocketClient, IPositionSocketClient
 
 // ---- WEBSOCKET EXAMPLE ----
+// Shared socket subscriptions return WebSocketResult<UpdateSubscription>.
 var weexSocket = new WeexSocketClient();
 ITickerSocketClient weexTickerSocket = weexSocket.SpotApi.SharedClient;
 

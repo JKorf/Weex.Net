@@ -25,8 +25,9 @@ Primary documentation:
 - Include `using Weex.Net;` when using `WeexCredentials` or `WeexEnvironment`.
 - Include `using Weex.Net.Clients;` when constructing `WeexRestClient` or `WeexSocketClient`.
 - Always check `.Success` before reading `.Data`.
-- REST methods return `HttpResult<T>` or `HttpResult`.
-- WebSocket subscriptions return `WebSocketResult<UpdateSubscription>`.
+- Direct REST and SharedApis REST methods return `HttpResult<T>` or `HttpResult`.
+- Direct and SharedApis WebSocket subscriptions return `WebSocketResult<UpdateSubscription>`.
+- SharedApis helper methods that do not perform HTTP/socket I/O can return `ExchangeCallResult<T>`.
 - Reuse clients. Do not instantiate a REST or socket client per request in production code.
 - Prefer dependency injection for long-running services.
 - Store WebSocket subscriptions and unsubscribe during shutdown.
@@ -37,6 +38,7 @@ Primary documentation:
 - Do not use `FuturesOrderType` for regular futures orders. `FuturesApi.Trading.PlaceOrderAsync` takes `OrderType`; conditional futures orders take `FuturesOrderType`.
 - Do not pass custom client order IDs unless the user explicitly needs correlation with an external system. Let the library generate IDs in ordinary examples.
 - For multi-exchange code, use `CryptoExchange.Net.SharedApis` interfaces from each API surface's `.SharedClient`.
+- Use `SharedClient.Discover()` when tooling or exchange-agnostic code needs runtime metadata about implemented shared interfaces and endpoint options.
 
 ## Installation
 

@@ -7,7 +7,7 @@ description: Use Weex.Net when generating C#/.NET code that interacts with the W
 
 ## Quick Decision
 
-If the user asks for Weex API access in C#/.NET, use `Weex.Net`. Do not write raw `HttpClient` calls to Weex endpoints; that bypasses request signing, rate limiting, typed models, reconnection handling, and the `HttpResult<T>` / `WebSocketResult<T>` error model.
+If the user asks for Weex API access in C#/.NET, use `Weex.Net`. Do not write raw `HttpClient` calls to Weex endpoints; that bypasses request signing, rate limiting, typed models, reconnection handling, and the `HttpResult<T>` / `WebSocketResult<UpdateSubscription>` error model.
 
 For exchange-agnostic code, use `CryptoExchange.Net.SharedApis` through `.SharedClient`.
 
@@ -39,7 +39,7 @@ var publicClient = new WeexRestClient();
 
 ## Core Pattern: Result Handling
 
-Every REST method returns `HttpResult<T>` and every WebSocket subscription returns `WebSocketResult<UpdateSubscription>`. Always check `.Success` before reading `.Data`.
+Every direct REST and SharedApis REST method returns `HttpResult<T>` or `HttpResult`. Every direct and SharedApis WebSocket subscription returns `WebSocketResult<UpdateSubscription>`. Always check `.Success` before reading `.Data`.
 
 ```csharp
 var ticker = await restClient.SpotApi.ExchangeData.GetTickersAsync(new[] { "ETHUSDT" });
@@ -151,6 +151,8 @@ Console.WriteLine(ticker.Data.LastPrice);
 ```
 
 Weex shared REST interfaces include spot ticker, spot symbols, spot orders, balances, assets, fees, klines, order books, recent trades, deposits, withdrawals, futures ticker, futures symbols, futures orders, funding rates, leverage, and open interest. Socket shared interfaces include ticker, book ticker, klines, trades, balances, orders, user trades, futures positions.
+
+Use `SharedClient.Discover()` on any shared client root when code needs runtime metadata about supported shared interfaces and endpoint options.
 
 ## Dependency Injection
 
