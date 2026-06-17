@@ -25,7 +25,6 @@ namespace Weex.Net
             SpotUserDataTrackerConfig? config = null) : base(
                 logger,
                 restClient.SpotApi.SharedClient,
-                null,
                 restClient.SpotApi.SharedClient,
                 socketClient.SpotApi.SharedClient,
                 restClient.SpotApi.SharedClient,
@@ -55,7 +54,6 @@ namespace Weex.Net
             FuturesUserDataTrackerConfig? config = null) :
             base(logger,
                 restClient.FuturesApi.SharedClient,
-                null,
                 restClient.FuturesApi.SharedClient,
                 socketClient.FuturesApi.SharedClient,
                 restClient.FuturesApi.SharedClient,
