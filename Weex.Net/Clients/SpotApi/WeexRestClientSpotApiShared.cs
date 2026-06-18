@@ -330,7 +330,13 @@ namespace Weex.Net.Clients.SpotApi
 
             return HttpResult.Ok(result, ExchangeHelpers.ApplyFilter(result.Data.Items, x => x.CreateTime, request.StartTime, request.EndTime, direction)
                 .Select(x =>
-                    new SharedWithdrawal(x.Asset, string.Empty, x.DeltaQuantity, true, x.CreateTime)
+                    new SharedWithdrawal(
+                        x.Asset,
+                        string.Empty, 
+                        x.DeltaQuantity, 
+                        true,
+                        x.CreateTime,
+                        SharedTransferStatus.Unknown)
                     {
                         Id = x.BillId.ToString()
                     })
