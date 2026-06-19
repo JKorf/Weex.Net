@@ -27,7 +27,8 @@ namespace Weex.Net
                 "https://www.weex.com/",
                 ["https://www.weex.com/api-doc/spot/log/changelog"],
                 PlatformType.CryptoCurrencyExchange,
-                CentralizationType.Centralized
+                CentralizationType.Centralized,
+                WeexEnvironment.All
                 );
 
         internal static JsonSerializerOptions _serializerContext = SerializerOptions.WithConverters(JsonSerializerContextCache.GetOrCreate<WeexSourceGenerationContext>());

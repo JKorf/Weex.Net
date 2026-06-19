@@ -21,7 +21,7 @@ namespace Weex.Net.Clients.FuturesApi
 
         public void SetDefaultExchangeParameter(string key, object value) => ExchangeParameters.SetStaticParameter(Exchange, key, value);
         public void ResetDefaultExchangeParameters() => ExchangeParameters.ResetStaticParameters();
-        public SharedClientInfo Discover() => SharedUtils.GetClientInfo(this);
+        public SharedClientInfo Discover() => SharedUtils.GetClientInfo(WeexExchange.Metadata, this);
 
         #region Balance client
         SubscribeBalanceOptions IBalanceSocketClient.SubscribeBalanceOptions { get; } = new SubscribeBalanceOptions(_exchangeName, true);
@@ -74,7 +74,7 @@ namespace Weex.Net.Clients.FuturesApi
                 var kline = update.Data.Single();
                 handler(update.ToType(
                     new SharedKline(
-                        ExchangeSymbolCache.ParseSymbol(_topicId, update.Symbol),
+                        ExchangeSymbolCache.ParseSymbol(_topicId, EnvironmentName, null, update.Symbol),
                         update.Symbol!,
                         kline.OpenTime,
                         kline.ClosePrice,
@@ -102,7 +102,7 @@ namespace Weex.Net.Clients.FuturesApi
             var symbols = request.Symbols?.Length > 0 ? request.Symbols.Select(x => x.GetSymbol(FormatSymbol)).ToArray() : [request.Symbol!.GetSymbol(FormatSymbol)];
             var result = await SubscribeToTickerUpdatesAsync(symbols, update => handler(update.ToType(
                 new SharedSpotTicker(
-                    ExchangeSymbolCache.ParseSymbol(_topicId, update.Symbol),
+                    ExchangeSymbolCache.ParseSymbol(_topicId, EnvironmentName, null, update.Symbol),
                     update.Symbol!,
                     update.Data.LastPrice,
                     update.Data.HighPrice,
@@ -137,7 +137,7 @@ namespace Weex.Net.Clients.FuturesApi
 
                 handler(update.ToType(update.Data.Select(x =>
                     new SharedTrade(
-                        ExchangeSymbolCache.ParseSymbol(_topicId, update.Symbol),
+                        ExchangeSymbolCache.ParseSymbol(_topicId, EnvironmentName, null, update.Symbol),
                         update.Symbol!,
                         x.Quantity,
                         x.Price,
@@ -166,7 +166,7 @@ namespace Weex.Net.Clients.FuturesApi
                 {
                     handler(update.ToType(update.Data.Trades.Select(x =>
                         new SharedUserTrade(
-                            ExchangeSymbolCache.ParseSymbol(_topicId, x.Symbol),
+                            ExchangeSymbolCache.ParseSymbol(_topicId, EnvironmentName, null, x.Symbol),
                             x.Symbol,
                             x.OrderId.ToString(),
                             x.Id,
@@ -198,7 +198,7 @@ namespace Weex.Net.Clients.FuturesApi
             var result = await SubscribeToOrderUpdatesAsync(
                 update => handler(update.ToType(update.Data.Orders.Select(x =>
                     new SharedFuturesOrder(
-                        ExchangeSymbolCache.ParseSymbol(_topicId, x.Symbol),
+                        ExchangeSymbolCache.ParseSymbol(_topicId, EnvironmentName, null, x.Symbol),
                         x.Symbol,
                         x.Id.ToString(),
                         ParseOrderType(x.OrderType),
@@ -270,7 +270,7 @@ namespace Weex.Net.Clients.FuturesApi
             var result = await SubscribeToPositionUpdatesAsync(
                 update => handler(update.ToType(update.Data.Positions.Select(x => 
                 new SharedPosition(
-                    ExchangeSymbolCache.ParseSymbol(_topicId, x.Symbol),
+                    ExchangeSymbolCache.ParseSymbol(_topicId, EnvironmentName, null, x.Symbol),
                     x.Symbol,
                     x.Quantity,
                     x.UpdateTime)

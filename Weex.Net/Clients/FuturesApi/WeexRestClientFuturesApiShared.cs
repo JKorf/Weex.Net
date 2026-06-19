@@ -20,7 +20,7 @@ namespace Weex.Net.Clients.FuturesApi
 
         public void SetDefaultExchangeParameter(string key, object value) => ExchangeParameters.SetStaticParameter(Exchange, key, value);
         public void ResetDefaultExchangeParameters() => ExchangeParameters.ResetStaticParameters();
-        public SharedClientInfo Discover() => SharedUtils.GetClientInfo(this);
+        public SharedClientInfo Discover() => SharedUtils.GetClientInfo(WeexExchange.Metadata, this);
 
         #region Balance Client
         GetBalancesOptions IBalanceRestClient.GetBalancesOptions { get; } = new GetBalancesOptions(_exchangeName, AccountTypeFilter.Spot);
@@ -55,7 +55,7 @@ namespace Weex.Net.Clients.FuturesApi
 
             var ticker = resultTicker.Data.Single();
             return HttpResult.Ok(resultTicker, new SharedBookTicker(
-                ExchangeSymbolCache.ParseSymbol(_topicId, ticker.Symbol),
+                ExchangeSymbolCache.ParseSymbol(_topicId, EnvironmentName, null, ticker.Symbol),
                 ticker.Symbol,
                 ticker.BestAskPrice,
                 ticker.BestAskQuantity,
@@ -243,20 +243,20 @@ namespace Weex.Net.Clients.FuturesApi
                 ContractSize = 1
             }).ToArray());
 
-            ExchangeSymbolCache.UpdateSymbolInfo(_topicId, resultData.Data!);
+            ExchangeSymbolCache.UpdateSymbolInfo(_topicId, EnvironmentName, null, resultData.Data!);
             return resultData;
         }
 
         async Task<ExchangeCallResult<SharedSymbol[]>> IFuturesSymbolRestClient.GetFuturesSymbolsForBaseAssetAsync(string baseAsset)
         {
-            if (!ExchangeSymbolCache.HasCached(_topicId))
+            if (!ExchangeSymbolCache.HasCached(_topicId, EnvironmentName, null))
             {
                 var symbols = await ((IFuturesSymbolRestClient)this).GetFuturesSymbolsAsync(new GetSymbolsRequest()).ConfigureAwait(false);
                 if (!symbols.Success)
                     return ExchangeCallResult<SharedSymbol[]>.Fail(Exchange, symbols.Error!);
             }
 
-            return ExchangeCallResult<SharedSymbol[]>.Ok(Exchange, ExchangeSymbolCache.GetSymbolsForBaseAsset(_topicId, baseAsset));
+            return ExchangeCallResult<SharedSymbol[]>.Ok(Exchange, ExchangeSymbolCache.GetSymbolsForBaseAsset(_topicId, EnvironmentName, null, baseAsset));
         }
 
         async Task<ExchangeCallResult<bool>> IFuturesSymbolRestClient.SupportsFuturesSymbolAsync(SharedSymbol symbol)
@@ -264,26 +264,26 @@ namespace Weex.Net.Clients.FuturesApi
             if (symbol.TradingMode == TradingMode.Spot)
                 throw new ArgumentException(nameof(symbol), "Spot symbols not allowed");
 
-            if (!ExchangeSymbolCache.HasCached(_topicId))
+            if (!ExchangeSymbolCache.HasCached(_topicId, EnvironmentName, null))
             {
                 var symbols = await ((IFuturesSymbolRestClient)this).GetFuturesSymbolsAsync(new GetSymbolsRequest()).ConfigureAwait(false);
                 if (!symbols.Success)
                     return ExchangeCallResult<bool>.Fail(Exchange, symbols.Error!);
             }
 
-            return ExchangeCallResult<bool>.Ok(Exchange, ExchangeSymbolCache.SupportsSymbol(_topicId, symbol));
+            return ExchangeCallResult<bool>.Ok(Exchange, ExchangeSymbolCache.SupportsSymbol(_topicId, EnvironmentName, null, symbol));
         }
 
         async Task<ExchangeCallResult<bool>> IFuturesSymbolRestClient.SupportsFuturesSymbolAsync(string symbolName)
         {
-            if (!ExchangeSymbolCache.HasCached(_topicId))
+            if (!ExchangeSymbolCache.HasCached(_topicId, EnvironmentName, null))
             {
                 var symbols = await ((IFuturesSymbolRestClient)this).GetFuturesSymbolsAsync(new GetSymbolsRequest()).ConfigureAwait(false);
                 if (!symbols.Success)
                     return ExchangeCallResult<bool>.Fail(Exchange, symbols.Error!);
             }
 
-            return ExchangeCallResult<bool>.Ok(Exchange, ExchangeSymbolCache.SupportsSymbol(_topicId, symbolName));
+            return ExchangeCallResult<bool>.Ok(Exchange, ExchangeSymbolCache.SupportsSymbol(_topicId, EnvironmentName, null, symbolName));
         }
         #endregion
 
@@ -310,7 +310,7 @@ namespace Weex.Net.Clients.FuturesApi
             var funding = resultFunding.Result.Data.Single();
 
             return HttpResult.Ok(resultTicker.Result, new SharedFuturesTicker(
-                ExchangeSymbolCache.ParseSymbol(_topicId, ticker.Symbol), 
+                ExchangeSymbolCache.ParseSymbol(_topicId, EnvironmentName, null, ticker.Symbol), 
                 ticker.Symbol,
                 ticker.LastPrice, 
                 ticker.HighPrice,
@@ -344,7 +344,7 @@ namespace Weex.Net.Clients.FuturesApi
             {
                 var funding = resultFunding.Result.Data.SingleOrDefault(p => p.Symbol == x.Symbol);
                 return new SharedFuturesTicker(
-                    ExchangeSymbolCache.ParseSymbol(_topicId, x.Symbol),
+                    ExchangeSymbolCache.ParseSymbol(_topicId, EnvironmentName, null, x.Symbol),
                     x.Symbol,
                     x.LastPrice,
                     x.HighPrice,
@@ -554,7 +554,7 @@ namespace Weex.Net.Clients.FuturesApi
                 return HttpResult.Fail<SharedFuturesOrder>(order);
 
             return HttpResult.Ok(order, new SharedFuturesOrder(
-                ExchangeSymbolCache.ParseSymbol(_topicId, order.Data.Symbol), order.Data.Symbol,
+                ExchangeSymbolCache.ParseSymbol(_topicId, EnvironmentName, null, order.Data.Symbol), order.Data.Symbol,
                 order.Data.OrderId.ToString(),
                 ParseOrderType(order.Data.OrderType),
                 order.Data.Side == OrderSide.Buy ? SharedOrderSide.Buy : SharedOrderSide.Sell,
@@ -588,7 +588,7 @@ namespace Weex.Net.Clients.FuturesApi
                 return HttpResult.Fail<SharedFuturesOrder[]>(orders);
 
             return HttpResult.Ok(orders, orders.Data.Select(x => new SharedFuturesOrder(
-               ExchangeSymbolCache.ParseSymbol(_topicId, x.Symbol), x.Symbol,
+               ExchangeSymbolCache.ParseSymbol(_topicId, EnvironmentName, null, x.Symbol), x.Symbol,
                 x.OrderId.ToString(),
                 ParseOrderType(x.OrderType),
                 x.Side == OrderSide.Buy ? SharedOrderSide.Buy : SharedOrderSide.Sell,
@@ -641,7 +641,7 @@ namespace Weex.Net.Clients.FuturesApi
             return HttpResult.Ok(result, ExchangeHelpers.ApplyFilter(result.Data, x => x.Timestamp, request.StartTime, request.EndTime, direction)
                 .Select(x =>
                     new SharedFuturesOrder(
-                        ExchangeSymbolCache.ParseSymbol(_topicId, x.Symbol), x.Symbol,
+                        ExchangeSymbolCache.ParseSymbol(_topicId, EnvironmentName, null, x.Symbol), x.Symbol,
                         x.OrderId.ToString(),
                         ParseOrderType(x.OrderType),
                         x.Side == OrderSide.Buy ? SharedOrderSide.Buy : SharedOrderSide.Sell,
@@ -681,7 +681,7 @@ namespace Weex.Net.Clients.FuturesApi
                 return HttpResult.Fail<SharedUserTrade[]>(orders);
 
             return HttpResult.Ok(orders, orders.Data.Select(x => new SharedUserTrade(
-                ExchangeSymbolCache.ParseSymbol(_topicId, x.Symbol), x.Symbol,
+                ExchangeSymbolCache.ParseSymbol(_topicId, EnvironmentName, null, x.Symbol), x.Symbol,
                 x.OrderId.ToString(),
                 x.Id.ToString(),
                 x.Side == OrderSide.Buy ? SharedOrderSide.Buy : SharedOrderSide.Sell,
@@ -728,7 +728,7 @@ namespace Weex.Net.Clients.FuturesApi
             return HttpResult.Ok(result, ExchangeHelpers.ApplyFilter(result.Data, x => x.Timestamp, request.StartTime, request.EndTime, direction)
                 .Select(x =>
                     new SharedUserTrade(
-                        ExchangeSymbolCache.ParseSymbol(_topicId, x.Symbol), x.Symbol,
+                        ExchangeSymbolCache.ParseSymbol(_topicId, EnvironmentName, null, x.Symbol), x.Symbol,
                         x.OrderId.ToString(),
                         x.Id.ToString(),
                         x.Side == OrderSide.Buy ? SharedOrderSide.Buy : SharedOrderSide.Sell,
@@ -779,7 +779,7 @@ namespace Weex.Net.Clients.FuturesApi
             
             return HttpResult.Ok(result, data.Select(x =>
                 new SharedPosition(
-                    ExchangeSymbolCache.ParseSymbol(_topicId, x.Symbol),
+                    ExchangeSymbolCache.ParseSymbol(_topicId, EnvironmentName, null, x.Symbol),
                     x.Symbol,
                     Math.Abs(x.Quantity),
                     DateTime.UtcNow)
@@ -931,7 +931,7 @@ namespace Weex.Net.Clients.FuturesApi
             var (orderType, orderDirection) = ParseTriggerDirections(order.OrderType, order.Side);
             // Return
             return HttpResult.Ok(orders, new SharedFuturesTriggerOrder(
-                ExchangeSymbolCache.ParseSymbol(_topicId, order.Symbol),
+                ExchangeSymbolCache.ParseSymbol(_topicId, EnvironmentName, null, order.Symbol),
                 order.Symbol,
                 order.AlgoId.ToString(),
                 orderType,
