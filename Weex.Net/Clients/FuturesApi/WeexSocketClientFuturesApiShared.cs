@@ -32,7 +32,8 @@ namespace Weex.Net.Clients.FuturesApi
                 return WebSocketResult.Fail<UpdateSubscription>(Exchange, validationError);
 
             var result = await SubscribeToAccountUpdatesAsync(
-                update => handler(update.ToType(update.Data.Balances.Select(x => new SharedBalance(x.Asset, x.Quantity, x.LegacyQuantity)).ToArray())),
+                update => handler(update.ToType(update.Data.Balances.Select(x => 
+                    new SharedBalance(SupportedTradingModes, x.Asset, x.Quantity, x.LegacyQuantity)).ToArray())),
                 ct: ct).ConfigureAwait(false);
 
             return result;
