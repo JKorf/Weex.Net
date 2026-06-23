@@ -16,10 +16,15 @@ namespace Weex.Net.Enums
         [Map("TRADING")]
         Trading,
         /// <summary>
-        /// ["<c>TRADING</c>"] Paused
+        /// ["<c>BREAK</c>"] Paused
         /// </summary>
         [Map("BREAK")]
-        Break
+        Break,
+        /// <summary>
+        /// ["<c>HALT</c>"] Halted
+        /// </summary>
+        [Map("HALT")]
+        Halt
     }
 
 }
