@@ -12,15 +12,15 @@ namespace Weex.Net.Objects.Sockets
     {
         public WeexQuery(WeexSocketRequest request, bool authenticated, int weight = 1) : base(request, authenticated, weight)
         {
-            MessageRouter = MessageRouter.CreateWithoutTopicFilter<WeexSocketResponse>(request.Id.ToString(), HandleMessage);
+            MessageRouter = MessageRouter.CreateForQuery<WeexSocketResponse>([request.Id.ToString()], HandleMessage);
         }
 
         public CallResult<WeexSocketResponse> HandleMessage(SocketConnection connection, DateTime receiveTime, string? originalData, WeexSocketResponse message)
         {
             if (!message.Result)
-                return new CallResult<WeexSocketResponse>(new ServerError(ErrorInfo.Unknown with { Message = message.Message }));
+                return CallResult.Fail<WeexSocketResponse>(new ServerError(ErrorInfo.Unknown with { Message = message.Message }));
 
-            return new CallResult<WeexSocketResponse>(message, originalData, null);
+            return CallResult.Ok(message);
         }
     }
 }

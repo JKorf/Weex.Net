@@ -27,10 +27,16 @@ namespace Weex.Net
                 "https://www.weex.com/",
                 ["https://www.weex.com/api-doc/spot/log/changelog"],
                 PlatformType.CryptoCurrencyExchange,
-                CentralizationType.Centralized
+                CentralizationType.Centralized,
+                WeexEnvironment.All
                 );
 
         internal static JsonSerializerOptions _serializerContext = SerializerOptions.WithConverters(JsonSerializerContextCache.GetOrCreate<WeexSourceGenerationContext>());
+        internal static ParameterSerializationSettings _parameterSerializationSettings = new ParameterSerializationSettings
+        {
+            Decimal = DecimalSerialization.String,
+            DateTimes = DateTimeSerialization.MillisecondsString
+        };
         internal static string _clientReference = "b-WEEX111124-";
 
         /// <summary>
@@ -62,7 +68,7 @@ namespace Weex.Net
         /// <summary>
         /// Rate limiter configuration for the Weex API
         /// </summary>
-        public static WeexRateLimiters RateLimiter { get; } = new WeexRateLimiters();
+        public static WeexRateLimiters RateLimiter { get; set; } = new WeexRateLimiters();
     }
 
     /// <summary>
@@ -80,13 +86,19 @@ namespace Weex.Net
         public event Action<RateLimitUpdateEvent> RateLimitUpdated;
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-        internal WeexRateLimiters()
+        /// <summary>
+        /// ctor
+        /// </summary>
+        public WeexRateLimiters()
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         {
             Initialize();
         }
 
-        private void Initialize()
+        /// <summary>
+        /// Initialize the rate limits
+        /// </summary>
+        protected virtual void Initialize()
         {
             WeexRestIp = new RateLimitGate("Weex IP")
                 .AddGuard(new RateLimitGuard(RateLimitGuard.PerEndpoint, new LimitItemTypeFilter(RateLimitItemType.Request), 500, TimeSpan.FromSeconds(10), RateLimitWindowType.Sliding)); // 500 weight per 10 seconds 

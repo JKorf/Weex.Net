@@ -12,7 +12,7 @@ namespace Weex.Net.Objects.Sockets.Subscriptions
     {
         public WeexPingSubscription(ILogger logger) : base(logger, false)
         {
-            MessageRouter = MessageRouter.CreateWithoutTopicFilter<WeexPing>("ping", HandlePing);
+            MessageRouter = MessageRouter.CreateForEvent<WeexPing>("ping", HandlePing);
         }
 
         private CallResult? HandlePing(SocketConnection connection, DateTime time, string? arg3, WeexPing ping)
@@ -23,7 +23,7 @@ namespace Weex.Net.Objects.Sockets.Subscriptions
                 _ = connection.SendAsync(id, new WeexSocketRequest() { Id = id, Method = "PONG" }, 0);
             else
                 _ = connection.SendAndWaitQueryAsync(new WeexQuery(new WeexSocketRequest() { Id = id, Method = "PONG" }, false, 0));
-            return CallResult.SuccessResult;
+            return CallResult.Ok();
         }
     }
 }

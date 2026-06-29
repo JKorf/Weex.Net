@@ -18,7 +18,7 @@ namespace Weex.Net.Interfaces.Clients.FuturesApi
         /// </summary>
         /// <param name="ct">Cancellation token</param>
         /// <returns></returns>
-        Task<WebCallResult<DateTime>> GetServerTimeAsync(CancellationToken ct = default);
+        Task<HttpResult<DateTime>> GetServerTimeAsync(CancellationToken ct = default);
 
         /// <summary>
         /// Get asset and symbol info
@@ -31,7 +31,7 @@ namespace Weex.Net.Interfaces.Clients.FuturesApi
         /// </summary>
         /// <param name="symbol">["<c>symbol</c>"] Filter by symbol, for example `ETHUSDT`</param>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult<WeexFuturesExchangeInfo>> GetExchangeInfoAsync(string? symbol = null, CancellationToken ct = default);
+        Task<HttpResult<WeexFuturesExchangeInfo>> GetExchangeInfoAsync(string? symbol = null, CancellationToken ct = default);
 
         /// <summary>
         /// Get order book snapshot
@@ -45,7 +45,7 @@ namespace Weex.Net.Interfaces.Clients.FuturesApi
         /// <param name="symbol">["<c>symbol</c>"] The symbol, for example `ETHUSDT`</param>
         /// <param name="depth">["<c>limit</c>"] Book depth, either 15 or 200</param>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult<WeexOrderBook>> GetOrderBookAsync(string symbol, int? depth = null, CancellationToken ct = default);
+        Task<HttpResult<WeexOrderBook>> GetOrderBookAsync(string symbol, int? depth = null, CancellationToken ct = default);
 
         /// <summary>
         /// Get 24h ticker price statistics
@@ -58,7 +58,7 @@ namespace Weex.Net.Interfaces.Clients.FuturesApi
         /// </summary>
         /// <param name="symbol">["<c>symbol</c>"] The symbol, for example `ETHUSDT`</param>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult<WeexFuturesTicker[]>> GetTickersAsync(string? symbol = null, CancellationToken ct = default);
+        Task<HttpResult<WeexFuturesTicker[]>> GetTickersAsync(string? symbol = null, CancellationToken ct = default);
 
         /// <summary>
         /// Get best price/quantity on the order book for a symbol or symbols.
@@ -71,7 +71,7 @@ namespace Weex.Net.Interfaces.Clients.FuturesApi
         /// </summary>
         /// <param name="symbol">["<c>symbol</c>"] Filter by symbol, for example `ETHUSDT`</param>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult<WeexFuturesBookTicker[]>> GetBookTickersAsync(string? symbol = null, CancellationToken ct = default);
+        Task<HttpResult<WeexFuturesBookTicker[]>> GetBookTickersAsync(string? symbol = null, CancellationToken ct = default);
 
         /// <summary>
         /// Get recent trades
@@ -85,7 +85,7 @@ namespace Weex.Net.Interfaces.Clients.FuturesApi
         /// <param name="symbol">["<c>symbol</c>"] The symbol, for example `ETHUSDT`</param>
         /// <param name="limit">["<c>limit</c>"] Max number of results, max 1000</param>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult<WeexTrade[]>> GetRecentTradesAsync(string symbol, int? limit = null, CancellationToken ct = default);
+        Task<HttpResult<WeexTrade[]>> GetRecentTradesAsync(string symbol, int? limit = null, CancellationToken ct = default);
 
         /// <summary>
         /// Get klines/candles for a symbol.
@@ -100,7 +100,7 @@ namespace Weex.Net.Interfaces.Clients.FuturesApi
         /// <param name="interval">["<c>interval</c>"] Kline interval</param>
         /// <param name="limit">["<c>limit</c>"] Max number of results, max 1000</param>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult<WeexKline[]>> GetKlinesAsync(string symbol, FuturesKlineInterval interval, int? limit = null, CancellationToken ct = default);
+        Task<HttpResult<WeexKline[]>> GetKlinesAsync(string symbol, FuturesKlineInterval interval, int? limit = null, CancellationToken ct = default);
 
         /// <summary>
         /// Get index price klines/candles for a symbol.
@@ -115,7 +115,7 @@ namespace Weex.Net.Interfaces.Clients.FuturesApi
         /// <param name="interval">["<c>interval</c>"] Kline interval</param>
         /// <param name="limit">["<c>limit</c>"] Max number of results, max 1000</param>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult<WeexKline[]>> GetIndexPriceKlinesAsync(string symbol, FuturesKlineInterval interval, int? limit = null, CancellationToken ct = default);
+        Task<HttpResult<WeexKline[]>> GetIndexPriceKlinesAsync(string symbol, FuturesKlineInterval interval, int? limit = null, CancellationToken ct = default);
 
         /// <summary>
         /// Get mark price klines/candles for a symbol.
@@ -130,7 +130,7 @@ namespace Weex.Net.Interfaces.Clients.FuturesApi
         /// <param name="interval">["<c>interval</c>"] Kline interval</param>
         /// <param name="limit">["<c>limit</c>"] Max number of results, max 1000</param>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult<WeexKline[]>> GetMarkPriceKlinesAsync(string symbol, FuturesKlineInterval interval, int? limit = null, CancellationToken ct = default);
+        Task<HttpResult<WeexKline[]>> GetMarkPriceKlinesAsync(string symbol, FuturesKlineInterval interval, int? limit = null, CancellationToken ct = default);
 
         /// <summary>
         /// Get kline history
@@ -148,7 +148,7 @@ namespace Weex.Net.Interfaces.Clients.FuturesApi
         /// <param name="limit">["<c>limit</c>"] Max number of results, max 100</param>
         /// <param name="priceType">["<c>priceType</c>"] Price type</param>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult<WeexKline[]>> GetKlineHistoryAsync(string symbol, KlineInterval interval, DateTime? startTime = null, DateTime? endTime = null, int? limit = null, PriceType? priceType = null, CancellationToken ct = default);
+        Task<HttpResult<WeexKline[]>> GetKlineHistoryAsync(string symbol, KlineInterval interval, DateTime? startTime = null, DateTime? endTime = null, int? limit = null, PriceType? priceType = null, CancellationToken ct = default);
 
         /// <summary>
         /// Get index/mark price for a symbol
@@ -162,7 +162,7 @@ namespace Weex.Net.Interfaces.Clients.FuturesApi
         /// <param name="symbol">["<c>symbol</c>"] The symbol, for example `ETHUSDT`</param>
         /// <param name="priceType">["<c>priceType</c>"] Price type, defaults to Index</param>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult<WeexFuturesPrice>> GetPriceAsync(string symbol, PriceType? priceType = null, CancellationToken ct = default);
+        Task<HttpResult<WeexFuturesPrice>> GetPriceAsync(string symbol, PriceType? priceType = null, CancellationToken ct = default);
 
         /// <summary>
         /// Get open interest for a symbol
@@ -175,7 +175,7 @@ namespace Weex.Net.Interfaces.Clients.FuturesApi
         /// </summary>
         /// <param name="symbol">["<c>symbol</c>"] The symbol, for example `ETHUSDT`</param>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult<WeexOpenInterest>> GetOpenInterestAsync(string symbol, CancellationToken ct = default);
+        Task<HttpResult<WeexOpenInterest>> GetOpenInterestAsync(string symbol, CancellationToken ct = default);
 
         /// <summary>
         /// Get current funding rate info
@@ -188,7 +188,7 @@ namespace Weex.Net.Interfaces.Clients.FuturesApi
         /// </summary>
         /// <param name="symbol">["<c>symbol</c>"] Filter by symbol, for example `ETHUSDT`</param>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult<WeexFundingInfo[]>> GetFundingRateAsync(string? symbol = null, CancellationToken ct = default);
+        Task<HttpResult<WeexFundingInfo[]>> GetFundingRateAsync(string? symbol = null, CancellationToken ct = default);
 
         /// <summary>
         /// Get funding history
@@ -204,7 +204,7 @@ namespace Weex.Net.Interfaces.Clients.FuturesApi
         /// <param name="endTime">["<c>endTime</c>"] Filter by end time</param>
         /// <param name="limit">["<c>limit</c>"] Max number of results, max 1000</param>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult<WeexFundingHistory[]>> GetFundingRateHistoryAsync(string symbol, DateTime? startTime = null, DateTime? endTime = null, int? limit = null, CancellationToken ct = default);
+        Task<HttpResult<WeexFundingHistory[]>> GetFundingRateHistoryAsync(string symbol, DateTime? startTime = null, DateTime? endTime = null, int? limit = null, CancellationToken ct = default);
 
         /// <summary>
         /// 
@@ -216,7 +216,7 @@ namespace Weex.Net.Interfaces.Clients.FuturesApi
         /// </para>
         /// </summary>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult<string[]>> GetTradingSymbolsAsync(CancellationToken ct = default);
+        Task<HttpResult<string[]>> GetTradingSymbolsAsync(CancellationToken ct = default);
 
     }
 }

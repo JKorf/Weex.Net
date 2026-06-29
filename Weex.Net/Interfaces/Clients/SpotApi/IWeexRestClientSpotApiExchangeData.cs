@@ -20,7 +20,7 @@ namespace Weex.Net.Interfaces.Clients.SpotApi
         /// </summary>
         /// <param name="ct">Cancellation token</param>
         /// <returns></returns>
-        Task<WebCallResult<DateTime>> GetServerTimeAsync(CancellationToken ct = default);
+        Task<HttpResult<DateTime>> GetServerTimeAsync(CancellationToken ct = default);
 
         /// <summary>
         /// Get list of support assets and network info
@@ -32,7 +32,7 @@ namespace Weex.Net.Interfaces.Clients.SpotApi
         /// </para>
         /// </summary>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult<WeexAsset[]>> GetAssetsAsync(CancellationToken ct = default);
+        Task<HttpResult<WeexAsset[]>> GetAssetsAsync(CancellationToken ct = default);
 
         /// <summary>
         /// Get exchange information
@@ -46,7 +46,7 @@ namespace Weex.Net.Interfaces.Clients.SpotApi
         /// <param name="symbols">["<c>symbols</c>"] Filter by symbols, for example `ETHUSDT`</param>
         /// <param name="symbolStatus">["<c>symbolStatus</c>"] Filter by symbol status</param>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult<WeexExchangeInfo>> GetExchangeInfoAsync(IEnumerable<string>? symbols = null, SymbolStatus? symbolStatus = null, CancellationToken ct = default);
+        Task<HttpResult<WeexExchangeInfo>> GetExchangeInfoAsync(IEnumerable<string>? symbols = null, SymbolStatus? symbolStatus = null, CancellationToken ct = default);
 
         /// <summary>
         /// Get last price for symbols
@@ -59,7 +59,7 @@ namespace Weex.Net.Interfaces.Clients.SpotApi
         /// </summary>
         /// <param name="symbols">["<c>symbols</c>"] Filter by symbols, for example `ETHUSDT`</param>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult<WeexPrice[]>> GetPricesAsync(IEnumerable<string>? symbols = null, CancellationToken ct = default);
+        Task<HttpResult<WeexPrice[]>> GetPricesAsync(IEnumerable<string>? symbols = null, CancellationToken ct = default);
 
         /// <summary>
         /// Get 24hr price change statistics for symbols
@@ -72,7 +72,7 @@ namespace Weex.Net.Interfaces.Clients.SpotApi
         /// </summary>
         /// <param name="symbols">["<c>symbols</c>"] Filter symbols, for example `ETHUSDT`</param>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult<WeexTicker[]>> GetTickersAsync(IEnumerable<string>? symbols = null, CancellationToken ct = default);
+        Task<HttpResult<WeexTicker[]>> GetTickersAsync(IEnumerable<string>? symbols = null, CancellationToken ct = default);
 
         /// <summary>
         /// Get recent trades for a symbol
@@ -86,7 +86,7 @@ namespace Weex.Net.Interfaces.Clients.SpotApi
         /// <param name="symbol">["<c>symbol</c>"] The symbol, for example `ETHUSDT`</param>
         /// <param name="limit">["<c>limit</c>"] Max number of results, max 1000</param>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult<WeexTrade[]>> GetRecentTradesAsync(string symbol, int? limit = null, CancellationToken ct = default);
+        Task<HttpResult<WeexTrade[]>> GetRecentTradesAsync(string symbol, int? limit = null, CancellationToken ct = default);
 
         /// <summary>
         /// Get kline/candlestick data for a symbol
@@ -100,7 +100,7 @@ namespace Weex.Net.Interfaces.Clients.SpotApi
         /// <param name="symbol">["<c>symbol</c>"] The symbol, for example `ETHUSDT`</param>
         /// <param name="interval">["<c>interval</c>"] Kline interval</param>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult<WeexKline[]>> GetKlinesAsync(string symbol, KlineInterval interval, CancellationToken ct = default);
+        Task<HttpResult<WeexKline[]>> GetKlinesAsync(string symbol, KlineInterval interval, CancellationToken ct = default);
 
         /// <summary>
         /// Get order book snapshot
@@ -114,7 +114,7 @@ namespace Weex.Net.Interfaces.Clients.SpotApi
         /// <param name="symbol">["<c>symbol</c>"] The symbol, for example `ETHUSDT`</param>
         /// <param name="limit">["<c>limit</c>"] 15 or 200</param>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult<WeexOrderBook>> GetOrderBookAsync(string symbol, int? limit = null, CancellationToken ct = default);
+        Task<HttpResult<WeexOrderBook>> GetOrderBookAsync(string symbol, int? limit = null, CancellationToken ct = default);
 
         /// <summary>
         /// Get book ticker (best bid/ask)
@@ -127,7 +127,7 @@ namespace Weex.Net.Interfaces.Clients.SpotApi
         /// </summary>
         /// <param name="symbols">["<c>symbols</c>"] Filter by symbol, for example `ETHUSDT`</param>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult<WeexBookTicker[]>> GetBookTickersAsync(IEnumerable<string>? symbols = null, CancellationToken ct = default);
+        Task<HttpResult<WeexBookTicker[]>> GetBookTickersAsync(IEnumerable<string>? symbols = null, CancellationToken ct = default);
 
     }
 }

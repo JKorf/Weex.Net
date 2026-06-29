@@ -24,7 +24,7 @@ namespace Weex.Net.Interfaces.Clients.SpotApi
         /// </para>
         /// </summary>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult<string[]>> GetTradingSymbolsAsync(CancellationToken ct = default);
+        Task<HttpResult<string[]>> GetTradingSymbolsAsync(CancellationToken ct = default);
 
         /// <summary>
         /// Get account info and balances
@@ -36,7 +36,7 @@ namespace Weex.Net.Interfaces.Clients.SpotApi
         /// </para>
         /// </summary>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult<WeexAccountInfo>> GetAccountInfoAsync(CancellationToken ct = default);
+        Task<HttpResult<WeexAccountInfo>> GetAccountInfoAsync(CancellationToken ct = default);
 
         /// <summary>
         /// Get account bill history
@@ -53,7 +53,7 @@ namespace Weex.Net.Interfaces.Clients.SpotApi
         /// <param name="endTime">["<c>before</c>"] Filter by end time</param>
         /// <param name="limit">["<c>limit</c>"] Max number of results, max 100</param>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult<WeexBill[]>> GetAccountBillsAsync(long? assetId = null, BusinessType? businessType = null, DateTime? startTime = null, DateTime? endTime = null, int? limit = null, CancellationToken ct = default);
+        Task<HttpResult<WeexBill[]>> GetAccountBillsAsync(long? assetId = null, BusinessType? businessType = null, DateTime? startTime = null, DateTime? endTime = null, int? limit = null, CancellationToken ct = default);
 
         /// <summary>
         /// Get account funding bills
@@ -71,7 +71,7 @@ namespace Weex.Net.Interfaces.Clients.SpotApi
         /// <param name="page">["<c>pageIndex</c>"] Page number</param>
         /// <param name="limit">["<c>pageSize</c>"] Max number of results, max 100</param>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult<WeexPage<WeexFundingBill>>> GetFundingBillsAsync(long? assetId = null, BusinessType? businessType = null, DateTime? startTime = null, DateTime? endTime = null, int? page = null, int? limit = null, CancellationToken ct = default);
+        Task<HttpResult<WeexPage<WeexFundingBill>>> GetFundingBillsAsync(long? assetId = null, BusinessType? businessType = null, DateTime? startTime = null, DateTime? endTime = null, int? page = null, int? limit = null, CancellationToken ct = default);
 
         /// <summary>
         /// Get transfer history
@@ -88,7 +88,7 @@ namespace Weex.Net.Interfaces.Clients.SpotApi
         /// <param name="endTime">["<c>before</c>"] Filter by end time</param>
         /// <param name="limit">["<c>limit</c>"] Max number of results</param>
         /// <param name="ct">Cancellation token</param>
-        Task<WebCallResult<WeexTransfer[]>> GetTransferHistoryAsync(long? assetId = null, AccountType? fromType = null, DateTime? startTime = null, DateTime? endTime = null, int? limit = null, CancellationToken ct = default);
+        Task<HttpResult<WeexTransfer[]>> GetTransferHistoryAsync(long? assetId = null, AccountType? fromType = null, DateTime? startTime = null, DateTime? endTime = null, int? limit = null, CancellationToken ct = default);
 
     }
 }

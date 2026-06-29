@@ -36,11 +36,11 @@ namespace Weex.Net.Objects.Sockets.Subscriptions
             {
                 if (symbols?.Length > 0)
                 {
-                    routes.AddRange(symbols.Select(x => MessageRoute<T>.CreateWithTopicFilter(type, x, DoHandleMessage)));
+                    routes.AddRange(symbols.Select(x => MessageRoute.CreateForEvent<T>(type, x, DoHandleMessage)));
                 }
                 else
                 {
-                    routes.Add(MessageRoute<T>.CreateWithoutTopicFilter(type, DoHandleMessage));
+                    routes.Add(MessageRoute.CreateForEvent<T>(type, DoHandleMessage));
                 }
             }
 
@@ -73,7 +73,7 @@ namespace Weex.Net.Objects.Sockets.Subscriptions
         public CallResult DoHandleMessage(SocketConnection connection, DateTime receiveTime, string? originalData, T message)
         {
             _handler.Invoke(receiveTime, originalData, message);
-            return new CallResult(null);
+            return CallResult.Ok();
         }
     }
 }

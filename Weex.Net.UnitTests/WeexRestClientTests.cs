@@ -1,6 +1,7 @@
 using CryptoExchange.Net.Authentication;
 using CryptoExchange.Net.Clients;
 using CryptoExchange.Net.Converters.SystemTextJson;
+using CryptoExchange.Net.Objects;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -27,12 +28,11 @@ namespace Weex.Net.UnitTests
                     return headers["ACCESS-SIGN"].ToString();
                 },
                 "AkV6bNpe7++1vpD331UuwdWXsGC8Qy2HheZ29ilIwOQ=",
-                new Dictionary<string, object>
+                new Parameters(WeexExchange._parameterSerializationSettings)
                 {
                     { "symbol", "LTCBTC" },
                 },
                 DateTimeConverter.ParseFromDouble(1499827319559),
-                true,
                 false);
         }
 

@@ -6,20 +6,21 @@ using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Concurrent;
 using System.Net.Http;
+using CryptoExchange.Net.Clients;
 
 namespace Weex.Net.Clients
 {
     /// <inheritdoc />
-    public class WeexUserClientProvider : IWeexUserClientProvider
+    public class WeexUserClientProvider : UserClientProvider<
+        IWeexRestClient,
+        IWeexSocketClient,
+        WeexRestOptions,
+        WeexSocketOptions,
+        WeexCredentials,
+        WeexEnvironment
+        >, IWeexUserClientProvider
     {
-        private static ConcurrentDictionary<string, IWeexRestClient> _restClients = new ConcurrentDictionary<string, IWeexRestClient>();
-        private static ConcurrentDictionary<string, IWeexSocketClient> _socketClients = new ConcurrentDictionary<string, IWeexSocketClient>();
         
-        private readonly IOptions<WeexRestOptions> _restOptions;
-        private readonly IOptions<WeexSocketOptions> _socketOptions;
-        private readonly HttpClient _httpClient;
-        private readonly ILoggerFactory? _loggerFactory;
-
         /// <summary>
         /// ctor
         /// </summary>
@@ -37,97 +38,18 @@ namespace Weex.Net.Clients
             ILoggerFactory? loggerFactory,
             IOptions<WeexRestOptions> restOptions,
             IOptions<WeexSocketOptions> socketOptions)
+            : base(httpClient, loggerFactory, restOptions, socketOptions)
         {
-            _httpClient = httpClient ?? new HttpClient();
-            _httpClient.Timeout = restOptions.Value.RequestTimeout;
-            _loggerFactory = loggerFactory;
-            _restOptions = restOptions;
-            _socketOptions = socketOptions;
         }
 
         /// <inheritdoc />
-        public void InitializeUserClient(string userIdentifier, WeexCredentials credentials, WeexEnvironment? environment = null)
-        {
-            CreateRestClient(userIdentifier, credentials, environment);
-            CreateSocketClient(userIdentifier, credentials, environment);
-        }
+        public override string ExchangeName => WeexExchange.Metadata.Id;
 
         /// <inheritdoc />
-        public void ClearUserClients(string userIdentifier)
-        {
-            _restClients.TryRemove(userIdentifier, out _);
-            _socketClients.TryRemove(userIdentifier, out _);
-        }
-
+        protected override IWeexRestClient ConstructRestClient(HttpClient client, ILoggerFactory? loggerFactory, IOptions<WeexRestOptions> options) 
+            => new WeexRestClient(client, loggerFactory, options);
         /// <inheritdoc />
-        public IWeexRestClient GetRestClient(string userIdentifier, WeexCredentials? credentials = null, WeexEnvironment? environment = null)
-        {
-            if (!_restClients.TryGetValue(userIdentifier, out var client) || client.Disposed)
-                client = CreateRestClient(userIdentifier, credentials, environment);
-
-            return client;
-        }
-
-        /// <inheritdoc />
-        public IWeexSocketClient GetSocketClient(string userIdentifier, WeexCredentials? credentials = null, WeexEnvironment? environment = null)
-        {
-            if (!_socketClients.TryGetValue(userIdentifier, out var client) || client.Disposed)
-                client = CreateSocketClient(userIdentifier, credentials, environment);
-
-            return client;
-        }
-
-        private IWeexRestClient CreateRestClient(string userIdentifier, WeexCredentials? credentials, WeexEnvironment? environment)
-        {
-            var clientRestOptions = SetRestEnvironment(environment);
-            var client = new WeexRestClient(_httpClient, _loggerFactory, clientRestOptions);
-            if (credentials != null)
-            {
-                client.SetApiCredentials(credentials);
-                _restClients[userIdentifier] = client;
-            }
-            return client;
-        }
-
-        private IWeexSocketClient CreateSocketClient(string userIdentifier, WeexCredentials? credentials, WeexEnvironment? environment)
-        {
-            var clientSocketOptions = SetSocketEnvironment(environment);
-            var client = new WeexSocketClient(clientSocketOptions!, _loggerFactory);
-            if (credentials != null)
-            {
-                client.SetApiCredentials(credentials);
-                _socketClients[userIdentifier] = client;
-            }
-            return client;
-        }
-
-        private IOptions<WeexRestOptions> SetRestEnvironment(WeexEnvironment? environment)
-        {
-            if (environment == null)
-                return _restOptions;
-
-            var newRestClientOptions = new WeexRestOptions();
-            var restOptions = _restOptions.Value.Set(newRestClientOptions);
-            newRestClientOptions.Environment = environment;
-            return Options.Create(newRestClientOptions);
-        }
-
-        private IOptions<WeexSocketOptions> SetSocketEnvironment(WeexEnvironment? environment)
-        {
-            if (environment == null)
-                return _socketOptions;
-
-            var newSocketClientOptions = new WeexSocketOptions();
-            var restOptions = _socketOptions.Value.Set(newSocketClientOptions);
-            newSocketClientOptions.Environment = environment;
-            return Options.Create(newSocketClientOptions);
-        }
-
-        private static T ApplyOptionsDelegate<T>(Action<T>? del) where T : new()
-        {
-            var opts = new T();
-            del?.Invoke(opts);
-            return opts;
-        }
+        protected override IWeexSocketClient ConstructSocketClient(ILoggerFactory? loggerFactory, IOptions<WeexSocketOptions> options)
+            => new WeexSocketClient(options, loggerFactory);
     }
 }

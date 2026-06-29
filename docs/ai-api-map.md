@@ -139,6 +139,7 @@ Use this file to route common user intents to the correct Weex.Net client member
 | Shared ticker socket | `ITickerSocketClient.SubscribeToTickerUpdatesAsync(...)` |
 | Shared order socket | `ISpotOrderSocketClient` / `IFuturesOrderSocketClient` |
 | Shared position socket | `IPositionSocketClient` |
+| Discover shared capabilities | `client.SpotApi.SharedClient.Discover()` or the equivalent futures/socket SharedClient root |
 
 For shared socket subscriptions, keep the concrete socket client and unsubscribe with `await socketClient.UnsubscribeAsync(subscription.Data)`.
 
@@ -146,9 +147,10 @@ For shared socket subscriptions, keep the concrete socket client and unsubscribe
 
 | Situation | Pattern |
 |---|---|
-| REST success check | `if (!result.Success) { Console.WriteLine(result.Error); return; }` |
-| Socket subscription success check | `if (!sub.Success) { Console.WriteLine(sub.Error); return; }` |
-| Read REST data | Read `result.Data` only after `result.Success` |
+| REST success check | Direct and shared REST methods return `HttpResult<T>` / `HttpResult` |
+| Socket subscription success check | Direct and shared subscriptions return `WebSocketResult<UpdateSubscription>` |
+| Generic success check | `if (!result.Success) { Console.WriteLine(result.Error); return; }` |
+| Read result data | Read `result.Data` only after `result.Success` |
 | Retry decision | Retry only when `result.Error?.IsTransient == true` |
 | Cancellation | Pass `ct: cancellationToken` |
 

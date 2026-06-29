@@ -15,7 +15,7 @@ These examples are optimized for AI coding assistants and quick onboarding. Each
 | `02-futures.cs` | Futures leverage, market order, positions, close positions |
 | `03-websocket.cs` | Spot and futures public streams, private account/order streams, proper teardown |
 | `04-multi-exchange.cs` | `CryptoExchange.Net.SharedApis` pattern for exchange-agnostic code |
-| `05-error-handling.cs` | `WebCallResult` patterns, retry, validation with exchange info |
+| `05-error-handling.cs` | `HttpResult` patterns, retry, validation with exchange info |
 
 ## Running
 

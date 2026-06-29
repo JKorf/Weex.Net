@@ -49,8 +49,8 @@ namespace Weex.Net.Clients
         {
             Initialize(options.Value);
                         
-            FuturesApi = AddApiClient(new WeexSocketClientFuturesApi(this, _logger, options.Value));
-            SpotApi = AddApiClient(new WeexSocketClientSpotApi(this, _logger, options.Value));
+            FuturesApi = AddApiClient(new WeexSocketClientFuturesApi(this, loggerFactory, options.Value));
+            SpotApi = AddApiClient(new WeexSocketClientSpotApi(this, loggerFactory, options.Value));
         }
         #endregion
 

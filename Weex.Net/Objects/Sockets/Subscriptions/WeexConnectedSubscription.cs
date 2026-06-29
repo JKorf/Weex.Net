@@ -12,7 +12,7 @@ namespace Weex.Net.Objects.Sockets.Subscriptions
     {
         public WeexConnectedSubscription(ILogger logger) : base(logger, false)
         {
-            MessageRouter = MessageRouter.CreateWithoutHandler<WeexPing>("connected");
+            MessageRouter = MessageRouter.CreateVoid<WeexPing>("connected");
         }
     }
 }

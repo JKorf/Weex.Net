@@ -29,7 +29,7 @@ namespace Weex.Net.Clients.SpotApi
         #region Place Order
 
         /// <inheritdoc />
-        public async Task<WebCallResult<WeexOrderResult>> PlaceOrderAsync(string symbol, OrderSide side, OrderType orderType, decimal quantity, decimal? price = null, TimeInForce? timeInForce = null, string? clientOrderId = null, CancellationToken ct = default)
+        public async Task<HttpResult<WeexOrderResult>> PlaceOrderAsync(string symbol, OrderSide side, OrderType orderType, decimal quantity, decimal? price = null, TimeInForce? timeInForce = null, string? clientOrderId = null, CancellationToken ct = default)
         {
             var clientOrderIdUpdated = LibraryHelpers.ApplyBrokerId(
                 clientOrderId,
@@ -37,15 +37,15 @@ namespace Weex.Net.Clients.SpotApi
                 36,
                 _baseClient.ClientOptions.AllowAppendingClientOrderId);
 
-            var parameters = new ParameterCollection();
+            var parameters = new Parameters(WeexExchange._parameterSerializationSettings);
             parameters.Add("symbol", symbol);
-            parameters.AddEnum("side", side);
-            parameters.AddEnum("type", orderType);
-            parameters.AddString("quantity", quantity);
-            parameters.AddOptionalString("price", price);
-            parameters.AddOptionalEnum("timeInForce", timeInForce);
-            parameters.AddOptional("newClientOrderId", clientOrderIdUpdated);
-            var request = _definitions.GetOrCreate(HttpMethod.Post, "/api/v3/order", WeexExchange.RateLimiter.WeexRestUid, 5, true);
+            parameters.Add("side", side);
+            parameters.Add("type", orderType);
+            parameters.Add("quantity", quantity);
+            parameters.Add("price", price);
+            parameters.Add("timeInForce", timeInForce);
+            parameters.Add("newClientOrderId", clientOrderIdUpdated);
+            var request = _definitions.GetOrCreate(HttpMethod.Post, _baseClient.BaseAddress, "/api/v3/order", WeexExchange.RateLimiter.WeexRestUid, 5, true);
             var result = await _baseClient.SendAsync<WeexOrderResult>(request, parameters, ct).ConfigureAwait(false);
             return result;
         }
@@ -55,7 +55,7 @@ namespace Weex.Net.Clients.SpotApi
         #region Cancel Order
 
         /// <inheritdoc />
-        public async Task<WebCallResult<WeexCancelResult>> CancelOrderAsync(long? orderId = null, string? clientOrderId = null, CancellationToken ct = default)
+        public async Task<HttpResult<WeexCancelResult>> CancelOrderAsync(long? orderId = null, string? clientOrderId = null, CancellationToken ct = default)
         {
             if (clientOrderId != null)
             {
@@ -66,11 +66,11 @@ namespace Weex.Net.Clients.SpotApi
                     _baseClient.ClientOptions.AllowAppendingClientOrderId);
             }
 
-            var parameters = new ParameterCollection();
-            parameters.AddOptional("orderId", orderId);
-            parameters.AddOptional("origClientOrderId", clientOrderId);
-            var request = _definitions.GetOrCreate(HttpMethod.Delete, "/api/v3/order", WeexExchange.RateLimiter.WeexRestUid, 1, true);
-            var result = await _baseClient.SendAsync<WeexCancelResult>(request, parameters, new ParameterCollection(), ct).ConfigureAwait(false);
+            var parameters = new Parameters(WeexExchange._parameterSerializationSettings);
+            parameters.Add("orderId", orderId);
+            parameters.Add("origClientOrderId", clientOrderId);
+            var request = _definitions.GetOrCreate(HttpMethod.Delete, _baseClient.BaseAddress, "/api/v3/order", WeexExchange.RateLimiter.WeexRestUid, 1, true);
+            var result = await _baseClient.SendAsync<WeexCancelResult>(request, parameters, new Parameters(WeexExchange._parameterSerializationSettings), ct).ConfigureAwait(false);
             return result;
         }
 
@@ -79,12 +79,12 @@ namespace Weex.Net.Clients.SpotApi
         #region Cancel All Symbol Orders
 
         /// <inheritdoc />
-        public async Task<WebCallResult<WeexCancelResult[]>> CancelAllSymbolOrdersAsync(string symbol, CancellationToken ct = default)
+        public async Task<HttpResult<WeexCancelResult[]>> CancelAllSymbolOrdersAsync(string symbol, CancellationToken ct = default)
         {
-            var parameters = new ParameterCollection();
+            var parameters = new Parameters(WeexExchange._parameterSerializationSettings);
             parameters.Add("symbol", symbol);
-            var request = _definitions.GetOrCreate(HttpMethod.Delete, "/api/v3/openOrders", WeexExchange.RateLimiter.WeexRestUid, 1, true);
-            var result = await _baseClient.SendAsync<WeexCancelResult[]>(request, parameters, new ParameterCollection(), ct).ConfigureAwait(false);
+            var request = _definitions.GetOrCreate(HttpMethod.Delete, _baseClient.BaseAddress, "/api/v3/openOrders", WeexExchange.RateLimiter.WeexRestUid, 1, true);
+            var result = await _baseClient.SendAsync<WeexCancelResult[]>(request, parameters, new Parameters(WeexExchange._parameterSerializationSettings), ct).ConfigureAwait(false);
             return result;
         }
 
@@ -93,7 +93,7 @@ namespace Weex.Net.Clients.SpotApi
         #region Cancel Orders
 
         /// <inheritdoc />
-        public async Task<WebCallResult<WeexCancelResult[]>> CancelOrdersAsync(IEnumerable<long>? orderIds = null, IEnumerable<string>? clientOrderIds = null, CancellationToken ct = default)
+        public async Task<HttpResult<WeexCancelResult[]>> CancelOrdersAsync(IEnumerable<long>? orderIds = null, IEnumerable<string>? clientOrderIds = null, CancellationToken ct = default)
         {
             if (clientOrderIds?.Count() > 0)
             {
@@ -105,12 +105,15 @@ namespace Weex.Net.Clients.SpotApi
                         _baseClient.ClientOptions.AllowAppendingClientOrderId)).ToArray();
             }
 
-            var parameters = new ParameterCollection();
-            parameters.AddOptional("orderIds", orderIds?.ToArray());
-            parameters.AddOptional("origClientOrderIds", clientOrderIds?.ToArray());
-            var request = _definitions.GetOrCreate(HttpMethod.Delete, "/api/v3/order/batch", WeexExchange.RateLimiter.WeexRestUid, 10, true);
+            var parameters = new Parameters(WeexExchange._parameterSerializationSettings);
+            parameters.AddRaw("orderIds", orderIds?.ToArray());
+            parameters.AddRaw("origClientOrderIds", clientOrderIds?.ToArray());
+            var request = _definitions.GetOrCreate(HttpMethod.Delete, _baseClient.BaseAddress, "/api/v3/order/batch", WeexExchange.RateLimiter.WeexRestUid, 10, true);
             var result = await _baseClient.SendAsync<WeexCancelResultWrapper>(request, parameters, ct).ConfigureAwait(false);
-            return result.As<WeexCancelResult[]>(result.Data?.Orders);
+            if (!result.Success)
+                return HttpResult.Fail<WeexCancelResult[]>(result);
+
+            return HttpResult.Ok(result, result.Data.Orders);
         }
 
         #endregion
@@ -118,7 +121,7 @@ namespace Weex.Net.Clients.SpotApi
         #region Get Order
 
         /// <inheritdoc />
-        public async Task<WebCallResult<WeexOrder>> GetOrderAsync(long? orderId = null, string? clientOrderId = null, CancellationToken ct = default)
+        public async Task<HttpResult<WeexOrder>> GetOrderAsync(long? orderId = null, string? clientOrderId = null, CancellationToken ct = default)
         {
             if (clientOrderId != null)
             {
@@ -129,10 +132,10 @@ namespace Weex.Net.Clients.SpotApi
                     _baseClient.ClientOptions.AllowAppendingClientOrderId);
             }
 
-            var parameters = new ParameterCollection();
-            parameters.AddOptional("orderId", orderId);
-            parameters.AddOptional("origClientOrderId", clientOrderId);
-            var request = _definitions.GetOrCreate(HttpMethod.Get, "/api/v3/order", WeexExchange.RateLimiter.WeexRestUid, 2, true);
+            var parameters = new Parameters(WeexExchange._parameterSerializationSettings);
+            parameters.Add("orderId", orderId);
+            parameters.Add("origClientOrderId", clientOrderId);
+            var request = _definitions.GetOrCreate(HttpMethod.Get, _baseClient.BaseAddress, "/api/v3/order", WeexExchange.RateLimiter.WeexRestUid, 2, true);
             var result = await _baseClient.SendAsync<WeexOrder>(request, parameters, ct).ConfigureAwait(false);
             return result;
         }
@@ -142,11 +145,11 @@ namespace Weex.Net.Clients.SpotApi
         #region Get Open Orders
 
         /// <inheritdoc />
-        public async Task<WebCallResult<WeexOrder[]>> GetOpenOrdersAsync(string? symbol = null, CancellationToken ct = default)
+        public async Task<HttpResult<WeexOrder[]>> GetOpenOrdersAsync(string? symbol = null, CancellationToken ct = default)
         {
-            var parameters = new ParameterCollection();
-            parameters.AddOptional("symbol", symbol);
-            var request = _definitions.GetOrCreate(HttpMethod.Get, "/api/v3/openOrders", WeexExchange.RateLimiter.WeexRestUid, 3, true);
+            var parameters = new Parameters(WeexExchange._parameterSerializationSettings);
+            parameters.Add("symbol", symbol);
+            var request = _definitions.GetOrCreate(HttpMethod.Get, _baseClient.BaseAddress, "/api/v3/openOrders", WeexExchange.RateLimiter.WeexRestUid, 3, true);
             var result = await _baseClient.SendAsync<WeexOrder[]>(request, parameters, ct).ConfigureAwait(false);
             return result;
         }
@@ -156,15 +159,15 @@ namespace Weex.Net.Clients.SpotApi
         #region Get Order History
 
         /// <inheritdoc />
-        public async Task<WebCallResult<WeexOrder[]>> GetOrderHistoryAsync(string symbol, DateTime? startTime = null, DateTime? endTime = null, int? page = null, int? limit = null, CancellationToken ct = default)
+        public async Task<HttpResult<WeexOrder[]>> GetOrderHistoryAsync(string symbol, DateTime? startTime = null, DateTime? endTime = null, int? page = null, int? limit = null, CancellationToken ct = default)
         {
-            var parameters = new ParameterCollection();
+            var parameters = new Parameters(WeexExchange._parameterSerializationSettings);
             parameters.Add("symbol", symbol);
-            parameters.AddOptionalMillisecondsString("startTime", startTime);
-            parameters.AddOptionalMillisecondsString("endTime", endTime);
-            parameters.AddOptional("page", page);
-            parameters.AddOptional("limit", limit);
-            var request = _definitions.GetOrCreate(HttpMethod.Get, "/api/v3/allOrders", WeexExchange.RateLimiter.WeexRestUid, 10, true);
+            parameters.Add("startTime", startTime);
+            parameters.Add("endTime", endTime);
+            parameters.Add("page", page);
+            parameters.Add("limit", limit);
+            var request = _definitions.GetOrCreate(HttpMethod.Get, _baseClient.BaseAddress, "/api/v3/allOrders", WeexExchange.RateLimiter.WeexRestUid, 10, true);
             var result = await _baseClient.SendAsync<WeexOrder[]>(request, parameters, ct).ConfigureAwait(false);
             return result;
         }
@@ -174,15 +177,15 @@ namespace Weex.Net.Clients.SpotApi
         #region Get User Trades
 
         /// <inheritdoc />
-        public async Task<WebCallResult<WeexUserTrade[]>> GetUserTradesAsync(string symbol, long? orderId = null, DateTime? startTime = null, DateTime? endTime = null, int? limit = null, CancellationToken ct = default)
+        public async Task<HttpResult<WeexUserTrade[]>> GetUserTradesAsync(string symbol, long? orderId = null, DateTime? startTime = null, DateTime? endTime = null, int? limit = null, CancellationToken ct = default)
         {
-            var parameters = new ParameterCollection();
+            var parameters = new Parameters(WeexExchange._parameterSerializationSettings);
             parameters.Add("symbol", symbol);
-            parameters.AddOptional("orderId", orderId);
-            parameters.AddOptionalMillisecondsString("startTime", startTime);
-            parameters.AddOptionalMillisecondsString("endTime", endTime);
-            parameters.AddOptional("limit", limit);
-            var request = _definitions.GetOrCreate(HttpMethod.Get, "/api/v3/myTrades", WeexExchange.RateLimiter.WeexRestUid, 5, true);
+            parameters.Add("orderId", orderId);
+            parameters.Add("startTime", startTime);
+            parameters.Add("endTime", endTime);
+            parameters.Add("limit", limit);
+            var request = _definitions.GetOrCreate(HttpMethod.Get, _baseClient.BaseAddress, "/api/v3/myTrades", WeexExchange.RateLimiter.WeexRestUid, 5, true);
             var result = await _baseClient.SendAsync<WeexUserTrade[]>(request, parameters, ct).ConfigureAwait(false);
             return result;
         }
