@@ -96,7 +96,7 @@ Weex.Net includes AI-oriented documentation and examples for code generation too
 |[`docs/ai-api-map.md`](docs/ai-api-map.md)|Table-style intent-to-method map for Spot, Futures, WebSocket, and SharedApis|
 |[`Examples/ai-friendly`](Examples/ai-friendly)|Compilable single-file examples for common REST, WebSocket, shared API, and error handling workflows|
 
-GitHub Copilot and Cursor instructions are also provided in `.github/copilot-instructions.md` and `.cursor/rules/weex-net.mdc`; both point back to the root AI context files.
+See [cryptoexchange-skills-hub](https://github.com/JKorf/cryptoexchange-skills-hub) for installable skills.
 
 ## CryptoExchange.Net
 Weex.Net is based on the [CryptoExchange.Net](https://github.com/JKorf/CryptoExchange.Net) base library. Other exchange API implementations based on the CryptoExchange.Net base library are available and follow the same logic.
@@ -215,19 +215,3 @@ Alternatively, sponsor me on Github using [Github Sponsors](https://github.com/s
     * Added SymbolStatus.Halt enum value
     * Various small performance improvements
     * Fixed websocket connection attempts counting towards rate limit even when server could not be reached
-
-* Version 1.2.0 - 08 Jun 2026
-    * Updated CryptoExchange.Net to version 11.2.2
-    * Fixed user client provider not caching new client when previous client was disposed
-
-* Version 1.1.1 - 27 May 2026
-    * Fixed WeexFuturesSymbolOrderBook pointing to Spot API
-
-* Version 1.1.0 - 26 May 2026
-    * Updated CryptoExchange.Net to version 11.2.0
-    * Added DisplaySymbol property on WeexFuturesSymbol model
-    * Fixed SpotApi.SubscribeToTradeUpdates UpdateType not correctly set
-
-* Version 1.0.0 - 10 Apr 2026
-    * Initial release
-
