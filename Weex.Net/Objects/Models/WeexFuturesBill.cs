@@ -23,6 +23,11 @@ namespace Weex.Net.Objects.Models
         /// </summary>
         [JsonPropertyName("items")]
         public WeexFuturesBill[] Items { get; set; } = [];
+        /// <summary>
+        /// ["<c>nextKey</c>"] Next page key
+        /// </summary>
+        [JsonPropertyName("nextKey")]
+        public string? NextKey { get; set; }
     }
 
     /// <summary>
