@@ -22,6 +22,11 @@ namespace Weex.Net.Objects.Models
         /// </summary>
         [JsonPropertyName("symbols")]
         public WeexFuturesSymbol[] Symbols { get; set; } = [];
+        /// <summary>
+        /// ["<c>rateLimits</c>"] Rate limits
+        /// </summary>
+        [JsonPropertyName("rateLimits")]
+        public WeexRateLimit[] RateLimits { get; set; } = [];
     }
 
     /// <summary>
