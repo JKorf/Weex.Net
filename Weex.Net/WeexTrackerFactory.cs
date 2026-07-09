@@ -46,7 +46,7 @@ namespace Weex.Net
         public bool CanCreateTradeTracker(SharedSymbol symbol) => true;
 
         /// <inheritdoc />
-        public IKlineTracker CreateKlineTracker(SharedSymbol symbol, SharedKlineInterval interval, int? limit = null, TimeSpan? period = null)
+        public IKlineTracker CreateKlineTracker(SharedSymbol symbol, SharedKlineInterval interval, int? limit = null, TimeSpan? period = null, ExchangeParameters? exchangeParameters = null)
         {
             var restClient = _serviceProvider?.GetRequiredService<IWeexRestClient>() ?? new WeexRestClient();
             var socketClient = _serviceProvider?.GetRequiredService<IWeexSocketClient>() ?? new WeexSocketClient();
@@ -71,11 +71,12 @@ namespace Weex.Net
                 symbol,
                 interval,
                 limit,
-                period
+                period,
+                exchangeParameters
                 );
         }
         /// <inheritdoc />
-        public ITradeTracker CreateTradeTracker(SharedSymbol symbol, int? limit = null, TimeSpan? period = null)
+        public ITradeTracker CreateTradeTracker(SharedSymbol symbol, int? limit = null, TimeSpan? period = null, ExchangeParameters? exchangeParameters = null)
         {
             var restClient = _serviceProvider?.GetRequiredService<IWeexRestClient>() ?? new WeexRestClient();
             var socketClient = _serviceProvider?.GetRequiredService<IWeexSocketClient>() ?? new WeexSocketClient();
@@ -100,7 +101,8 @@ namespace Weex.Net
                 sharedSocketClient,
                 symbol,
                 limit,
-                period
+                period,
+                exchangeParameters
                 );
         }
 
