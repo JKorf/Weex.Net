@@ -183,6 +183,11 @@ Make a one time donation in a crypto currency of your choice. If you prefer to d
 Alternatively, sponsor me on Github using [Github Sponsors](https://github.com/sponsors/JKorf). 
 
 ## Release notes
+* Version 2.1.0 - 09 Jul 2026
+    * Updated CryptoExchange.Net to v12.1.0
+    * Added RateLimits to WeexExchangeInfo and WeexFuturesExchangeInfo models
+    * Added NextKey property to WeexFuturesBillPage model
+
 * Version 2.0.0 - 29 Jun 2026
     * Result types:
       * (Web)CallResult types are replaced by HttpResult, WebSocketResult and QueryResult with the same logic
