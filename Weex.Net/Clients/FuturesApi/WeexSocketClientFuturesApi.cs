@@ -156,7 +156,7 @@ namespace Weex.Net.Clients.FuturesApi
 
                 onMessage(
                     new DataEvent<WeexTradeUpdate[]>(WeexExchange.Metadata.Id, data.Data, receiveTime, originalData)
-                        .WithUpdateType(SocketUpdateType.Update)
+                        .WithUpdateType(data.Event is "tradeSnapshot" ? SocketUpdateType.Snapshot : SocketUpdateType.Update)
                         .WithStreamId(data.Event)
                         .WithSymbol(data.Symbol)
                         .WithDataTimestamp(data.EventTime, GetTimeOffset())
