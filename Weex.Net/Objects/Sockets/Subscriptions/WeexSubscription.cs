@@ -30,6 +30,7 @@ namespace Weex.Net.Objects.Sockets.Subscriptions
         {
             _handler = handler;
             _subTopics = subTopics;
+            IndividualSubscriptionCount = _subTopics.Length;
 
             var routes = new List<MessageRoute>();
             foreach(var type in eventType)
