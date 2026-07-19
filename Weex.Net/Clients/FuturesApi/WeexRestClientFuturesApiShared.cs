@@ -216,6 +216,7 @@ namespace Weex.Net.Clients.FuturesApi
 
         #region Futures Symbol client
 
+        SharedSymbolCatalog? IFuturesSymbolRestClient.FuturesSymbolCatalog => ExchangeSymbolCache.GetSymbolCatalog(_topicId, EnvironmentName, null);
         GetFuturesSymbolsOptions IFuturesSymbolRestClient.GetFuturesSymbolsOptions { get; } = new GetFuturesSymbolsOptions(_exchangeName, false);
         async Task<HttpResult<SharedFuturesSymbol[]>> IFuturesSymbolRestClient.GetFuturesSymbolsAsync(GetSymbolsRequest request, CancellationToken ct)
         {
@@ -227,25 +228,51 @@ namespace Weex.Net.Clients.FuturesApi
             if (!result.Success)
                 return HttpResult.Fail<SharedFuturesSymbol[]>(result);
 
-            var resultData = HttpResult.Ok(result, result.Data.Symbols.Select(s =>
-            new SharedFuturesSymbol(TradingMode.PerpetualLinear,
-            s.BaseAsset,
-            s.QuoteAsset,
-            s.Symbol,
-            true)
+            var resultData =
+                 result.Data.Symbols.Select(x => ParseSymbol(x))
+                .ToArray();
+
+            ExchangeSymbolCache.UpdateSymbolInfo(_topicId, EnvironmentName, null, resultData);
+            return HttpResult.Ok(result, SharedUtils.ApplySymbolFilter(resultData, request));
+        }
+
+        private SharedFuturesSymbol ParseSymbol(WeexFuturesSymbol s)
+        {
+            var result = new SharedFuturesSymbol(TradingMode.PerpetualLinear,
+                s.BaseAsset,
+                s.QuoteAsset,
+                s.Symbol,
+                true)
             {
                 MinTradeQuantity = s.MinOrderQuantity,
                 MaxTradeQuantity = s.MaxOrderQuantity,
                 QuantityDecimals = s.QuantityPrecision,
                 PriceDecimals = s.PricePrecision,
+                DisplayName = s.DisplaySymbol,
                 // The contract size returned in the API isn't used for anything other than specifying the quantity step
                 // so we set it to the step and ignore the actual value of it
                 QuantityStep = s.ContractSize,
-                ContractSize = 1
-            }).ToArray());
+                ContractSize = 1,
+                QuoteAssetType = SharedAssetType.Crypto,
+                QuoteAssetSubType = SharedAssetSubType.StableCoin
+            };
 
-            ExchangeSymbolCache.UpdateSymbolInfo(_topicId, EnvironmentName, null, resultData.Data!);
-            return resultData;
+            if (LibraryHelpers.IsCommodity(result.BaseAsset))
+            {
+                result.BaseAssetType = SharedAssetType.TradFi;
+                result.BaseAssetSubType = SharedAssetSubType.Commodity;
+            } 
+            else if (LibraryHelpers.IsEquity(result.BaseAsset))
+            {
+                result.BaseAssetType = SharedAssetType.TradFi;
+                result.BaseAssetSubType = SharedAssetSubType.Equity;
+            }
+            else
+            {
+                result.BaseAssetType = SharedAssetType.Crypto;
+            }
+
+            return result;
         }
 
         async Task<ExchangeCallResult<SharedSymbol[]>> IFuturesSymbolRestClient.GetFuturesSymbolsForBaseAssetAsync(string baseAsset)
