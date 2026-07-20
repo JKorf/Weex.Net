@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Weex.Net.Enums;
 using Weex.Net.Interfaces.Clients.SpotApi;
+using Weex.Net.Objects.Models;
 
 namespace Weex.Net.Clients.SpotApi
 {
@@ -22,6 +23,17 @@ namespace Weex.Net.Clients.SpotApi
         public void SetDefaultExchangeParameter(string key, object value) => ExchangeParameters.SetStaticParameter(Exchange, key, value);
         public void ResetDefaultExchangeParameters() => ExchangeParameters.ResetStaticParameters();
         public SharedClientInfo Discover() => SharedUtils.GetClientInfo(WeexExchange.Metadata, this);
+
+        private static readonly HashSet<string> _knownCommodities = 
+            ["GOLD(PAXG)", "GOLDXAUT", "SILVER(XAG)", "SLVON", "PALLON",
+            "IAUON", "PLATINUM(XPT)", "USOON", "CRUDEOIL"];
+
+        private static readonly HashSet<string> _assetsEndingWithOnNotStocks = [
+            "COON", "FON", "SOON", "NEON", "NEON", "ANON", "ELON", "PYTHON", "ONON", "KAON",
+            "DRGON", "ROOMCON", "DIGIMON", "ALON", "BARRON", "CATTOn", "ENRON", "MILTON", "LION",
+            "MON", "AUCTION", "CATTON", "CON", "ON", "UNION", "ATTENTION", "TERRAFORMATION",
+            "DRAGON", "BACON", "LUCKYMOON", "POSEIDON", "LEMON", "MOTION", "COMMON", "TYCOON",
+            ];
 
 
         #region Asset client
@@ -347,6 +359,7 @@ namespace Weex.Net.Clients.SpotApi
         #endregion
 
         #region Spot Symbol client
+        SharedSymbolCatalog? ISpotSymbolRestClient.SpotSymbolCatalog => ExchangeSymbolCache.GetSymbolCatalog(_exchangeName, _topicId, EnvironmentName, null);
         GetSpotSymbolsOptions ISpotSymbolRestClient.GetSpotSymbolsOptions { get; } = new GetSpotSymbolsOptions(_exchangeName, false);
 
         async Task<HttpResult<SharedSpotSymbol[]>> ISpotSymbolRestClient.GetSpotSymbolsAsync(GetSymbolsRequest request, CancellationToken ct)
@@ -359,18 +372,57 @@ namespace Weex.Net.Clients.SpotApi
             if (!result.Success)
                 return HttpResult.Fail<SharedSpotSymbol[]>(result);
 
-            var resultData = HttpResult.Ok(result, result.Data.Symbols.Select(s => new SharedSpotSymbol(s.BaseAsset, s.QuoteAsset, s.Symbol, s.Status == SymbolStatus.Trading && s.EnableTrade)
-                {
-                    MinTradeQuantity = s.MinTradeQuantity,
-                    MaxTradeQuantity = s.MaxTradeQuantity,
-                    PriceDecimals = s.QuoteAssetPrecision,
-                    QuantityDecimals = s.BaseAssetPrecision,
-                    QuantityStep = s.StepSize,
-                    PriceStep = s.TickSize
-                }).ToArray());
+            var resultData =
+                 result.Data.Symbols.Select(x => ParseSymbol(x))
+                .ToArray();
 
-            ExchangeSymbolCache.UpdateSymbolInfo(_topicId, EnvironmentName, null, resultData.Data!);
-            return resultData;
+            ExchangeSymbolCache.UpdateSymbolInfo(_topicId, EnvironmentName, null, resultData);
+            return HttpResult.Ok(result, SharedUtils.ApplySymbolFilter(resultData, request));
+        }
+
+        private SharedSpotSymbol ParseSymbol(WeexSymbol s)
+        {
+            var result = new SharedSpotSymbol(s.BaseAsset, s.QuoteAsset, s.Symbol, s.Status == SymbolStatus.Trading && s.EnableTrade)
+            {
+                MinTradeQuantity = s.MinTradeQuantity,
+                MaxTradeQuantity = s.MaxTradeQuantity,
+                PriceDecimals = s.QuoteAssetPrecision,
+                QuantityDecimals = s.BaseAssetPrecision,
+                QuantityStep = s.StepSize,
+                PriceStep = s.TickSize,
+                DisplayName = s.Symbol,
+                QuoteAssetType = SharedAssetType.Crypto,
+                QuoteAssetSubType = SharedAssetSubType.StableCoin
+            };
+
+            if (LibraryHelpers.IsStableCoin(s.BaseAsset))
+            {
+                result.BaseAssetType = SharedAssetType.Crypto;
+                result.BaseAssetSubType = SharedAssetSubType.StableCoin;
+            }
+            else if (LibraryHelpers.IsCommodity(s.BaseAsset, _knownCommodities))
+            {
+                result.BaseAssetType = SharedAssetType.TradFi;
+                result.BaseAssetSubType = SharedAssetSubType.Commodity;
+            }
+            else if (s.BaseAsset.EndsWith("ON"))
+            {
+                if (!_assetsEndingWithOnNotStocks.Contains(s.BaseAsset))
+                {
+                    result.BaseAssetType = SharedAssetType.TradFi;
+                    result.BaseAssetSubType = SharedAssetSubType.Equity;
+                }
+                else
+                {
+                    result.BaseAssetType = SharedAssetType.Crypto;
+                }
+            }
+            else
+            {
+                result.BaseAssetType = SharedAssetType.Crypto;
+            }
+
+            return result;
         }
 
         async Task<ExchangeCallResult<SharedSymbol[]>> ISpotSymbolRestClient.GetSpotSymbolsForBaseAssetAsync(string baseAsset)
