@@ -131,6 +131,10 @@ Use this file to route common user intents to the correct Weex.Net client member
 | Shared futures REST client | `new WeexRestClient().FuturesApi.SharedClient` |
 | Shared spot socket client | `new WeexSocketClient().SpotApi.SharedClient` |
 | Shared futures socket client | `new WeexSocketClient().FuturesApi.SharedClient` |
+| Query/filter shared spot symbols | `ISpotSymbolRestClient.GetSpotSymbolsAsync(new GetSymbolsRequest(...))` |
+| Read cached shared spot symbol metadata | `ISpotSymbolRestClient.SpotSymbolCatalog` (refreshed by a successful symbol query) |
+| Query/filter shared futures symbols | `IFuturesSymbolRestClient.GetFuturesSymbolsAsync(new GetSymbolsRequest(...))` |
+| Read cached shared futures symbol metadata | `IFuturesSymbolRestClient.FuturesSymbolCatalog` (refreshed by a successful symbol query) |
 | Shared spot ticker REST | `ISpotTickerRestClient.GetSpotTickerAsync(new GetTickerRequest(symbol))` |
 | Shared spot order REST | `ISpotOrderRestClient.PlaceSpotOrderAsync(...)` |
 | Shared futures order REST | `IFuturesOrderRestClient.PlaceFuturesOrderAsync(...)` |
@@ -142,6 +146,8 @@ Use this file to route common user intents to the correct Weex.Net client member
 | Discover shared capabilities | `client.SpotApi.SharedClient.Discover()` or the equivalent futures/socket SharedClient root |
 
 For shared socket subscriptions, keep the concrete socket client and unsubscribe with `await socketClient.UnsubscribeAsync(subscription.Data)`.
+
+Shared spot and futures symbol results include display names and asset type/subtype metadata. `GetSymbolsRequest` filters are applied before results are returned.
 
 ## Result Handling
 

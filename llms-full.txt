@@ -4,8 +4,8 @@
 
 Weex.Net is a strongly typed .NET client library for the Weex REST and WebSocket APIs. It is part of the CryptoExchange.Net ecosystem and uses the same result, shared API, logging, rate limiting, dependency injection, and socket subscription patterns as the other JKorf exchange libraries.
 
-Current package version in this repository: 2.1.0.
-CryptoExchange.Net dependency: 11.1.1.
+Current package version in this repository: 2.2.0.
+CryptoExchange.Net dependency: 12.2.0.
 Target frameworks: netstandard2.0, netstandard2.1, net8.0, net9.0, net10.0.
 Native AOT: supported on compatible .NET targets.
 
@@ -577,6 +577,23 @@ await socketClient.UnsubscribeAsync(sub.Data);
 ```
 
 Do not call `tickerSocket.UnsubscribeAsync(...)` on `ITickerSocketClient`; that shared interface does not expose the method.
+
+Shared symbol discovery supports catalogs and request filtering. After a successful symbol query, the corresponding catalog is refreshed and the returned symbols include display-name and asset-class metadata:
+
+```csharp
+ISpotSymbolRestClient symbolClient = new WeexRestClient().SpotApi.SharedClient;
+
+var symbols = await symbolClient.GetSpotSymbolsAsync(new GetSymbolsRequest());
+if (!symbols.Success)
+{
+    Console.WriteLine(symbols.Error);
+    return;
+}
+
+SharedSymbolCatalog? catalog = symbolClient.SpotSymbolCatalog;
+```
+
+Use `IFuturesSymbolRestClient.GetFuturesSymbolsAsync(...)` and `FuturesSymbolCatalog` for futures. `GetSymbolsRequest` filters are applied by both clients. Symbol results expose `DisplayName`, `BaseAssetType`, `BaseAssetSubType`, `QuoteAssetType`, and `QuoteAssetSubType`; Weex classifies applicable assets as crypto, stablecoins, commodities, or equities.
 
 ## SharedApis Support Matrix
 

@@ -152,6 +152,8 @@ Console.WriteLine(ticker.Data.LastPrice);
 
 Weex shared REST interfaces include spot ticker, spot symbols, spot orders, balances, assets, fees, klines, order books, recent trades, deposits, withdrawals, futures ticker, futures symbols, futures orders, funding rates, leverage, and open interest. Socket shared interfaces include ticker, book ticker, klines, trades, balances, orders, user trades, futures positions.
 
+`ISpotSymbolRestClient` and `IFuturesSymbolRestClient` expose `SpotSymbolCatalog` and `FuturesSymbolCatalog`. A successful `GetSpotSymbolsAsync(...)` or `GetFuturesSymbolsAsync(...)` call refreshes the catalog, applies the filters in `GetSymbolsRequest`, and returns symbols with display names and asset type/subtype metadata (including crypto, stablecoin, commodity, and equity classification where applicable).
+
 Use `SharedClient.Discover()` on any shared client root when code needs runtime metadata about supported shared interfaces and endpoint options.
 
 ## Dependency Injection

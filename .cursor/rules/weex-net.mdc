@@ -80,6 +80,8 @@ var ticker = await shared.GetSpotTickerAsync(
     new GetTickerRequest(new SharedSymbol(TradingMode.Spot, "ETH", "USDT")));
 ```
 
+Shared `ISpotSymbolRestClient` and `IFuturesSymbolRestClient` queries honor `GetSymbolsRequest` filters, refresh `SpotSymbolCatalog` / `FuturesSymbolCatalog`, and return display-name and asset-class metadata.
+
 ## Hard Rules
 
 - Never write raw HTTP to Weex endpoints.

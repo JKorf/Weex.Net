@@ -51,6 +51,8 @@ Store the returned `UpdateSubscription` and unsubscribe on shutdown via `socketC
 
 For code that needs to work across multiple exchanges, use `CryptoExchange.Net.SharedApis` interfaces (`ISpotTickerRestClient`, `ISpotOrderRestClient`, `IFuturesOrderRestClient`, etc.) through `.SharedClient`.
 
+For shared symbol discovery, use `ISpotSymbolRestClient` or `IFuturesSymbolRestClient`. Successful symbol queries honor `GetSymbolsRequest` filters, refresh `SpotSymbolCatalog` / `FuturesSymbolCatalog`, and return display-name and asset-class metadata.
+
 ## Avoid
 
 - Generic `ApiCredentials`; use `WeexCredentials`
