@@ -112,7 +112,7 @@ namespace Weex.Net.Clients.SpotApi
                         kline.HighPrice,
                         kline.LowPrice,
                         kline.OpenPrice,
-                        kline.Volume)));
+                        new SharedOrderQuantity(kline.Volume, kline.QuoteVolume))));
             }, ct).ConfigureAwait(false);
 
             return result;
@@ -138,10 +138,9 @@ namespace Weex.Net.Clients.SpotApi
                     update.Data.LastPrice, 
                     update.Data.HighPrice,
                     update.Data.LowPrice,
-                    update.Data.Volume,
+                    new SharedOrderQuantity(update.Data.Volume, update.Data.QuoteVolume),
                     update.Data.PriceChangePercentage * 100)
             {
-                QuoteVolume = update.Data.QuoteVolume
             })), ct).ConfigureAwait(false);
 
             return result;
@@ -170,7 +169,7 @@ namespace Weex.Net.Clients.SpotApi
                     new SharedTrade(
                         ExchangeSymbolCache.ParseSymbol(_topicId, EnvironmentName, null, update.Symbol),
                         update.Symbol!,
-                        x.Quantity,
+                        new SharedOrderQuantity(x.Quantity, x.Value),
                         x.Price,
                         x.Timestamp)
                     {
