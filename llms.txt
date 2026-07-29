@@ -2,7 +2,7 @@
 
 > Strongly typed .NET client library for the Weex REST and WebSocket APIs. Supports Spot and Futures trading through typed REST clients, WebSocket subscriptions, local order book helpers, dependency injection, Native AOT, and CryptoExchange.Net SharedApis for multi-exchange code.
 
-Weex.Net exposes `WeexRestClient` and `WeexSocketClient` with `SpotApi` and `FuturesApi` roots. Direct REST and SharedApis REST methods return `HttpResult<T>` / `HttpResult`; direct and SharedApis socket subscriptions return `WebSocketResult<UpdateSubscription>`. Always check `.Success` before using `.Data`. Current source version: 2.2.0. Targets netstandard2.0, netstandard2.1, net8.0, net9.0, net10.0.
+Weex.Net exposes `WeexRestClient` and `WeexSocketClient` with `SpotApi` and `FuturesApi` roots. Direct REST and SharedApis REST methods return `HttpResult<T>` / `HttpResult`; direct and SharedApis socket subscriptions return `WebSocketResult<UpdateSubscription>`. Always check `.Success` before using `.Data`. Current source version: 2.3.0. Targets netstandard2.0, netstandard2.1, net8.0, net9.0, net10.0.
 
 ## Documentation
 
