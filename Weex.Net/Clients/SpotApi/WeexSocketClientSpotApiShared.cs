@@ -62,9 +62,9 @@ namespace Weex.Net.Clients.SpotApi
                             ExchangeSymbolCache.ParseSymbol(_topicId, EnvironmentName, null, update.Data.Symbol),
                             update.Data.Symbol,
                             update.Data.BestAskPrice,
-                            update.Data.BestAskQuantity,
+                            new SharedOrderQuantity(update.Data.BestAskQuantity),
                             update.Data.BestBidPrice,
-                            update.Data.BestBidQuantity)
+                            new SharedOrderQuantity(update.Data.BestBidQuantity))
                         )), ct).ConfigureAwait(false);
 
             return result;
@@ -201,7 +201,7 @@ namespace Weex.Net.Clients.SpotApi
                             x.OrderId.ToString(),
                             x.Id,
                             x.OrderSide == OrderSide.Buy ? SharedOrderSide.Buy : SharedOrderSide.Sell,
-                            x.Quantity,
+                            new SharedOrderQuantity(x.Quantity),
                             Math.Round(x.Value / x.Quantity, 8),
                             x.CreateTime)
                         {

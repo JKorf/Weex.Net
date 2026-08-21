@@ -171,7 +171,7 @@ namespace Weex.Net.Clients.FuturesApi
                             x.OrderId.ToString(),
                             x.Id,
                             x.OrderSide == OrderSide.Buy ? SharedOrderSide.Buy : SharedOrderSide.Sell,
-                            x.FillQuantity,
+                            new SharedOrderQuantity(x.FillQuantity, x.FillValue),
                             Math.Round(x.FillValue / x.FillQuantity, 8),
                             x.CreateTime)
                         {
@@ -272,7 +272,7 @@ namespace Weex.Net.Clients.FuturesApi
                 new SharedPosition(
                     ExchangeSymbolCache.ParseSymbol(_topicId, EnvironmentName, null, x.Symbol),
                     x.Symbol,
-                    x.Quantity,
+                    new SharedOrderQuantity(x.Quantity),
                     x.UpdateTime)
                 {
                     PositionMode = SharedPositionMode.HedgeMode,

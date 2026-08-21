@@ -133,9 +133,9 @@ namespace Weex.Net.Clients.SpotApi
                 ExchangeSymbolCache.ParseSymbol(_topicId, EnvironmentName, null, ticker.Symbol),
                 ticker.Symbol,
                 ticker.BestAskPrice,
-                ticker.BestAskQuantity,
+                new SharedOrderQuantity(ticker.BestAskQuantity),
                 ticker.BestBidPrice,
-                ticker.BestBidQuantity));
+                new SharedOrderQuantity(ticker.BestBidQuantity)));
         }
 
         #endregion
@@ -285,7 +285,7 @@ namespace Weex.Net.Clients.SpotApi
             if (!result.Success)
                 return HttpResult.Fail<SharedOrderBook>(result);
 
-            return HttpResult.Ok(result, new SharedOrderBook(result.Data.Asks, result.Data.Bids));
+            return HttpResult.Ok(result, new SharedOrderBook(SharedQuantityType.BaseAsset, result.Data.Asks, result.Data.Bids));
         }
 
         #endregion
@@ -400,7 +400,11 @@ namespace Weex.Net.Clients.SpotApi
                 PriceStep = s.TickSize,
                 DisplayName = s.Symbol,
                 QuoteAssetType = SharedAssetType.Crypto,
-                QuoteAssetSubType = SharedAssetSubType.StableCoin
+                QuoteAssetSubType = SharedAssetSubType.StableCoin,
+                MakerFeePercentage = s.MakerFeeRate * 100,
+                TakerFeePercentage = s.TakerFeeRate * 100,
+                LowerPriceLimitPercentage = s.BuyLimitPriceRatio * 100 - 100,
+                UpperPriceLimitPercentage = -(s.SellLimitPriceRatio * 100 - 100)
             };
 
             if (LibraryHelpers.IsStableCoin(s.BaseAsset))
@@ -694,7 +698,7 @@ namespace Weex.Net.Clients.SpotApi
                 x.OrderId.ToString(),
                 x.Id.ToString(),
                 x.IsBuyer ? SharedOrderSide.Buy : SharedOrderSide.Sell,
-                x.Quantity,
+                new SharedOrderQuantity(x.Quantity, x.QuoteQuantity),
                 x.Price,
                 x.Timestamp)
             {
@@ -740,7 +744,7 @@ namespace Weex.Net.Clients.SpotApi
                         x.OrderId.ToString(),
                         x.Id.ToString(),
                         x.IsBuyer ? SharedOrderSide.Buy : SharedOrderSide.Sell,
-                        x.Quantity,
+                        new SharedOrderQuantity(x.Quantity, x.QuoteQuantity),
                         x.Price,
                         x.Timestamp)
                     {

@@ -59,9 +59,9 @@ namespace Weex.Net.Clients.FuturesApi
                 ExchangeSymbolCache.ParseSymbol(_topicId, EnvironmentName, null, ticker.Symbol),
                 ticker.Symbol,
                 ticker.BestAskPrice,
-                ticker.BestAskQuantity,
+                new SharedOrderQuantity(ticker.BestAskQuantity),
                 ticker.BestBidPrice,
-                ticker.BestBidQuantity));
+                new SharedOrderQuantity(ticker.BestBidQuantity)));
         }
 
         #endregion
@@ -151,7 +151,7 @@ namespace Weex.Net.Clients.FuturesApi
             if (!result.Success)
                 return HttpResult.Fail<SharedOrderBook>(result);
 
-            return HttpResult.Ok(result, new SharedOrderBook(result.Data.Asks, result.Data.Bids));
+            return HttpResult.Ok(result, new SharedOrderBook(SharedQuantityType.BaseAsset, result.Data.Asks, result.Data.Bids));
         }
 
         #endregion
@@ -262,7 +262,14 @@ namespace Weex.Net.Clients.FuturesApi
                 QuantityStep = s.ContractSize,
                 ContractSize = 1,
                 QuoteAssetType = SharedAssetType.Crypto,
-                QuoteAssetSubType = SharedAssetSubType.StableCoin
+                QuoteAssetSubType = SharedAssetSubType.StableCoin,
+                MaxLongLeverage = s.MaxLeverage,
+                MaxShortLeverage = s.MaxLeverage,
+                UpperPriceLimitPercentage = s.SellLimitPriceRatio * 100,
+                LowerPriceLimitPercentage = -s.BuyLimitPriceRatio * 100,
+                MakerFeePercentage = s.MakerFeeRate * 100,
+                TakerFeePercentage = s.TakerFeeRate * 100,
+
             };
 
             if (LibraryHelpers.IsCommodity(result.BaseAsset))
@@ -525,7 +532,7 @@ namespace Weex.Net.Clients.FuturesApi
             if (!result.Success)
                 return HttpResult.Fail<SharedOpenInterest>(result);
 
-            return HttpResult.Ok(result, new SharedOpenInterest(result.Data.OpenInterest));
+            return HttpResult.Ok(result, new SharedOpenInterest(new SharedOrderQuantity(result.Data.OpenInterest)));
         }
 
         #endregion
@@ -721,7 +728,7 @@ namespace Weex.Net.Clients.FuturesApi
                 x.OrderId.ToString(),
                 x.Id.ToString(),
                 x.Side == OrderSide.Buy ? SharedOrderSide.Buy : SharedOrderSide.Sell,
-                x.Quantity,
+                new SharedOrderQuantity(x.Quantity, x.QuoteQuantity),
                 x.Price,
                 x.Timestamp)
             {
@@ -768,7 +775,7 @@ namespace Weex.Net.Clients.FuturesApi
                         x.OrderId.ToString(),
                         x.Id.ToString(),
                         x.Side == OrderSide.Buy ? SharedOrderSide.Buy : SharedOrderSide.Sell,
-                        x.Quantity,
+                        new SharedOrderQuantity(x.Quantity, x.QuoteQuantity),
                         x.Price,
                         x.Timestamp)
                     {
@@ -817,7 +824,7 @@ namespace Weex.Net.Clients.FuturesApi
                 new SharedPosition(
                     ExchangeSymbolCache.ParseSymbol(_topicId, EnvironmentName, null, x.Symbol),
                     x.Symbol,
-                    Math.Abs(x.Quantity),
+                    new SharedOrderQuantity(Math.Abs(x.Quantity)),
                     DateTime.UtcNow)
                 {
                     UnrealizedPnl = x.UnrealizePnl,

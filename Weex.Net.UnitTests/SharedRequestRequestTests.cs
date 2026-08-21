@@ -67,16 +67,16 @@ namespace Weex.Net.UnitTests
                  );
             await tester.ValidateAsync(client => client.SpotApi.SharedClient.GetBookTickerAsync(new GetBookTickerRequest(symbol)), "GetBookTicker", client.SpotApi.SharedClient.GetBookTickerOptions,
                 x => x.BestAskPrice == 68920.60m,
-                x => x.BestAskQuantity == 1.102m,
+                x => x.BestAskQuantities.QuantityInBaseAsset == 1.102m,
                 x => x.BestBidPrice == 68919.90m,
-                x => x.BestBidQuantity == 2.480m
+                x => x.BestBidQuantities.QuantityInBaseAsset == 2.480m
                 );
             await tester.ValidateAsync(client => client.SpotApi.SharedClient.GetKlinesAsync(new GetKlinesRequest(symbol, SharedKlineInterval.OneDay)), "GetKlines", client.SpotApi.SharedClient.GetKlinesOptions,
                 x => x[0].OpenPrice == 68940.10m,
                 x => x[0].HighPrice == 68955.00m,
                 x => x[0].LowPrice == 68938.50m,
                 x => x[0].ClosePrice == 68952.40m,
-                x => x[0].Volume == 12.345m
+                x => x[0].Volumes.QuantityInBaseAsset == 12.345m
                 );
             await tester.ValidateAsync(client => client.SpotApi.SharedClient.GetOrderBookAsync(new GetOrderBookRequest(symbol)), "GetOrderBook", client.SpotApi.SharedClient.GetOrderBookOptions,
                 x => x.Asks[0].Price == 68950.20m,
@@ -86,7 +86,7 @@ namespace Weex.Net.UnitTests
                 );
             await tester.ValidateAsync(client => client.SpotApi.SharedClient.GetRecentTradesAsync(new GetRecentTradesRequest(symbol)), "GetRecentTrades", client.SpotApi.SharedClient.GetRecentTradesOptions,
                 x => x[0].Price == 68950.00m,
-                x => x[0].Quantity == 0.002m,
+                x => x[0].Quantities.QuantityInBaseAsset == 0.002m,
                 x => x[0].Side == SharedOrderSide.Sell,
                 x => x[0].Timestamp == new DateTime(2025, 11, 30, 12, 33, 20, 456, DateTimeKind.Utc)
                 );
@@ -125,7 +125,7 @@ namespace Weex.Net.UnitTests
                 x => x[0].Fee == 0.138m,
                 x => x[0].OrderId == "702345678901234567",
                 x => x[0].Price == 68950.00m,
-                x => x[0].Quantity == 0.01m,
+                x => x[0].Quantities.QuantityInBaseAsset == 0.01m,
                 x => x[0].Side == SharedOrderSide.Buy,
                 x => x[0].Symbol == "BTCUSDT",
                 x => x[0].Timestamp == new DateTime(2025, 11, 30, 12, 33, 20, 456, DateTimeKind.Utc)
@@ -176,9 +176,9 @@ namespace Weex.Net.UnitTests
                 );
             await tester.ValidateAsync(client => client.FuturesApi.SharedClient.GetBookTickerAsync(new GetBookTickerRequest(symbol)), "GetBookTicker", client.FuturesApi.SharedClient.GetBookTickerOptions,
                 x => x.BestAskPrice == 69351.0m,
-                x => x.BestAskQuantity == 8.3m,
+                x => x.BestAskQuantities.QuantityInBaseAsset == 8.3m,
                 x => x.BestBidPrice == 69350.1m,
-                x => x.BestBidQuantity == 12.5m);
+                x => x.BestBidQuantities.QuantityInBaseAsset == 12.5m);
             await tester.ValidateAsync(client => client.FuturesApi.SharedClient.GetFundingRateHistoryAsync(new GetFundingRateHistoryRequest(symbol)), "GetFundingRateHistory", client.FuturesApi.SharedClient.GetFundingRateHistoryOptions,
                 x => x[0].FundingRate == 0.00025m,
                 x => x[0].Timestamp == new DateTime(2025, 11, 30, 12, 33, 20, 456, DateTimeKind.Utc)
@@ -188,10 +188,10 @@ namespace Weex.Net.UnitTests
                 x => x[0].HighPrice == 69380.0m,
                 x => x[0].LowPrice == 69320.5m,
                 x => x[0].ClosePrice == 69355.2m,
-                x => x[0].Volume == 25.678m
+                x => x[0].Volumes.QuantityInBaseAsset == 25.678m
                 );
             await tester.ValidateAsync(client => client.FuturesApi.SharedClient.GetOpenInterestAsync(new GetOpenInterestRequest(symbol)), "GetOpenInterest", client.FuturesApi.SharedClient.GetOpenInterestOptions,
-                x => x.OpenInterest == 128345.67m
+                x => x.OpenInterests.QuantityInBaseAsset == 128345.67m
                 );
             await tester.ValidateAsync(client => client.FuturesApi.SharedClient.GetOrderBookAsync(new GetOrderBookRequest(symbol)), "GetOrderBook", client.FuturesApi.SharedClient.GetOrderBookOptions,
                 x => x.Asks[0].Price == 69351.0m,
@@ -201,7 +201,7 @@ namespace Weex.Net.UnitTests
                 );
             await tester.ValidateAsync(client => client.FuturesApi.SharedClient.GetRecentTradesAsync(new GetRecentTradesRequest(symbol)), "GetTrades", client.FuturesApi.SharedClient.GetRecentTradesOptions,
                 x => x[0].Price == 69350.8m,
-                x => x[0].Quantity == 0.005m,
+                x => x[0].Quantities.QuantityInBaseAsset == 0.005m,
                 x => x[0].Timestamp == new DateTime(2025, 11, 30, 12, 33, 20, 456, DateTimeKind.Utc),
                 x => x[0].Side == SharedOrderSide.Buy
                 );
@@ -250,7 +250,7 @@ namespace Weex.Net.UnitTests
                 x => x[0].FeeAsset == "USDT",
                 x => x[0].Role == SharedRole.Taker,
                 x => x[0].Price == 69000m,
-                x => x[0].Quantity == 0.01m,
+                x => x[0].Quantities.QuantityInBaseAsset == 0.01m,
                 x => x[0].Timestamp == new DateTime(2025, 11, 30, 12, 33, 20, 456, DateTimeKind.Utc)
                 );
             await tester.ValidateAsync(client => client.FuturesApi.SharedClient.GetFuturesUserTradesAsync(new GetUserTradesRequest(symbol)), "GetUserTrades", client.FuturesApi.SharedClient.GetFuturesUserTradesOptions);
