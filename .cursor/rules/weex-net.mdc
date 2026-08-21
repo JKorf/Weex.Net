@@ -80,7 +80,7 @@ var ticker = await shared.GetSpotTickerAsync(
     new GetTickerRequest(new SharedSymbol(TradingMode.Spot, "ETH", "USDT")));
 ```
 
-Shared `ISpotSymbolRestClient` and `IFuturesSymbolRestClient` queries honor `GetSymbolsRequest` filters, refresh `SpotSymbolCatalog` / `FuturesSymbolCatalog`, and return display-name and asset-class metadata.
+Shared `ISpotSymbolRestClient` and `IFuturesSymbolRestClient` queries honor `GetSymbolsRequest` filters, refresh their symbol catalogs, and return asset classifications, fees, and price limits; futures symbols also include maximum leverage.
 
 ## Hard Rules
 

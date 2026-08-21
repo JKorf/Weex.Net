@@ -4,8 +4,8 @@
 
 Weex.Net is a strongly typed .NET client library for the Weex REST and WebSocket APIs. It is part of the CryptoExchange.Net ecosystem and uses the same result, shared API, logging, rate limiting, dependency injection, and socket subscription patterns as the other JKorf exchange libraries.
 
-Current package version in this repository: 2.3.0.
-CryptoExchange.Net dependency: 12.2.0.
+Current package version in this repository: 2.4.0.
+CryptoExchange.Net dependency: 12.5.0.
 Target frameworks: netstandard2.0, netstandard2.1, net8.0, net9.0, net10.0.
 Native AOT: supported on compatible .NET targets.
 
@@ -593,7 +593,7 @@ if (!symbols.Success)
 SharedSymbolCatalog? catalog = symbolClient.SpotSymbolCatalog;
 ```
 
-Use `IFuturesSymbolRestClient.GetFuturesSymbolsAsync(...)` and `FuturesSymbolCatalog` for futures. `GetSymbolsRequest` filters are applied by both clients. Symbol results expose `DisplayName`, `BaseAssetType`, `BaseAssetSubType`, `QuoteAssetType`, and `QuoteAssetSubType`; Weex classifies applicable assets as crypto, stablecoins, commodities, or equities.
+Use `IFuturesSymbolRestClient.GetFuturesSymbolsAsync(...)` and `FuturesSymbolCatalog` for futures. `GetSymbolsRequest` filters are applied by both clients. Spot and futures symbols expose display-name and asset-class metadata plus `MakerFeePercentage`, `TakerFeePercentage`, `LowerPriceLimitPercentage`, and `UpperPriceLimitPercentage`. Futures symbols additionally expose `MaxLongLeverage` and `MaxShortLeverage`.
 
 ## SharedApis Support Matrix
 

@@ -147,7 +147,7 @@ Use this file to route common user intents to the correct Weex.Net client member
 
 For shared socket subscriptions, keep the concrete socket client and unsubscribe with `await socketClient.UnsubscribeAsync(subscription.Data)`.
 
-Shared spot and futures symbol results include display names and asset type/subtype metadata. `GetSymbolsRequest` filters are applied before results are returned.
+Shared spot and futures symbol results include display names, asset classifications, fee percentages, and price-limit percentages; futures results also include maximum long/short leverage. `GetSymbolsRequest` filters are applied before results are returned.
 
 ## Result Handling
 
