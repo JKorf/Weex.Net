@@ -12,27 +12,47 @@ using Weex.Net.Interfaces.Clients.SpotApi;
 
 namespace Weex.Net.Clients.SpotApi
 {
-    internal partial class WeexSocketClientSpotApi : IWeexSocketClientSpotApiShared
+    internal class WeexSocketClientSpotSharedApi :
+        SharedApiBase,
+        IWeexSocketClientSpotSharedApi,
+        IWeexSocketClientSpotApiShared
     {
+        private readonly WeexSocketClientSpotApi _api;
+
         private const string _topicId = "WeexSpot";
         private const string _exchangeName = "Weex";
 
-        public TradingMode[] SupportedTradingModes => new[] { TradingMode.Spot };
+        public override SharedClientInfo Discover() => SharedUtils.GetClientInfo(WeexExchange.Metadata, this);
 
-        public void SetDefaultExchangeParameter(string key, object value) => ExchangeParameters.SetStaticParameter(Exchange, key, value);
-        public void ResetDefaultExchangeParameters() => ExchangeParameters.ResetStaticParameters();
-        public SharedClientInfo Discover() => SharedUtils.GetClientInfo(WeexExchange.Metadata, this);
+        public WeexSocketClientSpotSharedApi(WeexSocketClientSpotApi api)
+            : base(
+                  api.Exchange,
+                  [TradingMode.Spot],
+                  () => api.Authenticated,
+                  api.FormatSymbol)
+        {
+            _api = api;
 
+            SetCapabilities(
+                SubscribeBalanceOptions,
+                SubscribeBookTickerOptions,
+                SubscribeKlineOptions,
+                SubscribeTickerOptions,
+                SubscribeTradeOptions,
+                SubscribeUserTradeOptions,
+                SubscribeSpotOrderOptions
+                );
+        }
 
         #region Balance client
-        SubscribeBalanceOptions IBalanceSocketClient.SubscribeBalanceOptions { get; } = new SubscribeBalanceOptions(_exchangeName, true);
-        async Task<WebSocketResult<UpdateSubscription>> IBalanceSocketClient.SubscribeToBalanceUpdatesAsync(SubscribeBalancesRequest request, Action<DataEvent<SharedBalance[]>> handler, CancellationToken ct)
+        public SubscribeBalanceOptions SubscribeBalanceOptions { get; } = new SubscribeBalanceOptions(_exchangeName, true);
+        public async Task<WebSocketResult<UpdateSubscription>> SubscribeToBalanceUpdatesAsync(SubscribeBalancesRequest request, Action<DataEvent<SharedBalance[]>> handler, CancellationToken ct)
         {
-            var validationError = ((IBalanceSocketClient)this).SubscribeBalanceOptions.ValidateRequest(request, this);
+            var validationError = SubscribeBalanceOptions.ValidateRequest(request, this);
             if (validationError != null)
                 return WebSocketResult.Fail<UpdateSubscription>(Exchange, validationError);
 
-            var result = await SubscribeToAccountUpdatesAsync(
+            var result = await _api.SubscribeToAccountUpdatesAsync(
                 update => handler(update.ToType(update.Data.Balances.Select(x => 
                     new SharedBalance(SupportedTradingModes, x.Asset, x.Available, x.Available + x.Frozen)).ToArray())),
                 ct: ct).ConfigureAwait(false);
@@ -43,23 +63,23 @@ namespace Weex.Net.Clients.SpotApi
         #endregion
 
         #region Book Ticker client
-        SubscribeBookTickerOptions IBookTickerSocketClient.SubscribeBookTickerOptions { get; } = new SubscribeBookTickerOptions(_exchangeName, false)
+        public SubscribeBookTickerOptions SubscribeBookTickerOptions { get; } = new SubscribeBookTickerOptions(_exchangeName, false)
         {
             SupportsMultipleSymbols = true
         };
-        async Task<WebSocketResult<UpdateSubscription>> IBookTickerSocketClient.SubscribeToBookTickerUpdatesAsync(SubscribeBookTickerRequest request, Action<DataEvent<SharedBookTicker>> handler, CancellationToken ct)
+        public async Task<WebSocketResult<UpdateSubscription>> SubscribeToBookTickerUpdatesAsync(SubscribeBookTickerRequest request, Action<DataEvent<SharedBookTicker>> handler, CancellationToken ct)
         {
-            var validationError = ((IBookTickerSocketClient)this).SubscribeBookTickerOptions.ValidateRequest(request, this);
+            var validationError = SubscribeBookTickerOptions.ValidateRequest(request, this);
             if (validationError != null)
                 return WebSocketResult.Fail<UpdateSubscription>(Exchange, validationError);
 
             var symbols = request.Symbols?.Length > 0 ? request.Symbols.Select(x => x.GetSymbol(FormatSymbol)).ToArray() : [request.Symbol!.GetSymbol(FormatSymbol)];
-            var result = await SubscribeToBookTickerUpdatesAsync(
+            var result = await _api.SubscribeToBookTickerUpdatesAsync(
                 symbols, 
                 update =>
                     handler(update.ToType(
                         new SharedBookTicker(
-                            ExchangeSymbolCache.ParseSymbol(_topicId, EnvironmentName, null, update.Data.Symbol),
+                            ExchangeSymbolCache.ParseSymbol(_topicId, _api.EnvironmentName, null, update.Data.Symbol),
                             update.Data.Symbol,
                             update.Data.BestAskPrice,
                             new SharedOrderQuantity(update.Data.BestAskQuantity),
@@ -72,7 +92,7 @@ namespace Weex.Net.Clients.SpotApi
         #endregion
 
         #region Kline client
-        SubscribeKlineOptions IKlineSocketClient.SubscribeKlineOptions { get; } = new SubscribeKlineOptions(_exchangeName, false,
+        public SubscribeKlineOptions SubscribeKlineOptions { get; } = new SubscribeKlineOptions(_exchangeName, false,
             SharedKlineInterval.OneMinute,
             SharedKlineInterval.FiveMinutes,
             SharedKlineInterval.FifteenMinutes,
@@ -89,7 +109,7 @@ namespace Weex.Net.Clients.SpotApi
         {
             SupportsMultipleSymbols = true
         };
-        async Task<WebSocketResult<UpdateSubscription>> IKlineSocketClient.SubscribeToKlineUpdatesAsync(SubscribeKlineRequest request, Action<DataEvent<SharedKline>> handler, CancellationToken ct)
+        public async Task<WebSocketResult<UpdateSubscription>> SubscribeToKlineUpdatesAsync(SubscribeKlineRequest request, Action<DataEvent<SharedKline>> handler, CancellationToken ct)
         {
             var interval = (Enums.KlineInterval)request.Interval;
             var validationError = ((IKlineSocketClient)this).SubscribeKlineOptions.ValidateRequest(request, this);
@@ -97,7 +117,7 @@ namespace Weex.Net.Clients.SpotApi
                 return WebSocketResult.Fail<UpdateSubscription>(Exchange, validationError);
 
             var symbols = request.Symbols?.Length > 0 ? request.Symbols.Select(x => x.GetSymbol(FormatSymbol)).ToArray() : [request.Symbol!.GetSymbol(FormatSymbol)];
-            var result = await SubscribeToKlineUpdatesAsync(symbols, interval, update =>
+            var result = await _api.SubscribeToKlineUpdatesAsync(symbols, interval, update =>
             {
                 if (update.UpdateType == SocketUpdateType.Snapshot)
                     return;
@@ -105,7 +125,7 @@ namespace Weex.Net.Clients.SpotApi
                 var kline = update.Data.Single();
                 handler(update.ToType(
                     new SharedKline(
-                        ExchangeSymbolCache.ParseSymbol(_topicId, EnvironmentName, null, update.Symbol),
+                        ExchangeSymbolCache.ParseSymbol(_topicId, _api.EnvironmentName, null, update.Symbol),
                         update.Symbol!,
                         kline.OpenTime,
                         kline.ClosePrice,
@@ -120,20 +140,23 @@ namespace Weex.Net.Clients.SpotApi
         #endregion
 
         #region Ticker client
-        SubscribeTickerOptions ITickerSocketClient.SubscribeTickerOptions { get; } = new SubscribeTickerOptions(_exchangeName)
+        async Task<WebSocketResult<UpdateSubscription>> ISubscribeTickerOperation.SubscribeToTickerUpdatesAsync(SubscribeTickerRequest request, Action<DataEvent<SharedTicker>> handler, CancellationToken ct)
+            => await SubscribeToTickerUpdatesAsync(request, x => handler(x.ToType<SharedTicker>(x.Data)), ct).ConfigureAwait(false);
+
+        public SubscribeTickerOptions SubscribeTickerOptions { get; } = new SubscribeTickerOptions(_exchangeName)
         {
             SupportsMultipleSymbols = true
         };
-        async Task<WebSocketResult<UpdateSubscription>> ITickerSocketClient.SubscribeToTickerUpdatesAsync(SubscribeTickerRequest request, Action<DataEvent<SharedSpotTicker>> handler, CancellationToken ct)
+        public async Task<WebSocketResult<UpdateSubscription>> SubscribeToTickerUpdatesAsync(SubscribeTickerRequest request, Action<DataEvent<SharedSpotTicker>> handler, CancellationToken ct)
         {
-            var validationError = ((ITickerSocketClient)this).SubscribeTickerOptions.ValidateRequest(request, this);
+            var validationError = SubscribeTickerOptions.ValidateRequest(request, this);
             if (validationError != null)
                 return WebSocketResult.Fail<UpdateSubscription>(Exchange, validationError);
 
             var symbols = request.Symbols?.Length > 0 ? request.Symbols.Select(x => x.GetSymbol(FormatSymbol)).ToArray() : [request.Symbol!.GetSymbol(FormatSymbol)];
-            var result = await SubscribeToTickerUpdatesAsync(symbols, update => handler(update.ToType(
+            var result = await _api.SubscribeToTickerUpdatesAsync(symbols, update => handler(update.ToType(
                 new SharedSpotTicker(
-                    ExchangeSymbolCache.ParseSymbol(_topicId, EnvironmentName, null, update.Symbol),
+                    ExchangeSymbolCache.ParseSymbol(_topicId, _api.EnvironmentName, null, update.Symbol),
                     update.Symbol!,
                     update.Data.LastPrice, 
                     update.Data.HighPrice,
@@ -149,25 +172,25 @@ namespace Weex.Net.Clients.SpotApi
 
         #region Trade client
 
-        SubscribeTradeOptions ITradeSocketClient.SubscribeTradeOptions { get; } = new SubscribeTradeOptions(_exchangeName, false)
+        public SubscribeTradeOptions SubscribeTradeOptions { get; } = new SubscribeTradeOptions(_exchangeName, false)
         {
             SupportsMultipleSymbols = true
         };
-        async Task<WebSocketResult<UpdateSubscription>> ITradeSocketClient.SubscribeToTradeUpdatesAsync(SubscribeTradeRequest request, Action<DataEvent<SharedTrade[]>> handler, CancellationToken ct)
+        public async Task<WebSocketResult<UpdateSubscription>> SubscribeToTradeUpdatesAsync(SubscribeTradeRequest request, Action<DataEvent<SharedTrade[]>> handler, CancellationToken ct)
         {
-            var validationError = ((ITradeSocketClient)this).SubscribeTradeOptions.ValidateRequest(request, this);
+            var validationError = SubscribeTradeOptions.ValidateRequest(request, this);
             if (validationError != null)
                 return WebSocketResult.Fail<UpdateSubscription>(Exchange, validationError);
 
             var symbols = request.Symbols?.Length > 0 ? request.Symbols.Select(x => x.GetSymbol(FormatSymbol)).ToArray() : [request.Symbol!.GetSymbol(FormatSymbol)];
-            var result = await SubscribeToTradeUpdatesAsync(symbols, update =>
+            var result = await _api.SubscribeToTradeUpdatesAsync(symbols, update =>
             {
                 if (update.UpdateType == SocketUpdateType.Snapshot)
                     return;
 
                 handler(update.ToType(update.Data.Select(x => 
                     new SharedTrade(
-                        ExchangeSymbolCache.ParseSymbol(_topicId, EnvironmentName, null, update.Symbol),
+                        ExchangeSymbolCache.ParseSymbol(_topicId, _api.EnvironmentName, null, update.Symbol),
                         update.Symbol!,
                         new SharedOrderQuantity(x.Quantity, x.Value),
                         x.Price,
@@ -184,19 +207,19 @@ namespace Weex.Net.Clients.SpotApi
 
         #region User Trade client
 
-        SubscribeUserTradeOptions IUserTradeSocketClient.SubscribeUserTradeOptions { get; } = new SubscribeUserTradeOptions(_exchangeName, true);
-        async Task<WebSocketResult<UpdateSubscription>> IUserTradeSocketClient.SubscribeToUserTradeUpdatesAsync(SubscribeUserTradeRequest request, Action<DataEvent<SharedUserTrade[]>> handler, CancellationToken ct)
+        public SubscribeUserTradeOptions SubscribeUserTradeOptions { get; } = new SubscribeUserTradeOptions(_exchangeName, true);
+        public async Task<WebSocketResult<UpdateSubscription>> SubscribeToUserTradeUpdatesAsync(SubscribeUserTradeRequest request, Action<DataEvent<SharedUserTrade[]>> handler, CancellationToken ct)
         {
-            var validationError = ((IUserTradeSocketClient)this).SubscribeUserTradeOptions.ValidateRequest(request, this);
+            var validationError = SubscribeUserTradeOptions.ValidateRequest(request, this);
             if (validationError != null)
                 return WebSocketResult.Fail<UpdateSubscription>(Exchange, validationError);
 
-            var result = await SubscribeToUserTradeUpdatesAsync(
+            var result = await _api.SubscribeToUserTradeUpdatesAsync(
                 update =>
                 {
                     handler(update.ToType(update.Data.Trades.Select(x =>
                         new SharedUserTrade(
-                            ExchangeSymbolCache.ParseSymbol(_topicId, EnvironmentName, null, x.Symbol),
+                            ExchangeSymbolCache.ParseSymbol(_topicId, _api.EnvironmentName, null, x.Symbol),
                             x.Symbol,
                             x.OrderId.ToString(),
                             x.Id,
@@ -218,17 +241,20 @@ namespace Weex.Net.Clients.SpotApi
 
         #region Spot Order client
 
-        SubscribeSpotOrderOptions ISpotOrderSocketClient.SubscribeSpotOrderOptions { get; } = new SubscribeSpotOrderOptions(_exchangeName, true);
         async Task<WebSocketResult<UpdateSubscription>> ISpotOrderSocketClient.SubscribeToSpotOrderUpdatesAsync(SubscribeSpotOrderRequest request, Action<DataEvent<SharedSpotOrder[]>> handler, CancellationToken ct)
+            => await SubscribeToSpotOrderUpdatesAsync(request, x => handler(x.ToType<SharedSpotOrder[]>(x.Data)), ct).ConfigureAwait(false);
+
+        public SubscribeSpotOrderOptions SubscribeSpotOrderOptions { get; } = new SubscribeSpotOrderOptions(_exchangeName, true);
+        public async Task<WebSocketResult<UpdateSubscription>> SubscribeToSpotOrderUpdatesAsync(SubscribeSpotOrderRequest request, Action<DataEvent<SharedSpotOrderUpdate[]>> handler, CancellationToken ct)
         {
-            var validationError = ((ISpotOrderSocketClient)this).SubscribeSpotOrderOptions.ValidateRequest(request, this);
+            var validationError = SubscribeSpotOrderOptions.ValidateRequest(request, this);
             if (validationError != null)
                 return WebSocketResult.Fail<UpdateSubscription>(Exchange, validationError);
 
-            var result = await SubscribeToOrderUpdatesAsync(
+            var result = await _api.SubscribeToOrderUpdatesAsync(
                 update => handler(update.ToType(update.Data.Orders.Select(x =>
-                    new SharedSpotOrder(
-                        ExchangeSymbolCache.ParseSymbol(_topicId, EnvironmentName, null, x.Symbol),
+                    new SharedSpotOrderUpdate(
+                        ExchangeSymbolCache.ParseSymbol(_topicId, _api.EnvironmentName, null, x.Symbol),
                         x.Symbol,
                         x.Id.ToString(),
                         ParseOrderType(x.OrderType),
@@ -241,7 +267,9 @@ namespace Weex.Net.Clients.SpotApi
                         OrderQuantity = new SharedOrderQuantity(x.Quantity),
                         QuantityFilled = new SharedOrderQuantity(x.QuantityFilled, x.ValueFilled),
                         UpdateTime = x.UpdateTime,
+#pragma warning disable CS0618 // Type or member is obsolete
                         Fee = x.Fee,
+#pragma warning restore CS0618 // Type or member is obsolete
                         TimeInForce = ParseTimeInForce(x.TimeInForce)
                     }
                 ).ToArray())),

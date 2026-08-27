@@ -33,6 +33,8 @@ namespace Weex.Net.Clients.FuturesApi
     internal partial class WeexSocketClientFuturesApi : SocketApiClient<WeexEnvironment, WeexAuthenticationProvider, WeexCredentials>, IWeexSocketClientFuturesApi
     {
         #region fields
+        private readonly WeexSocketClientFuturesSharedApi _sharedApi;
+
         private readonly WeexSocketClient _baseClient;
 
         //protected override ErrorMapping ErrorMapping => WeexErrors.Errors;
@@ -48,6 +50,7 @@ namespace Weex.Net.Clients.FuturesApi
         {
             _baseClient = baseClient;
 
+            _sharedApi = new WeexSocketClientFuturesSharedApi(this);
             RateLimiter = WeexExchange.RateLimiter.WeexSocket;
 
             AddSystemSubscription(new WeexConnectedSubscription(_logger));
@@ -267,7 +270,9 @@ namespace Weex.Net.Clients.FuturesApi
         }
 
         /// <inheritdoc />
-        public IWeexSocketClientFuturesApiShared SharedClient => this;
+        public IWeexSocketClientFuturesApiShared SharedClient => _sharedApi;
+        /// <inheritdoc />
+        public IWeexSocketClientFuturesSharedApi SharedApi => _sharedApi;
 
         /// <inheritdoc />
         public override string FormatSymbol(string baseAsset, string quoteAsset, TradingMode tradingMode, DateTime? deliverDate = null)

@@ -22,6 +22,8 @@ namespace Weex.Net.Clients.SpotApi
     internal partial class WeexRestClientSpotApi : RestApiClient<WeexEnvironment, WeexAuthenticationProvider, WeexCredentials>, IWeexRestClientSpotApi
     {
         #region fields 
+        private readonly WeexRestClientSpotSharedApi _sharedApi;
+
         protected override ErrorMapping ErrorMapping => WeexErrors.RestErrors;
 
         /// <inheritdoc />
@@ -47,6 +49,8 @@ namespace Weex.Net.Clients.SpotApi
             Account = new WeexRestClientSpotApiAccount(this);
             ExchangeData = new WeexRestClientSpotApiExchangeData(_logger, this);
             Trading = new WeexRestClientSpotApiTrading(_logger, this);
+
+            _sharedApi = new WeexRestClientSpotSharedApi(this);
 
             StandardRequestHeaders = new Dictionary<string, string>
             {
@@ -89,6 +93,8 @@ namespace Weex.Net.Clients.SpotApi
             => WeexExchange.FormatSymbol(baseAsset, quoteAsset, tradingMode, deliverDate);
 
         /// <inheritdoc />
-        public IWeexRestClientSpotApiShared SharedClient => this;
+        public IWeexRestClientSpotApiShared SharedClient => _sharedApi;
+        /// <inheritdoc />
+        public IWeexRestClientSpotSharedApi SharedApi => _sharedApi;
     }
 }

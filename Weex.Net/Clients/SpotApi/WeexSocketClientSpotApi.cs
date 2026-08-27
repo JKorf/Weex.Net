@@ -1,10 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.WebSockets;
-using System.Threading;
-using System.Threading.Tasks;
 using CryptoExchange.Net;
 using CryptoExchange.Net.Authentication;
 using CryptoExchange.Net.Clients;
@@ -19,6 +12,14 @@ using CryptoExchange.Net.SharedApis;
 using CryptoExchange.Net.Sockets;
 using CryptoExchange.Net.Sockets.Default;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.WebSockets;
+using System.Threading;
+using System.Threading.Tasks;
+using Weex.Net.Clients.FuturesApi;
 using Weex.Net.Clients.MessageHandlers;
 using Weex.Net.Enums;
 using Weex.Net.Interfaces.Clients.SpotApi;
@@ -34,6 +35,8 @@ namespace Weex.Net.Clients.SpotApi
     internal partial class WeexSocketClientSpotApi : SocketApiClient<WeexEnvironment, WeexAuthenticationProvider, WeexCredentials>, IWeexSocketClientSpotApi
     {
         #region fields
+        private readonly WeexSocketClientSpotSharedApi _sharedApi;
+
         private readonly WeexSocketClient _baseClient;
 
         //protected override ErrorMapping ErrorMapping => WeexErrors.Errors;
@@ -48,6 +51,7 @@ namespace Weex.Net.Clients.SpotApi
             base(loggerFactory, WeexExchange.Metadata.Id, options.Environment.SocketClientSpotAddress!, options, options.SpotOptions)
         {
             _baseClient = baseClient;
+            _sharedApi = new WeexSocketClientSpotSharedApi(this);
 
             RateLimiter = WeexExchange.RateLimiter.WeexSocket;
 
@@ -273,7 +277,9 @@ namespace Weex.Net.Clients.SpotApi
         }
 
         /// <inheritdoc />
-        public IWeexSocketClientSpotApiShared SharedClient => this;
+        public IWeexSocketClientSpotApiShared SharedClient => _sharedApi;
+        /// <inheritdoc />
+        public IWeexSocketClientSpotSharedApi SharedApi => _sharedApi;
 
         /// <inheritdoc />
         public override string FormatSymbol(string baseAsset, string quoteAsset, TradingMode tradingMode, DateTime? deliverDate = null)

@@ -22,6 +22,8 @@ namespace Weex.Net.Clients.FuturesApi
     internal partial class WeexRestClientFuturesApi : RestApiClient<WeexEnvironment, WeexAuthenticationProvider, WeexCredentials>, IWeexRestClientFuturesApi
     {
         #region fields 
+        private readonly WeexRestClientFuturesSharedApi _sharedApi;
+
         protected override ErrorMapping ErrorMapping => WeexErrors.RestErrors;
 
         /// <inheritdoc />
@@ -47,6 +49,8 @@ namespace Weex.Net.Clients.FuturesApi
             Account = new WeexRestClientFuturesApiAccount(this);
             ExchangeData = new WeexRestClientFuturesApiExchangeData(_logger, this);
             Trading = new WeexRestClientFuturesApiTrading(_logger, this);
+
+            _sharedApi = new WeexRestClientFuturesSharedApi(this);
 
             StandardRequestHeaders = new Dictionary<string, string>
             {
@@ -90,6 +94,8 @@ namespace Weex.Net.Clients.FuturesApi
             => WeexExchange.FormatSymbol(baseAsset, quoteAsset, tradingMode, deliverDate);
 
         /// <inheritdoc />
-        public IWeexRestClientFuturesApiShared SharedClient => this;
+        public IWeexRestClientFuturesApiShared SharedClient => _sharedApi;
+        /// <inheritdoc />
+        public IWeexRestClientFuturesSharedApi SharedApi => _sharedApi;
     }
 }

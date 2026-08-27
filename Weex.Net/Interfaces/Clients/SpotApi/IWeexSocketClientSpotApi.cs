@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Weex.Net.Enums;
+using Weex.Net.Interfaces.Clients.FuturesApi;
 using Weex.Net.Objects.Models;
 
 namespace Weex.Net.Interfaces.Clients.SpotApi
@@ -212,8 +213,15 @@ namespace Weex.Net.Interfaces.Clients.SpotApi
         Task<WebSocketResult<UpdateSubscription>> SubscribeToUserTradeUpdatesAsync(Action<DataEvent<WeexUserTradeUpdate>> onMessage, CancellationToken ct = default);
 
         /// <summary>
-        /// Get the shared socket requests client. This interface is shared with other exchanges to allow for a common implementation for different exchanges.
+        /// Get the shared socket requests client. For new implementations prefer <see cref="SharedApi"/>
         /// </summary>
         public IWeexSocketClientSpotApiShared SharedClient { get; }
+
+        /// <summary>
+        /// Gets the aggregate Shared API interface. Shared APIs provide a common,
+        /// exchange-independent contract for accessing functionality across different
+        /// exchange client libraries.
+        /// </summary>
+        public IWeexSocketClientSpotSharedApi SharedApi { get; }
     }
 }
