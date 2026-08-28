@@ -54,7 +54,7 @@ namespace Weex.Net.UnitTests
                 x => x.Networks[0].MinWithdrawQuantity == 0.00001m,
                 x => x.Networks[0].WithdrawFee == 0.000002m
                 );
-            await tester.ValidateAsync(client => client.SpotApi.SharedClient.GetAssetsAsync(new GetAssetsRequest()), "GetAssets", client.SpotApi.SharedClient.GetAssetOptions);
+            await tester.ValidateAsync(client => client.SpotApi.SharedClient.GetAllAssetsAsync(new GetAssetsRequest()), "GetAssets", client.SpotApi.SharedClient.GetAssetOptions);
             await tester.ValidateAsync(client => client.SpotApi.SharedClient.GetSpotSymbolsAsync(new GetSymbolsRequest()), "GetExchangeInfo", client.SpotApi.SharedClient.GetSpotSymbolsOptions,
                  x => x[0].Name == "BTCUSDT",
                  x => x[0].BaseAsset == "BTC",
