@@ -213,12 +213,12 @@ namespace Weex.Net.Interfaces.Clients.SpotApi
         Task<WebSocketResult<UpdateSubscription>> SubscribeToUserTradeUpdatesAsync(Action<DataEvent<WeexUserTradeUpdate>> onMessage, CancellationToken ct = default);
 
         /// <summary>
-        /// Get the shared socket requests client. For new implementations prefer <see cref="SharedApi"/>
+        /// [V1] Get the shared socket requests client. For new implementations prefer <see cref="SharedApi"/>
         /// </summary>
         public IWeexSocketClientSpotApiShared SharedClient { get; }
 
         /// <summary>
-        /// Gets the aggregate Shared API interface. Shared APIs provide a common,
+        /// [V2] Gets the aggregate Shared API interface. Shared APIs provide a common,
         /// exchange-independent contract for accessing functionality across different
         /// exchange client libraries.
         /// </summary>

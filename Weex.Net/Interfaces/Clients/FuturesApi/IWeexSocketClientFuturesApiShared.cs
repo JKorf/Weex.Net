@@ -22,13 +22,13 @@ namespace Weex.Net.Interfaces.Clients.FuturesApi
     /// exchange client libraries.
     /// </summary>
     public interface IWeexSocketClientFuturesSharedApi :
-        ISubscribeBalancesOperation,
-        ISubscribeKlinesOperation,
-        ISubscribeTickerOperation,
-        ISubscribeTradesOperation,
-        ISubscribeUserTradesOperation,
-        ISubscribeFuturesOrdersOperation,
-        ISubscribePositionsOperation
+        ISubscribeBalancesSocket,
+        ISubscribeKlinesSocket,
+        ISubscribeTickerSocket,
+        ISubscribeTradesSocket,
+        ISubscribeUserTradesSocket,
+        ISubscribeFuturesOrdersSocket,
+        ISubscribePositionsSocket
     {
     }
 }

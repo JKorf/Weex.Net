@@ -22,13 +22,13 @@ namespace Weex.Net.Interfaces.Clients.SpotApi
     /// exchange client libraries.
     /// </summary>
     public interface IWeexSocketClientSpotSharedApi :
-        ISubscribeBalancesOperation,
-        ISubscribeBookTickerOperation,
-        ISubscribeKlinesOperation,
-        ISubscribeTickerOperation,
-        ISubscribeTradesOperation,
-        ISubscribeUserTradesOperation,
-        ISubscribeSpotOrdersOperation
+        ISubscribeBalancesSocket,
+        ISubscribeBookTickerSocket,
+        ISubscribeKlinesSocket,
+        ISubscribeTickerSocket,
+        ISubscribeTradesSocket,
+        ISubscribeUserTradesSocket,
+        ISubscribeSpotOrdersSocket
     {
     }
 }
