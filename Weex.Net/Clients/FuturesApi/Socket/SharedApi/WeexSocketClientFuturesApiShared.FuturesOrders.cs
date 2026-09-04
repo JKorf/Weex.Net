@@ -14,7 +14,8 @@ namespace Weex.Net.Clients.FuturesApi
 {
     internal partial class WeexSocketClientFuturesSharedApi
     {
-        #region Futures Order client
+
+        #region Subscribe Futures Orders
 
         async Task<WebSocketResult<UpdateSubscription>> IFuturesOrderSocketClient.SubscribeToFuturesOrderUpdatesAsync(SubscribeFuturesOrderRequest request, Action<DataEvent<SharedFuturesOrder[]>> handler, CancellationToken ct)
             => await SubscribeToFuturesOrderUpdatesAsync(request, x => handler(x.ToType<SharedFuturesOrder[]>(x.Data)), ct).ConfigureAwait(false);
@@ -56,6 +57,8 @@ namespace Weex.Net.Clients.FuturesApi
             return result;
         }
 
+        #endregion
+
         private SharedTimeInForce? ParseTimeInForce(TimeInForce timeInForce)
         {
             if (timeInForce == TimeInForce.GoodTillCanceled)
@@ -90,6 +93,5 @@ namespace Weex.Net.Clients.FuturesApi
 
             return SharedOrderType.Other;
         }
-        #endregion
     }
 }

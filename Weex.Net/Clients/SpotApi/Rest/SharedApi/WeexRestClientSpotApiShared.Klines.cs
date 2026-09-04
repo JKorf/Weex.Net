@@ -16,7 +16,10 @@ namespace Weex.Net.Clients.SpotApi
 {
     internal partial class WeexRestClientSpotSharedApi
     {
-        #region Klines Client
+        #region Get Klines
+
+        async Task<ICallResult<SharedKline[]>> IGetKlines.GetKlinesAsync(GetKlinesRequest request, PageRequest? pageRequest, CancellationToken ct)
+            => await GetKlinesAsync(request, pageRequest, ct).ConfigureAwait(false);
 
         public GetKlinesOptions GetKlinesOptions { get; } = new GetKlinesOptions(_exchangeName, false, false, false, 301, false,
             SharedKlineInterval.OneMinute,

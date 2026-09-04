@@ -14,7 +14,8 @@ namespace Weex.Net.Clients.SpotApi
 {
     internal partial class WeexSocketClientSpotSharedApi
     {
-        #region Spot Order client
+
+        #region Subscribe Spot Orders
 
         async Task<WebSocketResult<UpdateSubscription>> ISpotOrderSocketClient.SubscribeToSpotOrderUpdatesAsync(SubscribeSpotOrderRequest request, Action<DataEvent<SharedSpotOrder[]>> handler, CancellationToken ct)
             => await SubscribeToSpotOrderUpdatesAsync(request, x => handler(x.ToType<SharedSpotOrder[]>(x.Data)), ct).ConfigureAwait(false);
@@ -53,6 +54,8 @@ namespace Weex.Net.Clients.SpotApi
             return result;
         }
 
+        #endregion
+
         private SharedTimeInForce? ParseTimeInForce(TimeInForce timeInForce)
         {
             if (timeInForce == TimeInForce.GoodTillCanceled)
@@ -87,6 +90,5 @@ namespace Weex.Net.Clients.SpotApi
 
             return SharedOrderType.Other;
         }
-        #endregion
     }
 }

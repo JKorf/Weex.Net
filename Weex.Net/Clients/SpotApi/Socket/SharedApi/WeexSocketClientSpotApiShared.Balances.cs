@@ -14,7 +14,8 @@ namespace Weex.Net.Clients.SpotApi
 {
     internal partial class WeexSocketClientSpotSharedApi
     {
-        #region Balance client
+        #region Subscribe Balances
+
         public SubscribeBalanceOptions SubscribeBalanceOptions { get; } = new SubscribeBalanceOptions(_exchangeName, true);
         public async Task<WebSocketResult<UpdateSubscription>> SubscribeToBalanceUpdatesAsync(SubscribeBalancesRequest request, Action<DataEvent<SharedBalance[]>> handler, CancellationToken ct)
         {

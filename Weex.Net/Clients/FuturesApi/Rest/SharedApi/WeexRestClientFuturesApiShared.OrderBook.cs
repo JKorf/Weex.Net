@@ -14,7 +14,11 @@ namespace Weex.Net.Clients.FuturesApi
 {
     internal partial class WeexRestClientFuturesSharedApi
     {
-        #region Order Book client
+        #region Get Order Book
+
+        async Task<ICallResult<SharedOrderBook>> IGetOrderBook.GetOrderBookAsync(GetOrderBookRequest request, CancellationToken ct)
+            => await GetOrderBookAsync(request, ct).ConfigureAwait(false);
+
         public GetOrderBookOptions GetOrderBookOptions { get; } = new GetOrderBookOptions(_exchangeName, [15, 200], false);
         public async Task<HttpResult<SharedOrderBook>> GetOrderBookAsync(GetOrderBookRequest request, CancellationToken ct)
         {

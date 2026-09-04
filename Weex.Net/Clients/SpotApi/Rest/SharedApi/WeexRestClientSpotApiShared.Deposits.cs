@@ -16,7 +16,6 @@ namespace Weex.Net.Clients.SpotApi
 {
     internal partial class WeexRestClientSpotSharedApi
     {
-        #region Deposit client
 
         public GetDepositAddressesOptions GetDepositAddressesOptions { get; } = new GetDepositAddressesOptions(_exchangeName, true)
         {
@@ -26,6 +25,11 @@ namespace Weex.Net.Clients.SpotApi
         {
             return Task.FromResult(HttpResult.Fail<SharedDepositAddress[]>(Exchange, new InvalidOperationError($"Method not available for {Exchange}")));
         }
+
+        #region Get Deposit History
+
+        async Task<ICallResult<SharedDeposit[]>> IGetDepositHistory.GetDepositHistoryAsync(GetDepositsRequest request, PageRequest? pageRequest, CancellationToken ct)
+            => await GetDepositHistoryAsync(request, pageRequest, ct).ConfigureAwait(false);
 
         Task<HttpResult<SharedDeposit[]>> IDepositRestClient.GetDepositsAsync(GetDepositsRequest request, PageRequest? pageRequest, CancellationToken ct)
             => GetDepositHistoryAsync(request, pageRequest, ct);

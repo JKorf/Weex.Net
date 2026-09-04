@@ -14,7 +14,8 @@ namespace Weex.Net.Clients.SpotApi
 {
     internal partial class WeexSocketClientSpotSharedApi
     {
-        #region Book Ticker client
+        #region Subscribe Book Ticker
+
         public SubscribeBookTickerOptions SubscribeBookTickerOptions { get; } = new SubscribeBookTickerOptions(_exchangeName, false)
         {
             SupportsMultipleSymbols = true
@@ -41,6 +42,7 @@ namespace Weex.Net.Clients.SpotApi
 
             return result;
         }
+
         #endregion
     }
 }

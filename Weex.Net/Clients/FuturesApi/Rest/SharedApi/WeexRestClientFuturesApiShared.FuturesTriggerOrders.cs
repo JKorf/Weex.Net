@@ -14,7 +14,11 @@ namespace Weex.Net.Clients.FuturesApi
 {
     internal partial class WeexRestClientFuturesSharedApi
     {
-        #region Trigger Order Client
+        #region Place Futures Trigger Order
+
+        async Task<ICallResult<SharedId>> IPlaceFuturesTriggerOrder.PlaceFuturesTriggerOrderAsync(PlaceFuturesTriggerOrderRequest request, CancellationToken ct)
+            => await PlaceFuturesTriggerOrderAsync(request, ct).ConfigureAwait(false);
+
         public PlaceFuturesTriggerOrderOptions PlaceFuturesTriggerOrderOptions { get; } = new PlaceFuturesTriggerOrderOptions(_exchangeName, false)
         {
             RequiredRequestParameters = [
@@ -44,6 +48,12 @@ namespace Weex.Net.Clients.FuturesApi
             // Return
             return HttpResult.Ok(result, new SharedId(result.Data.OrderId!.ToString()!));
         }
+
+        #endregion
+        #region Get Futures Trigger Order
+
+        async Task<ICallResult<SharedFuturesTriggerOrder>> IGetFuturesTriggerOrder.GetFuturesTriggerOrderAsync(GetOrderRequest request, CancellationToken ct)
+            => await GetFuturesTriggerOrderAsync(request, ct).ConfigureAwait(false);
 
         public GetFuturesTriggerOrderOptions GetFuturesTriggerOrderOptions { get; } = new GetFuturesTriggerOrderOptions(_exchangeName, true);
         public async Task<HttpResult<SharedFuturesTriggerOrder>> GetFuturesTriggerOrderAsync(GetOrderRequest request, CancellationToken ct)
@@ -108,6 +118,8 @@ namespace Weex.Net.Clients.FuturesApi
             });
         }
 
+        #endregion
+
         private SharedTriggerOrderStatus ParseTriggerStatus(WeexFuturesConditionalOrder data)
         {
             if (data.Status == OrderStatus.Filled)
@@ -132,6 +144,10 @@ namespace Weex.Net.Clients.FuturesApi
 
             return SharedTriggerOrderStatus.Unknown;
         }
+        #region Cancel Futures Trigger Order
+
+        async Task<ICallResult<SharedId>> ICancelFuturesTriggerOrder.CancelFuturesTriggerOrderAsync(CancelOrderRequest request, CancellationToken ct)
+            => await CancelFuturesTriggerOrderAsync(request, ct).ConfigureAwait(false);
 
         public CancelFuturesTriggerOrderOptions CancelFuturesTriggerOrderOptions { get; } = new CancelFuturesTriggerOrderOptions(_exchangeName, true);
         public async Task<HttpResult<SharedId>> CancelFuturesTriggerOrderAsync(CancelOrderRequest request, CancellationToken ct)
@@ -149,6 +165,8 @@ namespace Weex.Net.Clients.FuturesApi
 
             return HttpResult.Ok(order, new SharedId(order.Data.OrderId!.ToString()!));
         }
+
+        #endregion
 
         private (FuturesOrderType, OrderSide) GetTriggerOrderParameters(SharedTriggerPriceDirection orderType, decimal? orderPrice, SharedTriggerOrderDirection direction)
         {
@@ -205,6 +223,5 @@ namespace Weex.Net.Clients.FuturesApi
                     SharedTriggerOrderDirection.Exit);
             }
         }
-        #endregion
     }
 }

@@ -39,6 +39,7 @@ namespace Weex.Net.Clients.SpotApi
 
         public WeexRestClientSpotSharedApi(WeexRestClientSpotApi api)
             : base(
+                  SharedTransport.Rest,
                   api.Exchange,
                   [TradingMode.Spot],
                   () => api.Authenticated,

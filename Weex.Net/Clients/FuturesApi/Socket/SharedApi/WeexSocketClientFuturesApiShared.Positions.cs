@@ -14,7 +14,8 @@ namespace Weex.Net.Clients.FuturesApi
 {
     internal partial class WeexSocketClientFuturesSharedApi
     {
-        #region Position client
+        #region Subscribe Positions
+
         public SubscribePositionOptions SubscribePositionOptions { get; } = new SubscribePositionOptions(_exchangeName, false);
         public async Task<WebSocketResult<UpdateSubscription>> SubscribeToPositionUpdatesAsync(SubscribePositionRequest request, Action<DataEvent<SharedPosition[]>> handler, CancellationToken ct)
         {

@@ -14,7 +14,7 @@ namespace Weex.Net.Clients.FuturesApi
 {
     internal partial class WeexSocketClientFuturesSharedApi
     {
-        #region Trade client
+        #region Subscribe Trades
 
         public SubscribeTradeOptions SubscribeTradeOptions { get; } = new SubscribeTradeOptions(_exchangeName, false)
         {

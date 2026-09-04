@@ -14,7 +14,11 @@ namespace Weex.Net.Clients.FuturesApi
 {
     internal partial class WeexRestClientFuturesSharedApi
     {
-        #region Futures Symbol client
+
+        #region Get Futures Symbols
+
+        async Task<ICallResult<SharedFuturesSymbol[]>> IGetFuturesSymbols.GetFuturesSymbolsAsync(GetSymbolsRequest request, CancellationToken ct)
+            => await GetFuturesSymbolsAsync(request, ct).ConfigureAwait(false);
 
         public SharedSymbolCatalog? FuturesSymbolCatalog => ExchangeSymbolCache.GetSymbolCatalog(_exchangeName, _topicId, _api.EnvironmentName, null);
         public GetFuturesSymbolsOptions GetFuturesSymbolsOptions { get; } = new GetFuturesSymbolsOptions(_exchangeName, false);
@@ -35,6 +39,8 @@ namespace Weex.Net.Clients.FuturesApi
             ExchangeSymbolCache.UpdateSymbolInfo(_topicId, _api.EnvironmentName, null, resultData);
             return HttpResult.Ok(result, SharedUtils.ApplySymbolFilter(resultData, request));
         }
+
+        #endregion
 
         private SharedFuturesSymbol ParseSymbol(WeexFuturesSymbol s)
         {
@@ -120,6 +126,5 @@ namespace Weex.Net.Clients.FuturesApi
 
             return ExchangeCallResult<bool>.Ok(Exchange, ExchangeSymbolCache.SupportsSymbol(_topicId, _api.EnvironmentName, null, symbolName));
         }
-        #endregion
     }
 }

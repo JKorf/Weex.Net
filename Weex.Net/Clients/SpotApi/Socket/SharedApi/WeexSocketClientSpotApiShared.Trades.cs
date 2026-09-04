@@ -14,7 +14,7 @@ namespace Weex.Net.Clients.SpotApi
 {
     internal partial class WeexSocketClientSpotSharedApi
     {
-        #region Trade client
+        #region Subscribe Trades
 
         public SubscribeTradeOptions SubscribeTradeOptions { get; } = new SubscribeTradeOptions(_exchangeName, false)
         {
