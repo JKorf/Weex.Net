@@ -45,7 +45,7 @@ namespace Weex.Net.Clients.FuturesApi
         public SetLeverageOptions SetLeverageOptions { get; } = new SetLeverageOptions(_exchangeName)
         {
             RequiredRequestParameters = [
-                RequestParameter<SetLeverageRequest>.Required(x => x.MarginMode,"Margin mode to adjust leverage for", SharedMarginMode.Cross)
+                RequestParameterRule<SetLeverageRequest>.Required(x => x.MarginMode,"Margin mode to adjust leverage for", SharedMarginMode.Cross)
                 ]
         };
         public async Task<HttpResult<SharedLeverage>> SetLeverageAsync(SetLeverageRequest request, CancellationToken ct)

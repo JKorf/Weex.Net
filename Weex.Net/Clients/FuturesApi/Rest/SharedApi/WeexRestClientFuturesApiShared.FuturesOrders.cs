@@ -35,7 +35,7 @@ namespace Weex.Net.Clients.FuturesApi
         public PlaceFuturesOrderOptions PlaceFuturesOrderOptions { get; } = new PlaceFuturesOrderOptions(_exchangeName, false)
         {
             RequiredRequestParameters = [
-                RequestParameter<PlaceFuturesOrderRequest>.Required(x => x.PositionSide,"The position side", SharedPositionSide.Long)
+                RequestParameterRule<PlaceFuturesOrderRequest>.Required(x => x.PositionSide,"The position side", SharedPositionSide.Long)
                 ]
         };
         public async Task<HttpResult<SharedId>> PlaceFuturesOrderAsync(PlaceFuturesOrderRequest request, CancellationToken ct)

@@ -22,7 +22,7 @@ namespace Weex.Net.Clients.FuturesApi
         public PlaceFuturesTriggerOrderOptions PlaceFuturesTriggerOrderOptions { get; } = new PlaceFuturesTriggerOrderOptions(_exchangeName, false)
         {
             RequiredRequestParameters = [
-                RequestParameter<PlaceFuturesTriggerOrderRequest>.Required(x => x.PositionSide,"The position side", SharedPositionSide.Long)
+                RequestParameterRule<PlaceFuturesTriggerOrderRequest>.Required(x => x.PositionSide,"The position side", SharedPositionSide.Long)
                 ]
         };
         public async Task<HttpResult<SharedId>> PlaceFuturesTriggerOrderAsync(PlaceFuturesTriggerOrderRequest request, CancellationToken ct)
