@@ -59,8 +59,8 @@ namespace Weex.Net.Clients.SpotApi
                 GetRecentTradesOptions,
                 GetWithdrawalHistoryOptions,
                 GetSpotSymbolsOptions,
-                GetSpotTickerOptions,
-                GetAllSpotTickersOptions,
+                GetTickerOptions,
+                GetAllTickersOptions,
                 PlaceSpotOrderOptions,
                 GetSpotOrderOptions,
                 GetOpenSpotOrdersOptions,
@@ -69,7 +69,8 @@ namespace Weex.Net.Clients.SpotApi
                 GetSpotUserTradeHistoryOptions,
                 CancelSpotOrderOptions,
                 GetSpotOrderByClientOrderIdOptions,
-                CancelSpotOrderByClientOrderIdOptions
+                CancelSpotOrderByClientOrderIdOptions,
+                GetTransferHistoryOptions
                 );
         }
 

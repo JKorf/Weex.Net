@@ -39,8 +39,8 @@ namespace Weex.Net.Interfaces.Clients.SpotApi
         IGetRecentTradesRest,
         IGetWithdrawalHistoryRest,
         IGetSpotSymbolsRest,
-        IGetSpotTickerRest,
-        IGetAllSpotTickersRest,
+        IGetTickerRest,
+        IGetAllTickersRest,
         IPlaceSpotOrderRest,
         ICancelSpotOrderRest,
         IGetSpotOrderRest,
@@ -49,7 +49,8 @@ namespace Weex.Net.Interfaces.Clients.SpotApi
         IGetSpotOrderTradesRest,
         IGetSpotUserTradeHistoryRest,
         IGetSpotOrderByClientOrderIdRest,
-        ICancelSpotOrderByClientOrderIdRest
+        ICancelSpotOrderByClientOrderIdRest,
+        IGetTransferHistoryRest
     {
     }
 }

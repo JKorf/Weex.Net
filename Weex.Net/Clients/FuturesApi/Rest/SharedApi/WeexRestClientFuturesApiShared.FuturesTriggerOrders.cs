@@ -21,8 +21,8 @@ namespace Weex.Net.Clients.FuturesApi
 
         public PlaceFuturesTriggerOrderOptions PlaceFuturesTriggerOrderOptions { get; } = new PlaceFuturesTriggerOrderOptions(_exchangeName, false)
         {
-            RequiredRequestParameters = [
-                RequestParameterRule<PlaceFuturesTriggerOrderRequest>.Required(x => x.PositionSide,"The position side", SharedPositionSide.Long)
+            ParameterRuleOverwrites = [
+                RequestParameterRuleOverride<PlaceFuturesTriggerOrderRequest>.Required(x => x.PositionSide)
                 ]
         };
         public async Task<HttpResult<SharedId>> PlaceFuturesTriggerOrderAsync(PlaceFuturesTriggerOrderRequest request, CancellationToken ct)
@@ -41,6 +41,7 @@ namespace Weex.Net.Clients.FuturesApi
                 triggerPrice: request.TriggerPrice,
                 price: request.OrderPrice,
                 clientOrderId: request.ClientOrderId,
+                reduceOnly: request.ReduceOnly,
                 ct: ct).ConfigureAwait(false);
             if (!result.Success)
                 return HttpResult.Fail<SharedId>(result);

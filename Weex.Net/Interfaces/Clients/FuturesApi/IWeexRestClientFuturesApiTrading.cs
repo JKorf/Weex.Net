@@ -203,8 +203,23 @@ namespace Weex.Net.Interfaces.Clients.FuturesApi
         /// <param name="stopLossPrice">["<c>presetStopLossPrice</c>"] Stop loss price</param>
         /// <param name="takeProfitWorkingType">["<c>TpWorkingType</c>"] Take profit trigger price type</param>
         /// <param name="stopLossWorkingType">["<c>SlWorkingType</c>"] Stop loss trigger price type</param>
+        /// <param name="reduceOnly">["<c>reduceOnly</c>"] Reduce only flag</param>
         /// <param name="ct">Cancellation token</param>
-        Task<HttpResult<WeexFuturesOrderResult>> PlaceConditionalOrderAsync(string symbol, OrderSide side, PositionSide positionSide, FuturesOrderType type, decimal quantity, decimal triggerPrice, decimal? price = null, string? clientOrderId = null, decimal? takeProfitPrice = null, decimal? stopLossPrice = null, FuturesPriceType? takeProfitWorkingType = null, FuturesPriceType? stopLossWorkingType = null, CancellationToken ct = default);
+        Task<HttpResult<WeexFuturesOrderResult>> PlaceConditionalOrderAsync(
+            string symbol,
+            OrderSide side,
+            PositionSide positionSide,
+            FuturesOrderType type,
+            decimal quantity, 
+            decimal triggerPrice,
+            decimal? price = null, 
+            string? clientOrderId = null, 
+            decimal? takeProfitPrice = null, 
+            decimal? stopLossPrice = null, 
+            FuturesPriceType? takeProfitWorkingType = null,
+            FuturesPriceType? stopLossWorkingType = null, 
+            bool? reduceOnly = null,
+            CancellationToken ct = default);
 
         /// <summary>
         /// Cancel an open conditional order

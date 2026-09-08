@@ -239,7 +239,21 @@ namespace Weex.Net.Clients.FuturesApi
         #region Place Conditional Order
 
         /// <inheritdoc />
-        public async Task<HttpResult<WeexFuturesOrderResult>> PlaceConditionalOrderAsync(string symbol, OrderSide side, PositionSide positionSide, FuturesOrderType type, decimal quantity, decimal triggerPrice, decimal? price = null, string? clientOrderId = null, decimal? takeProfitPrice = null, decimal? stopLossPrice = null, FuturesPriceType? takeProfitWorkingType = null, FuturesPriceType? stopLossWorkingType = null, CancellationToken ct = default)
+        public async Task<HttpResult<WeexFuturesOrderResult>> PlaceConditionalOrderAsync(
+            string symbol,
+            OrderSide side,
+            PositionSide positionSide,
+            FuturesOrderType type,
+            decimal quantity,
+            decimal triggerPrice,
+            decimal? price = null,
+            string? clientOrderId = null,
+            decimal? takeProfitPrice = null,
+            decimal? stopLossPrice = null,
+            FuturesPriceType? takeProfitWorkingType = null, 
+            FuturesPriceType? stopLossWorkingType = null,
+            bool? reduceOnly = null,
+            CancellationToken ct = default)
         {
             if (clientOrderId != null)
             {
@@ -263,6 +277,7 @@ namespace Weex.Net.Clients.FuturesApi
             parameters.Add("presetStopLossPrice", stopLossPrice);
             parameters.Add("TpWorkingType", takeProfitWorkingType);
             parameters.Add("SlWorkingType", stopLossWorkingType);
+            parameters.Add("reduceOnly", reduceOnly);
             var request = _definitions.GetOrCreate(HttpMethod.Post, _baseClient.BaseAddress, "/capi/v3/algoOrder", WeexExchange.RateLimiter.WeexRestUid, 5, true);
             var result = await _baseClient.SendAsync<WeexFuturesOrderResult>(request, parameters, ct).ConfigureAwait(false);
             return result;

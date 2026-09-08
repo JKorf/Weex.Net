@@ -34,8 +34,8 @@ namespace Weex.Net.Clients.FuturesApi
 
         public PlaceFuturesOrderOptions PlaceFuturesOrderOptions { get; } = new PlaceFuturesOrderOptions(_exchangeName, false)
         {
-            RequiredRequestParameters = [
-                RequestParameterRule<PlaceFuturesOrderRequest>.Required(x => x.PositionSide,"The position side", SharedPositionSide.Long)
+            ParameterRuleOverwrites = [
+                RequestParameterRuleOverride<PlaceFuturesOrderRequest>.Required(x => x.PositionSide)
                 ]
         };
         public async Task<HttpResult<SharedId>> PlaceFuturesOrderAsync(PlaceFuturesOrderRequest request, CancellationToken ct)
@@ -364,12 +364,40 @@ namespace Weex.Net.Clients.FuturesApi
         }
 
         #endregion
+
         #region Close Position
+        async Task<ICallResult<SharedId>> ICloseFullPosition.CloseFullPositionAsync(CloseFullPositionRequest request, CancellationToken ct)
+            => await CloseFullPositionAsync(request, ct).ConfigureAwait(false);
 
-        async Task<ICallResult<SharedId>> IClosePosition.ClosePositionAsync(ClosePositionRequest request, CancellationToken ct)
-            => await ClosePositionAsync(request, ct).ConfigureAwait(false);
+        public CloseFullPositionOptions CloseFullPositionOptions { get; } = new CloseFullPositionOptions(_exchangeName, true)
+        {
+            ParameterRuleOverwrites = [
+                RequestParameterRuleOverride<CloseFullPositionRequest>.NotSupported(x => x.PositionSide)
+            ]
+        };
 
-        public ClosePositionOptions ClosePositionOptions { get; } = new ClosePositionOptions(_exchangeName, true);
+        public async Task<HttpResult<SharedId>> CloseFullPositionAsync(CloseFullPositionRequest request, CancellationToken ct)
+        {
+            var validationError = CloseFullPositionOptions.ValidateRequest(request, this);
+            if (validationError != null)
+                return HttpResult.Fail<SharedId>(Exchange, validationError);
+
+            var symbol = request.Symbol!.GetSymbol(FormatSymbol);
+            var result = await _api.Trading.ClosePositionsAsync(
+                symbol,
+                ct: ct).ConfigureAwait(false);
+            if (!result.Success)
+                return HttpResult.Fail<SharedId>(result);
+
+            return HttpResult.Ok(result, new SharedId(result.Data.Single().SuccessOrderId?.ToString() ?? string.Empty));
+        }
+
+        public ClosePositionOptions ClosePositionOptions { get; } = new ClosePositionOptions(_exchangeName, true)
+        {
+            ParameterRuleOverwrites = [
+                RequestParameterRuleOverride<CloseFullPositionRequest>.NotSupported(x => x.PositionSide)
+            ]
+        };
         public async Task<HttpResult<SharedId>> ClosePositionAsync(ClosePositionRequest request, CancellationToken ct)
         {
             var validationError = ClosePositionOptions.ValidateRequest(request, this);

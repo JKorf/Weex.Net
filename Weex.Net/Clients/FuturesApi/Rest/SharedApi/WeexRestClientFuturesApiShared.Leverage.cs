@@ -15,6 +15,7 @@ namespace Weex.Net.Clients.FuturesApi
     internal partial class WeexRestClientFuturesSharedApi
     {
         public SharedLeverageSettingMode LeverageSettingType => SharedLeverageSettingMode.PerSymbol;
+
         #region Get Leverage
 
         async Task<ICallResult<SharedLeverage>> IGetLeverage.GetLeverageAsync(GetLeverageRequest request, CancellationToken ct)
@@ -37,6 +38,7 @@ namespace Weex.Net.Clients.FuturesApi
         }
 
         #endregion
+
         #region Set Leverage
 
         async Task<ICallResult<SharedLeverage>> ISetLeverage.SetLeverageAsync(SetLeverageRequest request, CancellationToken ct)
@@ -44,8 +46,8 @@ namespace Weex.Net.Clients.FuturesApi
 
         public SetLeverageOptions SetLeverageOptions { get; } = new SetLeverageOptions(_exchangeName)
         {
-            RequiredRequestParameters = [
-                RequestParameterRule<SetLeverageRequest>.Required(x => x.MarginMode,"Margin mode to adjust leverage for", SharedMarginMode.Cross)
+            ParameterRuleOverwrites = [
+                RequestParameterRuleOverride<SetLeverageRequest>.Required(x => x.MarginMode)
                 ]
         };
         public async Task<HttpResult<SharedLeverage>> SetLeverageAsync(SetLeverageRequest request, CancellationToken ct)
