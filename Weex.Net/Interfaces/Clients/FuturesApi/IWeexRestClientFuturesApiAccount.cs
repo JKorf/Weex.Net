@@ -69,7 +69,7 @@ namespace Weex.Net.Interfaces.Clients.FuturesApi
         /// Docs:<br />
         /// <a href="https://www.weex.com/api-doc/contract/Account_API/GetContractBills" /><br />
         /// Endpoint:<br />
-        /// GET /capi/v3/account/income<br />
+        /// POST /capi/v3/account/income<br />
         /// </para>
         /// </summary>
         /// <param name="asset">["<c>asset</c>"] Filter by asset, for example `ETH`</param>
@@ -79,7 +79,9 @@ namespace Weex.Net.Interfaces.Clients.FuturesApi
         /// <param name="endTime">["<c>endTime</c>"] Filter by end time</param>
         /// <param name="limit">["<c>limit</c>"] Max number of results, max 100</param>
         /// <param name="ct">Cancellation token</param>
-        Task<HttpResult<WeexFuturesBillPage>> GetAccountBillsAsync(string? asset = null, string? symbol = null, IncomeType? incomeType = null, DateTime? startTime = null, DateTime? endTime = null, int? limit = null, CancellationToken ct = default);
+        /// <param name="nextKeyId">["<c>nextKeyId</c>"] Cursor ID from the previous page</param>
+        /// <param name="nextKeyTime">["<c>nextKeyTime</c>"] Cursor timestamp from the previous page</param>
+        Task<HttpResult<WeexFuturesBillPage>> GetAccountBillsAsync(string? asset = null, string? symbol = null, IncomeType? incomeType = null, DateTime? startTime = null, DateTime? endTime = null, int? limit = null, CancellationToken ct = default, long? nextKeyId = null, DateTime? nextKeyTime = null);
 
         /// <summary>
         /// Set margin mode

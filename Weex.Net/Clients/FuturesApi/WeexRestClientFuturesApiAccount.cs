@@ -76,7 +76,7 @@ namespace Weex.Net.Clients.FuturesApi
         #region Get Account Bills
 
         /// <inheritdoc />
-        public async Task<HttpResult<WeexFuturesBillPage>> GetAccountBillsAsync(string? asset = null, string? symbol = null, IncomeType? incomeType = null, DateTime? startTime = null, DateTime? endTime = null, int? limit = null, CancellationToken ct = default)
+        public async Task<HttpResult<WeexFuturesBillPage>> GetAccountBillsAsync(string? asset = null, string? symbol = null, IncomeType? incomeType = null, DateTime? startTime = null, DateTime? endTime = null, int? limit = null, CancellationToken ct = default, long? nextKeyId = null, DateTime? nextKeyTime = null)
         {
             var parameters = new Parameters(WeexExchange._parameterSerializationSettings);
             parameters.Add("asset", asset);
@@ -85,6 +85,8 @@ namespace Weex.Net.Clients.FuturesApi
             parameters.Add("startTime", startTime);
             parameters.Add("endTime", endTime);
             parameters.Add("limit", limit);
+            parameters.Add("nextKeyId", nextKeyId);
+            parameters.Add("nextKeyTime", nextKeyTime);
             var request = _definitions.GetOrCreate(HttpMethod.Post, _baseClient.BaseAddress, "/capi/v3/account/income", WeexExchange.RateLimiter.WeexRestUid, 5, true);
             var result = await _baseClient.SendAsync<WeexFuturesBillPage>(request, parameters, ct).ConfigureAwait(false);
             return result;

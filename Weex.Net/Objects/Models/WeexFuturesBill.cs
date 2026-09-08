@@ -27,7 +27,19 @@ namespace Weex.Net.Objects.Models
         /// ["<c>nextKey</c>"] Next page key
         /// </summary>
         [JsonPropertyName("nextKey")]
-        public string? NextKey { get; set; }
+        public WeexFuturesBillCursor? NextKey { get; set; }
+    }
+
+    /// <summary>Pagination cursor for futures account income.</summary>
+    public record WeexFuturesBillCursor
+    {
+        /// <summary>["<c>nextKeyId</c>"] Next page cursor ID.</summary>
+        [JsonPropertyName("nextKeyId")]
+        public long NextKeyId { get; set; }
+
+        /// <summary>["<c>nextKeyTime</c>"] Next page cursor timestamp.</summary>
+        [JsonPropertyName("nextKeyTime")]
+        public DateTime NextKeyTime { get; set; }
     }
 
     /// <summary>
