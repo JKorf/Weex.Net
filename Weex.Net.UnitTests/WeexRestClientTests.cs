@@ -4,6 +4,7 @@ using CryptoExchange.Net.Converters.SystemTextJson;
 using CryptoExchange.Net.Interfaces.Clients;
 using CryptoExchange.Net.Objects;
 using CryptoExchange.Net.Testing;
+using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -79,6 +80,38 @@ namespace Weex.Net.UnitTests
 
             Assert.That(missingOptions, Is.Empty);
             Assert.That(missingInterfaces, Is.Empty);
+        }
+
+        [Test]
+        public void TestSpotRestSharedApiDoesntHaveUnsupportedCapabilities()
+        {
+            var unsupported = TestHelpers.ValidateUnsupportedCapabilities(new WeexRestClient().SpotApi.SharedApi);
+
+            Assert.That(unsupported, Is.Empty);
+        }
+
+        [Test]
+        public void TestSpotSocketSharedApiDoesntHaveUnsupportedCapabilities()
+        {
+            var unsupported = TestHelpers.ValidateUnsupportedCapabilities(new WeexSocketClient().SpotApi.SharedApi);
+
+            Assert.That(unsupported, Is.Empty);
+        }
+
+        [Test]
+        public void TestFuturesRestSharedApiDoesntHaveUnsupportedCapabilities()
+        {
+            var unsupported = TestHelpers.ValidateUnsupportedCapabilities(new WeexRestClient().FuturesApi.SharedApi);
+
+            Assert.That(unsupported, Is.Empty);
+        }
+
+        [Test]
+        public void TestFuturesSocketSharedApiDoesntHaveUnsupportedCapabilities()
+        {
+            var unsupported = TestHelpers.ValidateUnsupportedCapabilities(new WeexSocketClient().FuturesApi.SharedApi);
+
+            Assert.That(unsupported, Is.Empty);
         }
     }
 }

@@ -19,7 +19,13 @@ namespace Weex.Net.Clients.FuturesApi
         async Task<ICallResult<SharedFuturesKline[]>> IGetIndexPriceKlines.GetIndexPriceKlinesAsync(GetKlinesRequest request, PageRequest? pageRequest, CancellationToken ct)
             => await GetIndexPriceKlinesAsync(request, pageRequest, ct).ConfigureAwait(false);
 
-        public GetIndexPriceKlinesOptions GetIndexPriceKlinesOptions { get; } = new GetIndexPriceKlinesOptions(_exchangeName, false, true, false, 1000, false);
+        public GetIndexPriceKlinesOptions GetIndexPriceKlinesOptions { get; } = new GetIndexPriceKlinesOptions(_exchangeName, false, true, false, 1000, false)
+        {
+            ParameterRuleOverwrites = [
+                RequestParameterRuleOverride<GetKlinesRequest>.NotSupported(x => x.StartTime),
+                RequestParameterRuleOverride<GetKlinesRequest>.NotSupported(x => x.EndTime)
+                ]
+        };
 
         public async Task<HttpResult<SharedFuturesKline[]>> GetIndexPriceKlinesAsync(GetKlinesRequest request, PageRequest? pageRequest, CancellationToken ct)
         {

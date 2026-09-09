@@ -35,7 +35,12 @@ namespace Weex.Net.Clients.SpotApi
             => GetDepositHistoryAsync(request, pageRequest, ct);
         GetDepositHistoryOptions IDepositRestClient.GetDepositsOptions => GetDepositHistoryOptions;
 
-        public GetDepositHistoryOptions GetDepositHistoryOptions { get; } = new GetDepositHistoryOptions(_exchangeName, false, true, true, 100);
+        public GetDepositHistoryOptions GetDepositHistoryOptions { get; } = new GetDepositHistoryOptions(_exchangeName, false, true, true, 100)
+        {
+            ParameterRuleOverwrites = [
+                RequestParameterRuleOverride<GetDepositsRequest>.NotSupported(x => x.Asset)
+                ]
+        };
         public async Task<HttpResult<SharedDeposit[]>> GetDepositHistoryAsync(GetDepositsRequest request, PageRequest? pageRequest, CancellationToken ct)
         {
             var validationError = GetDepositHistoryOptions.ValidateRequest(request, this);

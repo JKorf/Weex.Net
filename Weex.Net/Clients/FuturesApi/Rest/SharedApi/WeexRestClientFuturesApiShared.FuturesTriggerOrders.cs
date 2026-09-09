@@ -22,7 +22,8 @@ namespace Weex.Net.Clients.FuturesApi
         public PlaceFuturesTriggerOrderOptions PlaceFuturesTriggerOrderOptions { get; } = new PlaceFuturesTriggerOrderOptions(_exchangeName, false)
         {
             ParameterRuleOverwrites = [
-                RequestParameterRuleOverride<PlaceFuturesTriggerOrderRequest>.Required(x => x.PositionSide)
+                RequestParameterRuleOverride<PlaceFuturesTriggerOrderRequest>.Required(x => x.PositionSide),
+                RequestParameterRuleOverride<PlaceFuturesTriggerOrderRequest>.NotSupported(x => x.MarginMode),
                 ]
         };
         public async Task<HttpResult<SharedId>> PlaceFuturesTriggerOrderAsync(PlaceFuturesTriggerOrderRequest request, CancellationToken ct)

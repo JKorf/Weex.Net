@@ -32,10 +32,12 @@ namespace Weex.Net.Clients.FuturesApi
         async Task<ICallResult<SharedId>> IPlaceFuturesOrder.PlaceFuturesOrderAsync(PlaceFuturesOrderRequest request, CancellationToken ct)
             => await PlaceFuturesOrderAsync(request, ct).ConfigureAwait(false);
 
-        public PlaceFuturesOrderOptions PlaceFuturesOrderOptions { get; } = new PlaceFuturesOrderOptions(_exchangeName, false)
+        public PlaceFuturesOrderOptions PlaceFuturesOrderOptions { get; } = new PlaceFuturesOrderOptions(_exchangeName, true)
         {
             ParameterRuleOverwrites = [
-                RequestParameterRuleOverride<PlaceFuturesOrderRequest>.Required(x => x.PositionSide)
+                RequestParameterRuleOverride<PlaceFuturesOrderRequest>.Required(x => x.PositionSide),
+                RequestParameterRuleOverride<PlaceFuturesOrderRequest>.NotSupported(x => x.Leverage),
+                RequestParameterRuleOverride<PlaceFuturesOrderRequest>.NotSupported(x => x.MarginMode),
                 ]
         };
         public async Task<HttpResult<SharedId>> PlaceFuturesOrderAsync(PlaceFuturesOrderRequest request, CancellationToken ct)
@@ -53,6 +55,9 @@ namespace Weex.Net.Clients.FuturesApi
                 price: request.Price,
                 timeInForce: GetTimeInForce(request.OrderType, request.TimeInForce),
                 clientOrderId: request.ClientOrderId,
+                takeProfitTriggerPrice: request.TakeProfitPrice,
+                stopLossTriggerPrice: request.StopLossPrice,
+                reduceOnly: request.ReduceOnly,
                 ct: ct).ConfigureAwait(false);
 
             if (!result.Success)
