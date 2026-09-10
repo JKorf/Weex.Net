@@ -92,7 +92,7 @@ namespace Weex.Net.UnitTests
             await RunAndCheckResult(warnings, client => client.FuturesApi.Account.GetTradingFeesAsync("ETHUSDT", CancellationToken.None), true);
             await RunAndCheckResult(warnings, client => client.FuturesApi.Account.GetAccountConfigAsync(CancellationToken.None), true);
             await RunAndCheckResult(warnings, client => client.FuturesApi.Account.GetSymbolConfigAsync(default, CancellationToken.None), true);
-            await RunAndCheckResult(warnings, client => client.FuturesApi.Account.GetAccountBillsAsync(default, default, default, default, default, default, CancellationToken.None, default, default), true);
+            await RunAndCheckResult(warnings, client => client.FuturesApi.Account.GetAccountBillsAsync(default, default, default, default, default, default, default, default, CancellationToken.None), true);
             foreach (var warning in warnings)
                 Assert.Warn(warning.Message);
         }
