@@ -81,7 +81,7 @@ namespace Weex.Net.Interfaces.Clients.FuturesApi
         /// <param name="ct">Cancellation token</param>
         /// <param name="nextKeyId">["<c>nextKeyId</c>"] Cursor ID from the previous page</param>
         /// <param name="nextKeyTime">["<c>nextKeyTime</c>"] Cursor timestamp from the previous page</param>
-        Task<HttpResult<WeexFuturesBillPage>> GetAccountBillsAsync(string? asset = null, string? symbol = null, IncomeType? incomeType = null, DateTime? startTime = null, DateTime? endTime = null, int? limit = null, CancellationToken ct = default, long? nextKeyId = null, DateTime? nextKeyTime = null);
+        Task<HttpResult<WeexFuturesBillPage>> GetAccountBillsAsync(string? asset = null, string? symbol = null, IncomeType? incomeType = null, DateTime? startTime = null, DateTime? endTime = null, int? limit = null, long? nextKeyId = null, DateTime? nextKeyTime = null, CancellationToken ct = default);
 
         /// <summary>
         /// Set margin mode

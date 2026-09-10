@@ -76,7 +76,7 @@ namespace Weex.Net.Clients.FuturesApi
         #region Get Account Bills
 
         /// <inheritdoc />
-        public async Task<HttpResult<WeexFuturesBillPage>> GetAccountBillsAsync(string? asset = null, string? symbol = null, IncomeType? incomeType = null, DateTime? startTime = null, DateTime? endTime = null, int? limit = null, CancellationToken ct = default, long? nextKeyId = null, DateTime? nextKeyTime = null)
+        public async Task<HttpResult<WeexFuturesBillPage>> GetAccountBillsAsync(string? asset = null, string? symbol = null, IncomeType? incomeType = null, DateTime? startTime = null, DateTime? endTime = null, int? limit = null, long? nextKeyId = null, DateTime? nextKeyTime = null, CancellationToken ct = default)
         {
             var parameters = new Parameters(WeexExchange._parameterSerializationSettings);
             parameters.Add("asset", asset);
