@@ -37,7 +37,7 @@ namespace Weex.Net.Clients.SpotApi
 
         public GetDepositHistoryOptions GetDepositHistoryOptions { get; } = new GetDepositHistoryOptions(_exchangeName, false, true, true, 100)
         {
-            ParameterRuleOverwrites = [
+            ParameterRuleOverrides = [
                 RequestParameterRuleOverride<GetDepositsRequest>.NotSupported(x => x.Asset)
                 ]
         };

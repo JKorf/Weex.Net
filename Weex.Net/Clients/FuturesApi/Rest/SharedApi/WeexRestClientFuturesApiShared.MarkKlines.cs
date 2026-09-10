@@ -21,7 +21,7 @@ namespace Weex.Net.Clients.FuturesApi
 
         public GetMarkPriceKlinesOptions GetMarkPriceKlinesOptions { get; } = new GetMarkPriceKlinesOptions(_exchangeName, false, true, false, 1000, false)
         {
-            ParameterRuleOverwrites = [
+            ParameterRuleOverrides = [
                 RequestParameterRuleOverride<GetKlinesRequest>.NotSupported(x => x.StartTime),
                 RequestParameterRuleOverride<GetKlinesRequest>.NotSupported(x => x.EndTime)
                 ]
