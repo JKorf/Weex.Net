@@ -1,3 +1,4 @@
+using CryptoExchange.Net.SharedApis;
 using Weex.Net.Interfaces.Clients.FuturesApi;
 using Weex.Net.Interfaces.Clients.SpotApi;
 
@@ -6,7 +7,7 @@ namespace Weex.Net.Interfaces.Clients
     /// <summary>
     /// Client for the shared REST and WebSocket API implementations of Weex
     /// </summary>
-    public interface IWeexSharedApiClient
+    public interface IWeexSharedApiClient : ISharedApiClientBase
     {
         /// <summary>
         /// Spot REST shared API implementations

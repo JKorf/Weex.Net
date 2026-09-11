@@ -1,11 +1,14 @@
+using CryptoExchange.Net.SharedApis;
+using Microsoft.Extensions.Options;
 using Weex.Net.Interfaces.Clients;
 using Weex.Net.Interfaces.Clients.FuturesApi;
 using Weex.Net.Interfaces.Clients.SpotApi;
+using Weex.Net.Objects.Options;
 
 namespace Weex.Net.Clients
 {
     /// <inheritdoc />
-    public class WeexSharedApiClient : IWeexSharedApiClient
+    public class WeexSharedApiClient : SharedApiClientBase, IWeexSharedApiClient
     {
         /// <inheritdoc />
         public IWeexRestClientSpotSharedApi SpotRest { get; }
@@ -21,7 +24,14 @@ namespace Weex.Net.Clients
         /// </summary>
         public WeexSharedApiClient(
             IWeexRestClient restClient,
-            IWeexSocketClient socketClient)
+            IWeexSocketClient socketClient,
+            IOptions<WeexOptions> options)
+            : base(options.Value.SharedApi.PreferredTransport,
+                  restClient.SpotApi.SharedApi,
+                  restClient.FuturesApi.SharedApi,
+                  socketClient.SpotApi.SharedApi,
+                  socketClient.FuturesApi.SharedApi
+                  )
         {
             SpotRest = restClient.SpotApi.SharedApi;
             FuturesRest = restClient.FuturesApi.SharedApi;
