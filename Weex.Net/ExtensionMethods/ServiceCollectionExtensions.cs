@@ -119,19 +119,19 @@ namespace Microsoft.Extensions.DependencyInjection
                     x.GetRequiredService<IOptions<WeexRestOptions>>(),
                     x.GetRequiredService<IOptions<WeexSocketOptions>>()));
 
-            services.AddTransient<IWeexSharedApiClient, WeexSharedApiClient>();
-
-            services.RegisterSharedApi(x => x.GetRequiredService<IWeexRestClient>().FuturesApi.SharedApi);
-            services.RegisterSharedApi(x => x.GetRequiredService<IWeexSocketClient>().FuturesApi.SharedApi);
-            services.RegisterSharedApi(x => x.GetRequiredService<IWeexRestClient>().SpotApi.SharedApi);
-            services.RegisterSharedApi(x => x.GetRequiredService<IWeexSocketClient>().SpotApi.SharedApi);
-
-            services.RegisterSharedApiClientCapabilities<IWeexSharedApiClient>();
-
             services.RegisterSharedRestInterfaces(x => x.GetRequiredService<IWeexRestClient>().FuturesApi.SharedClient);
             services.RegisterSharedSocketInterfaces(x => x.GetRequiredService<IWeexSocketClient>().FuturesApi.SharedClient);
             services.RegisterSharedRestInterfaces(x => x.GetRequiredService<IWeexRestClient>().SpotApi.SharedClient);
             services.RegisterSharedSocketInterfaces(x => x.GetRequiredService<IWeexSocketClient>().SpotApi.SharedClient);
+
+            services.RegisterSharedApiClient<
+                IWeexSharedApiClient,
+                WeexSharedApiClient>(sharedApis => sharedApis
+                    .Add(client => client.SpotRest)
+                    .Add(client => client.SpotSocket)
+                    .Add(client => client.FuturesRest)
+                    .Add(client => client.FuturesSocket)
+                    );
 
             return services;
         }
