@@ -34,28 +34,7 @@ namespace Microsoft.Extensions.DependencyInjection
             this IServiceCollection services,
             IConfiguration configuration)
         {
-            var options = new WeexOptions();
-            // Reset environment so we know if they're overridden
-            options.Rest.Environment = null!;
-            options.Socket.Environment = null!;
-            try
-            {
-                configuration.Bind(options);
-            }
-            catch (InvalidOperationException ex)
-            {
-                throw new InvalidOperationException("Invalid configuration provided", ex);
-            }
-
-            if (options.Rest == null || options.Socket == null)
-                throw new ArgumentException("Options null");
-
-            var restEnvName = options.Rest.Environment?.Name ?? options.Environment?.Name ?? WeexEnvironment.Live.Name;
-            var socketEnvName = options.Socket.Environment?.Name ?? options.Environment?.Name ?? WeexEnvironment.Live.Name;
-            options.Rest.Environment = WeexEnvironment.GetEnvironmentByName(restEnvName) ?? options.Rest.Environment!;
-            options.Rest.ApiCredentials = options.Rest.ApiCredentials ?? options.ApiCredentials;
-            options.Socket.Environment = WeexEnvironment.GetEnvironmentByName(socketEnvName) ?? options.Socket.Environment!;
-            options.Socket.ApiCredentials = options.Socket.ApiCredentials ?? options.ApiCredentials;
+            var options = WeexOptions.CreateFromConfiguration(configuration);
 
             services.AddSingleton(Options.Options.Create(options.Rest));
             services.AddSingleton(Options.Options.Create(options.Socket));
@@ -74,18 +53,7 @@ namespace Microsoft.Extensions.DependencyInjection
             this IServiceCollection services,
             Action<WeexOptions>? optionsDelegate = null)
         {
-            var options = new WeexOptions();
-            // Reset environment so we know if they're overridden
-            options.Rest.Environment = null!;
-            options.Socket.Environment = null!;
-            optionsDelegate?.Invoke(options);
-            if (options.Rest == null || options.Socket == null)
-                throw new ArgumentException("Options null");
-
-            options.Rest.Environment = options.Rest.Environment ?? options.Environment ?? WeexEnvironment.Live;
-            options.Rest.ApiCredentials = options.Rest.ApiCredentials ?? options.ApiCredentials;
-            options.Socket.Environment = options.Socket.Environment ?? options.Environment ?? WeexEnvironment.Live;
-            options.Socket.ApiCredentials = options.Socket.ApiCredentials ?? options.ApiCredentials;
+            var options = WeexOptions.Create(optionsDelegate);
 
             services.AddSingleton(Options.Options.Create(options.Rest));
             services.AddSingleton(Options.Options.Create(options.Socket));
