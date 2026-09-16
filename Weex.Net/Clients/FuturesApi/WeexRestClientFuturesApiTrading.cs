@@ -57,7 +57,7 @@ namespace Weex.Net.Clients.FuturesApi
         #region Place Order
 
         /// <inheritdoc />
-        public async Task<HttpResult<WeexFuturesOrderResult>> PlaceOrderAsync(string symbol, OrderSide side, PositionSide positionSide, OrderType orderType, decimal quantity, decimal? price = null, TimeInForce? timeInForce = null, string? clientOrderId = null, decimal? takeProfitTriggerPrice = null, decimal? stopLossTriggerPrice = null, FuturesPriceType? takeProfitWorkingType = null, FuturesPriceType? stopLossWorkingType = null, CancellationToken ct = default)
+        public async Task<HttpResult<WeexFuturesOrderResult>> PlaceOrderAsync(string symbol, OrderSide side, PositionSide positionSide, OrderType orderType, decimal quantity, decimal? price = null, TimeInForce? timeInForce = null, string? clientOrderId = null, decimal? takeProfitTriggerPrice = null, decimal? stopLossTriggerPrice = null, FuturesPriceType? takeProfitWorkingType = null, FuturesPriceType? stopLossWorkingType = null, bool? reduceOnly = null, CancellationToken ct = default)
         {
             var clientOrderIdUpdated = LibraryHelpers.ApplyBrokerId(
                 clientOrderId,
@@ -78,8 +78,11 @@ namespace Weex.Net.Clients.FuturesApi
             parameters.Add("slTriggerPrice", stopLossTriggerPrice);
             parameters.Add("TpWorkingType", takeProfitWorkingType);
             parameters.Add("SlWorkingType", stopLossWorkingType);
+            parameters.Add("reduceOnly", reduceOnly);
             var request = _definitions.GetOrCreate(HttpMethod.Post, _baseClient.BaseAddress, "/capi/v3/order", WeexExchange.RateLimiter.WeexRestUid, 5, true);
             var result = await _baseClient.SendAsync<WeexFuturesOrderResult>(request, parameters, ct).ConfigureAwait(false);
+            if (result.Success && !result.Data.Success)
+                return HttpResult.Fail<WeexFuturesOrderResult>(result, new ServerError(result.Data.ErrorCode ?? "", _baseClient.GetErrorInfo(result.Data.ErrorCode ?? "", result.Data.ErrorMessage)));
             return result;
         }
 
@@ -104,6 +107,8 @@ namespace Weex.Net.Clients.FuturesApi
             parameters.Add("origClientOrderId", clientOrderId);
             var request = _definitions.GetOrCreate(HttpMethod.Delete, _baseClient.BaseAddress, "/capi/v3/order", WeexExchange.RateLimiter.WeexRestUid, 3, true);
             var result = await _baseClient.SendAsync<WeexFuturesOrderResult>(request, parameters, new Parameters(WeexExchange._parameterSerializationSettings), ct).ConfigureAwait(false);
+            if (result.Success && !result.Data.Success)
+                return HttpResult.Fail<WeexFuturesOrderResult>(result, new ServerError(result.Data.ErrorCode ?? "", _baseClient.GetErrorInfo(result.Data.ErrorCode ?? "", result.Data.ErrorMessage)));
             return result;
         }
 

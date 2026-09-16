@@ -60,8 +60,9 @@ namespace Weex.Net.Interfaces.Clients.FuturesApi
         /// <param name="stopLossTriggerPrice">["<c>slTriggerPrice</c>"] Stop loss trigger price</param>
         /// <param name="takeProfitWorkingType">["<c>TpWorkingType</c>"] Take profit trigger price type</param>
         /// <param name="stopLossWorkingType">["<c>SlWorkingType</c>"] Stop loss trigger price type</param>
+        /// <param name="reduceOnly">["<c>reduceOnly</c>"] Only reduce an existing position</param>
         /// <param name="ct">Cancellation token</param>
-        Task<HttpResult<WeexFuturesOrderResult>> PlaceOrderAsync(string symbol, OrderSide side, PositionSide positionSide, OrderType orderType, decimal quantity, decimal? price = null, TimeInForce? timeInForce = null, string? clientOrderId = null, decimal? takeProfitTriggerPrice = null, decimal? stopLossTriggerPrice = null, FuturesPriceType? takeProfitWorkingType = null, FuturesPriceType? stopLossWorkingType = null, CancellationToken ct = default);
+        Task<HttpResult<WeexFuturesOrderResult>> PlaceOrderAsync(string symbol, OrderSide side, PositionSide positionSide, OrderType orderType, decimal quantity, decimal? price = null, TimeInForce? timeInForce = null, string? clientOrderId = null, decimal? takeProfitTriggerPrice = null, decimal? stopLossTriggerPrice = null, FuturesPriceType? takeProfitWorkingType = null, FuturesPriceType? stopLossWorkingType = null, bool? reduceOnly = null, CancellationToken ct = default);
 
         /// <summary>
         /// Cancel order
