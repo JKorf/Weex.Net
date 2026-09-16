@@ -30,14 +30,20 @@ namespace Weex.Net.Objects.Models
         public WeexFuturesBillCursor? NextKey { get; set; }
     }
 
-    /// <summary>Pagination cursor for futures account income.</summary>
+    /// <summary>
+    /// Pagination cursor for futures account income.
+    /// </summary>
     public record WeexFuturesBillCursor
     {
-        /// <summary>["<c>nextKeyId</c>"] Next page cursor ID.</summary>
+        /// <summary>
+        /// ["<c>nextKeyId</c>"] Next page cursor ID.
+        /// </summary>
         [JsonPropertyName("nextKeyId")]
         public long NextKeyId { get; set; }
 
-        /// <summary>["<c>nextKeyTime</c>"] Next page cursor timestamp.</summary>
+        /// <summary>
+        /// ["<c>nextKeyTime</c>"] Next page cursor timestamp.
+        /// </summary>
         [JsonPropertyName("nextKeyTime")]
         public DateTime NextKeyTime { get; set; }
     }

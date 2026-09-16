@@ -57,7 +57,7 @@ namespace Weex.Net.Clients.FuturesApi
         #region Place Order
 
         /// <inheritdoc />
-        public async Task<HttpResult<WeexFuturesOrderResult>> PlaceOrderAsync(string symbol, OrderSide side, PositionSide positionSide, OrderType orderType, decimal quantity, decimal? price = null, TimeInForce? timeInForce = null, string? clientOrderId = null, decimal? takeProfitTriggerPrice = null, decimal? stopLossTriggerPrice = null, FuturesPriceType? takeProfitWorkingType = null, FuturesPriceType? stopLossWorkingType = null, CancellationToken ct = default, bool? reduceOnly = null)
+        public async Task<HttpResult<WeexFuturesOrderResult>> PlaceOrderAsync(string symbol, OrderSide side, PositionSide positionSide, OrderType orderType, decimal quantity, decimal? price = null, TimeInForce? timeInForce = null, string? clientOrderId = null, decimal? takeProfitTriggerPrice = null, decimal? stopLossTriggerPrice = null, FuturesPriceType? takeProfitWorkingType = null, FuturesPriceType? stopLossWorkingType = null, bool? reduceOnly = null, CancellationToken ct = default)
         {
             var clientOrderIdUpdated = LibraryHelpers.ApplyBrokerId(
                 clientOrderId,
