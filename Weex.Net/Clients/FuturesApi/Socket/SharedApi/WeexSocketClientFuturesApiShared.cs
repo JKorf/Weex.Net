@@ -27,7 +27,7 @@ namespace Weex.Net.Clients.FuturesApi
         public WeexSocketClientFuturesSharedApi(WeexSocketClientFuturesApi api)
             : base(
                   SharedTransport.Socket,
-                  api.Exchange,
+                  api,
                   [TradingMode.PerpetualLinear],
                   () => api.Authenticated,
                   api.FormatSymbol)

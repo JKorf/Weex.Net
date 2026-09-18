@@ -27,7 +27,7 @@ namespace Weex.Net.Clients.SpotApi
         public WeexSocketClientSpotSharedApi(WeexSocketClientSpotApi api)
             : base(
                   SharedTransport.Socket,
-                  api.Exchange,
+                  api,
                   [TradingMode.Spot],
                   () => api.Authenticated,
                   api.FormatSymbol)

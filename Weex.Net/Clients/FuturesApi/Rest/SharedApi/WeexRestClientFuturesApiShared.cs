@@ -27,7 +27,7 @@ namespace Weex.Net.Clients.FuturesApi
         public WeexRestClientFuturesSharedApi(WeexRestClientFuturesApi api)
             : base(
                   SharedTransport.Rest,
-                  api.Exchange,
+                  api,
                   [TradingMode.PerpetualLinear],
                   () => api.Authenticated,
                   api.FormatSymbol)

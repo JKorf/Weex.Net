@@ -18,7 +18,7 @@ namespace Weex.Net.Clients.SpotApi
     {
         #region Get Transfer History
 
-        async Task<ICallResult<SharedTransfer[]>> IGetTransferHistory.GetTransferHistoryAsync(GetTransferHistoryRequest request, PageRequest? pageRequest, CancellationToken ct)
+        async Task<IExchangeCallResult<SharedTransfer[]>> IGetTransferHistory.GetTransferHistoryAsync(GetTransferHistoryRequest request, PageRequest? pageRequest, CancellationToken ct)
             => await GetTransferHistoryAsync(request, pageRequest, ct).ConfigureAwait(false);
 
         public GetTransferHistoryOptions GetTransferHistoryOptions { get; } = new GetTransferHistoryOptions(_exchangeName, false, true, true, 100);
