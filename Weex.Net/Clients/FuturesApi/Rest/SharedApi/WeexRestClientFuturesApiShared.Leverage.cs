@@ -1,0 +1,76 @@
+using CryptoExchange.Net;
+using CryptoExchange.Net.Objects;
+using CryptoExchange.Net.SharedApis;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Weex.Net.Enums;
+using Weex.Net.Interfaces.Clients.FuturesApi;
+using Weex.Net.Objects.Models;
+
+namespace Weex.Net.Clients.FuturesApi
+{
+    internal partial class WeexRestClientFuturesSharedApi
+    {
+        public SharedLeverageSettingMode LeverageSettingType => SharedLeverageSettingMode.PerSymbol;
+
+        #region Get Leverage
+
+        async Task<IExchangeCallResult<SharedLeverage>> IGetLeverage.GetLeverageAsync(GetLeverageRequest request, CancellationToken ct)
+            => await GetLeverageAsync(request, ct).ConfigureAwait(false);
+
+        public GetLeverageOptions GetLeverageOptions { get; } = new GetLeverageOptions(_exchangeName, true);
+        public async Task<HttpResult<SharedLeverage>> GetLeverageAsync(GetLeverageRequest request, CancellationToken ct)
+        {
+            var validationError = GetLeverageOptions.ValidateRequest(request, this);
+            if (validationError != null)
+                return HttpResult.Fail<SharedLeverage>(Exchange, validationError);
+
+            var result = await _api.Account.GetSymbolConfigAsync(symbol: request.Symbol!.GetSymbol(FormatSymbol), ct: ct).ConfigureAwait(false);
+            if (!result.Success)
+                return HttpResult.Fail<SharedLeverage>(result);
+
+            var symbolConfig = result.Data.Single();
+            return HttpResult.Ok(result, new SharedLeverage(
+                    request.MarginMode == SharedMarginMode.Isolated ? symbolConfig.IsolatedLongLeverage : symbolConfig.CrossLeverage));
+        }
+
+        #endregion
+
+        #region Set Leverage
+
+        async Task<IExchangeCallResult<SharedLeverage>> ISetLeverage.SetLeverageAsync(SetLeverageRequest request, CancellationToken ct)
+            => await SetLeverageAsync(request, ct).ConfigureAwait(false);
+
+        public SetLeverageOptions SetLeverageOptions { get; } = new SetLeverageOptions(_exchangeName)
+        {
+            ParameterRuleOverrides = [
+                RequestParameterRuleOverride<SetLeverageRequest>.Required(x => x.MarginMode)
+                ]
+        };
+        public async Task<HttpResult<SharedLeverage>> SetLeverageAsync(SetLeverageRequest request, CancellationToken ct)
+        {
+            var validationError = SetLeverageOptions.ValidateRequest(request, this);
+            if (validationError != null)
+                return HttpResult.Fail<SharedLeverage>(Exchange, validationError);
+
+            var marginMode = request.MarginMode == SharedMarginMode.Cross ? MarginType.Cross : MarginType.Isolated;
+            var result = await _api.Account.SetLeverageAsync(
+                symbol: request.Symbol!.GetSymbol(FormatSymbol),
+                marginMode,
+                marginMode == MarginType.Cross ? request.Leverage : null, 
+                marginMode == MarginType.Isolated ? request.Leverage : null,
+                marginMode == MarginType.Isolated ? request.Leverage : null,
+                ct: ct).ConfigureAwait(false);
+            if (!result.Success)
+                return HttpResult.Fail<SharedLeverage>(result);
+
+            return HttpResult.Ok(result, new SharedLeverage(
+                    request.MarginMode == SharedMarginMode.Isolated ? result.Data.IsolatedLongLeverage : result.Data.CrossLeverage));
+        }
+
+        #endregion
+    }
+}

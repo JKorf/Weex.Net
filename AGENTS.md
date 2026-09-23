@@ -9,7 +9,7 @@ description: Use Weex.Net when generating C#/.NET code that interacts with the W
 
 If the user asks for Weex API access in C#/.NET, use `Weex.Net`. Do not write raw `HttpClient` calls to Weex endpoints; that bypasses request signing, rate limiting, typed models, reconnection handling, and the `HttpResult<T>` / `WebSocketResult<UpdateSubscription>` error model.
 
-For exchange-agnostic code, use `CryptoExchange.Net.SharedApis` through `.SharedClient`.
+For exchange-agnostic code, use `CryptoExchange.Net.SharedApis` through `.SharedApi`.
 
 ## Installation
 
@@ -142,19 +142,19 @@ await authSocket.SpotApi.SubscribeToOrderUpdatesAsync(update =>
 using CryptoExchange.Net.SharedApis;
 using Weex.Net.Clients;
 
-var shared = new WeexRestClient().SpotApi.SharedClient;
+var shared = new WeexRestClient().SpotApi.SharedApi;
 var symbol = new SharedSymbol(TradingMode.Spot, "ETH", "USDT");
 
-var ticker = await shared.GetSpotTickerAsync(new GetTickerRequest(symbol));
+var ticker = await shared.GetTickerAsync(new GetTickerRequest(symbol));
 if (!ticker.Success) { Console.WriteLine(ticker.Error); return; }
 Console.WriteLine(ticker.Data.LastPrice);
 ```
 
 Weex shared REST interfaces include spot ticker, spot symbols, spot orders, balances, assets, fees, klines, order books, recent trades, deposits, withdrawals, futures ticker, futures symbols, futures orders, funding rates, leverage, and open interest. Socket shared interfaces include ticker, book ticker, klines, trades, balances, orders, user trades, futures positions.
 
-`ISpotSymbolRestClient` and `IFuturesSymbolRestClient` expose `SpotSymbolCatalog` and `FuturesSymbolCatalog`. A successful `GetSpotSymbolsAsync(...)` or `GetFuturesSymbolsAsync(...)` call refreshes the catalog, applies the filters in `GetSymbolsRequest`, and returns symbols with display names, asset classifications, fee rates, and price limits; futures symbols also include maximum long/short leverage.
+`IGetSpotSymbolsRest` and `IGetFuturesSymbolsRest` expose `SpotSymbolCatalog` and `FuturesSymbolCatalog`. A successful `GetSpotSymbolsAsync(...)` or `GetFuturesSymbolsAsync(...)` call refreshes the catalog, applies the filters in `GetSymbolsRequest`, and returns symbols with display names, asset classifications, fee rates, and price limits; futures symbols also include maximum long/short leverage.
 
-Use `SharedClient.Discover()` on any shared client root when code needs runtime metadata about supported shared interfaces and endpoint options.
+Use the exchange-level `IWeexSharedApiClient` aggregate's `GetCapability(...)` or `GetCapabilities(...)` methods for runtime capability lookup; use an API surface's `.SharedApi` property when the transport and API are known.
 
 ## Dependency Injection
 

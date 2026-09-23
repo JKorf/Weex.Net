@@ -24,12 +24,17 @@ namespace Weex.Net
             string? userIdentifier,
             SpotUserDataTrackerConfig? config = null) : base(
                 logger,
-                restClient.SpotApi.SharedClient,
-                restClient.SpotApi.SharedClient,
-                socketClient.SpotApi.SharedClient,
-                restClient.SpotApi.SharedClient,
-                socketClient.SpotApi.SharedClient,
-                socketClient.SpotApi.SharedClient,
+                restClient.SpotApi.SharedApi,
+
+                restClient.SpotApi.SharedApi,
+                socketClient.SpotApi.SharedApi,
+
+                restClient.SpotApi.SharedApi,
+                restClient.SpotApi.SharedApi,
+                socketClient.SpotApi.SharedApi,
+
+                restClient.SpotApi.SharedApi,
+                socketClient.SpotApi.SharedApi,
                 userIdentifier,
                 config ?? new SpotUserDataTrackerConfig())
         {
@@ -53,13 +58,20 @@ namespace Weex.Net
             string? userIdentifier,
             FuturesUserDataTrackerConfig? config = null) :
             base(logger,
-                restClient.FuturesApi.SharedClient,
-                restClient.FuturesApi.SharedClient,
-                socketClient.FuturesApi.SharedClient,
-                restClient.FuturesApi.SharedClient,
-                socketClient.FuturesApi.SharedClient,
-                socketClient.FuturesApi.SharedClient,
-                socketClient.FuturesApi.SharedClient,
+                restClient.FuturesApi.SharedApi,
+
+                restClient.FuturesApi.SharedApi,
+                socketClient.FuturesApi.SharedApi,
+
+                restClient.FuturesApi.SharedApi,
+                restClient.FuturesApi.SharedApi,
+                socketClient.FuturesApi.SharedApi,
+
+                restClient.FuturesApi.SharedApi,
+                socketClient.FuturesApi.SharedApi,
+
+                restClient.FuturesApi.SharedApi,
+                socketClient.FuturesApi.SharedApi,
                 userIdentifier,
                 config ?? new FuturesUserDataTrackerConfig())
         {

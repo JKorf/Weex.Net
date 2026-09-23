@@ -5,7 +5,7 @@ using System;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using Weex.Net.Interfaces.Clients.FuturesApi;
+using Weex.Net.Interfaces.Clients.SpotApi;
 using Weex.Net.Objects.Options;
 using CryptoExchange.Net.Clients;
 using CryptoExchange.Net.Converters.SystemTextJson;
@@ -16,12 +16,14 @@ using CryptoExchange.Net.Converters.MessageParsing.DynamicConverters;
 using Weex.Net.Clients.MessageHandlers;
 using System.Collections.Generic;
 
-namespace Weex.Net.Clients.FuturesApi
+namespace Weex.Net.Clients.SpotApi
 {
-    /// <inheritdoc cref="IWeexRestClientFuturesApi" />
-    internal partial class WeexRestClientFuturesApi : RestApiClient<WeexEnvironment, WeexAuthenticationProvider, WeexCredentials>, IWeexRestClientFuturesApi
+    /// <inheritdoc cref="IWeexRestClientSpotApi" />
+    internal partial class WeexRestClientSpotApi : RestApiClient<WeexEnvironment, WeexAuthenticationProvider, WeexCredentials>, IWeexRestClientSpotApi
     {
         #region fields 
+        private readonly WeexRestClientSpotSharedApi _sharedApi;
+
         protected override ErrorMapping ErrorMapping => WeexErrors.RestErrors;
 
         /// <inheritdoc />
@@ -33,20 +35,22 @@ namespace Weex.Net.Clients.FuturesApi
 
         #region Api clients
         /// <inheritdoc />
-        public IWeexRestClientFuturesApiAccount Account { get; }
+        public IWeexRestClientSpotApiAccount Account { get; }
         /// <inheritdoc />
-        public IWeexRestClientFuturesApiExchangeData ExchangeData { get; }
+        public IWeexRestClientSpotApiExchangeData ExchangeData { get; }
         /// <inheritdoc />
-        public IWeexRestClientFuturesApiTrading Trading { get; }
+        public IWeexRestClientSpotApiTrading Trading { get; }
         #endregion
 
         #region constructor/destructor
-        internal WeexRestClientFuturesApi(WeexRestClient baseClient, ILoggerFactory? loggerFactory, HttpClient? httpClient, WeexRestOptions options)
-            : base(loggerFactory, WeexExchange.Metadata.Id, httpClient, options.Environment.RestClientFuturesAddress, options, options.FuturesOptions)
+        internal WeexRestClientSpotApi(WeexRestClient baseClient, ILoggerFactory? loggerFactory, HttpClient? httpClient, WeexRestOptions options)
+            : base(loggerFactory, WeexExchange.Metadata.Id, httpClient, options.Environment.RestClientSpotAddress, options, options.SpotOptions)
         {
-            Account = new WeexRestClientFuturesApiAccount(this);
-            ExchangeData = new WeexRestClientFuturesApiExchangeData(_logger, this);
-            Trading = new WeexRestClientFuturesApiTrading(_logger, this);
+            Account = new WeexRestClientSpotApiAccount(this);
+            ExchangeData = new WeexRestClientSpotApiExchangeData(_logger, this);
+            Trading = new WeexRestClientSpotApiTrading(_logger, this);
+
+            _sharedApi = new WeexRestClientSpotSharedApi(this);
 
             StandardRequestHeaders = new Dictionary<string, string>
             {
@@ -57,7 +61,6 @@ namespace Weex.Net.Clients.FuturesApi
 
         /// <inheritdoc />
         protected override IMessageSerializer CreateSerializer() => new SystemTextJsonMessageSerializer(WeexExchange._serializerContext);
-
 
         /// <inheritdoc />
         protected override WeexAuthenticationProvider CreateAuthenticationProvider(WeexCredentials credentials)
@@ -71,7 +74,7 @@ namespace Weex.Net.Clients.FuturesApi
 
         internal async Task<HttpResult<T>> SendAsync<T>(RequestDefinition definition, Parameters? parameters, CancellationToken cancellationToken, int? weight = null) where T : class
         {
-            var result = await base.SendAsync<T>(definition, parameters, cancellationToken, null, weight).ConfigureAwait(false);
+            var result = await base.SendAsync<T>( definition, parameters, cancellationToken, null, weight).ConfigureAwait(false);
             return result;
         }
 
@@ -90,6 +93,8 @@ namespace Weex.Net.Clients.FuturesApi
             => WeexExchange.FormatSymbol(baseAsset, quoteAsset, tradingMode, deliverDate);
 
         /// <inheritdoc />
-        public IWeexRestClientFuturesApiShared SharedClient => this;
+        public IWeexRestClientSpotApiShared SharedClient => _sharedApi;
+        /// <inheritdoc />
+        public IWeexRestClientSpotSharedApi SharedApi => _sharedApi;
     }
 }

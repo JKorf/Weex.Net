@@ -37,8 +37,8 @@ Primary documentation:
 - Do not invent a testnet. Current source exposes `WeexEnvironment.Live` and `WeexEnvironment.CreateCustom(...)`.
 - Do not use `FuturesOrderType` for regular futures orders. `FuturesApi.Trading.PlaceOrderAsync` takes `OrderType`; conditional futures orders take `FuturesOrderType`.
 - Do not pass custom client order IDs unless the user explicitly needs correlation with an external system. Let the library generate IDs in ordinary examples.
-- For multi-exchange code, use `CryptoExchange.Net.SharedApis` interfaces from each API surface's `.SharedClient`.
-- Use `SharedClient.Discover()` when tooling or exchange-agnostic code needs runtime metadata about implemented shared interfaces and endpoint options.
+- For multi-exchange code, use `CryptoExchange.Net.SharedApis` interfaces from each API surface's `.SharedApi`.
+- Use the exchange-level `IWeexSharedApiClient` aggregate's `GetCapability(...)` or `GetCapabilities(...)` methods for runtime capability lookup; use an API surface's `.SharedApi` property when the transport and API are known.
 
 ## Installation
 
@@ -232,12 +232,12 @@ WeexRestClient
     .ExchangeData
     .Account
     .Trading
-    .SharedClient
+    .SharedApi
   .FuturesApi
     .ExchangeData
     .Account
     .Trading
-    .SharedClient
+    .SharedApi
 ```
 
 WebSocket:
@@ -247,11 +247,11 @@ WeexSocketClient
   .SpotApi
     public subscriptions
     private subscriptions
-    .SharedClient
+    .SharedApi
   .FuturesApi
     public subscriptions
     private subscriptions
-    .SharedClient
+    .SharedApi
 ```
 
 Important: Weex.Net has a smaller API tree than Binance.Net. There is no `GeneralApi`, no sub-account root, no separate USD-M or COIN-M futures roots, and no separate `ExchangeData` child on the socket APIs. Spot socket subscriptions are directly on `socketClient.SpotApi`; futures socket subscriptions are directly on `socketClient.FuturesApi`.
@@ -542,10 +542,10 @@ Use CryptoExchange.Net.SharedApis when the user asks for code that can work agai
 using Weex.Net.Clients;
 using CryptoExchange.Net.SharedApis;
 
-ISpotTickerRestClient tickerClient = new WeexRestClient().SpotApi.SharedClient;
+IGetTickerRest tickerClient = new WeexRestClient().SpotApi.SharedApi;
 var symbol = new SharedSymbol(TradingMode.Spot, "ETH", "USDT");
 
-var ticker = await tickerClient.GetSpotTickerAsync(new GetTickerRequest(symbol));
+var ticker = await tickerClient.GetTickerAsync(new GetTickerRequest(symbol));
 if (!ticker.Success)
 {
     Console.WriteLine(ticker.Error);
@@ -559,7 +559,7 @@ Shared WebSocket subscriptions return an `UpdateSubscription` in `.Data`. For sh
 
 ```csharp
 var socketClient = new WeexSocketClient();
-ITickerSocketClient tickerSocket = socketClient.SpotApi.SharedClient;
+ISubscribeTickerSocket tickerSocket = socketClient.SpotApi.SharedApi;
 
 var sub = await tickerSocket.SubscribeToTickerUpdatesAsync(
     new SubscribeTickerRequest(new SharedSymbol(TradingMode.Spot, "ETH", "USDT")),
@@ -576,12 +576,12 @@ Console.ReadLine();
 await socketClient.UnsubscribeAsync(sub.Data);
 ```
 
-Do not call `tickerSocket.UnsubscribeAsync(...)` on `ITickerSocketClient`; that shared interface does not expose the method.
+Do not call `tickerSocket.UnsubscribeAsync(...)` on `ISubscribeTickerSocket`; that shared interface does not expose the method.
 
 Shared symbol discovery supports catalogs and request filtering. After a successful symbol query, the corresponding catalog is refreshed and the returned symbols include display-name and asset-class metadata:
 
 ```csharp
-ISpotSymbolRestClient symbolClient = new WeexRestClient().SpotApi.SharedClient;
+IGetSpotSymbolsRest symbolClient = new WeexRestClient().SpotApi.SharedApi;
 
 var symbols = await symbolClient.GetSpotSymbolsAsync(new GetSymbolsRequest());
 if (!symbols.Success)
@@ -593,70 +593,70 @@ if (!symbols.Success)
 SharedSymbolCatalog? catalog = symbolClient.SpotSymbolCatalog;
 ```
 
-Use `IFuturesSymbolRestClient.GetFuturesSymbolsAsync(...)` and `FuturesSymbolCatalog` for futures. `GetSymbolsRequest` filters are applied by both clients. Spot and futures symbols expose display-name and asset-class metadata plus `MakerFeePercentage`, `TakerFeePercentage`, `LowerPriceLimitPercentage`, and `UpperPriceLimitPercentage`. Futures symbols additionally expose `MaxLongLeverage` and `MaxShortLeverage`.
+Use `IGetFuturesSymbolsRest.GetFuturesSymbolsAsync(...)` and `FuturesSymbolCatalog` for futures. `GetSymbolsRequest` filters are applied by both clients. Spot and futures symbols expose display-name and asset-class metadata plus `MakerFeePercentage`, `TakerFeePercentage`, `LowerPriceLimitPercentage`, and `UpperPriceLimitPercentage`. Futures symbols additionally expose `MaxLongLeverage` and `MaxShortLeverage`.
 
 ## SharedApis Support Matrix
 
-Spot REST shared interfaces implemented by `new WeexRestClient().SpotApi.SharedClient`:
+Spot REST shared interfaces implemented by `new WeexRestClient().SpotApi.SharedApi`:
 
 ```text
-IAssetsRestClient
-IBalanceRestClient
-IBookTickerRestClient
-IDepositRestClient
-IFeeRestClient
-IKlineRestClient
-IOrderBookRestClient
-IRecentTradeRestClient
-IWithdrawalRestClient
-ISpotSymbolRestClient
-ISpotTickerRestClient
-ISpotOrderRestClient
-ISpotOrderClientIdRestClient
+IGetAllAssetsRest
+IGetBalancesRest
+IGetBookTickerRest
+IGetDepositHistoryRest
+IGetFeesRest
+IGetKlinesRest
+IGetOrderBookRest
+IGetRecentTradesRest
+IGetWithdrawalHistoryRest
+IGetSpotSymbolsRest
+IGetTickerRest
+IPlaceSpotOrderRest
+IGetSpotOrderByClientOrderIdRest
 ```
 
-Futures REST shared interfaces implemented by `new WeexRestClient().FuturesApi.SharedClient`:
+Futures REST shared interfaces implemented by `new WeexRestClient().FuturesApi.SharedApi`:
 
 ```text
-IBalanceRestClient
-IBookTickerRestClient
-IFeeRestClient
-IKlineRestClient
-IOrderBookRestClient
-IRecentTradeRestClient
-IFundingRateRestClient
-IFuturesSymbolRestClient
-IFuturesTickerRestClient
-IIndexPriceKlineRestClient
-IMarkPriceKlineRestClient
-ILeverageRestClient
-IOpenInterestRestClient
-IFuturesOrderRestClient
-IFuturesTriggerOrderRestClient
+IGetBalancesRest
+IGetBookTickerRest
+IGetFeesRest
+IGetKlinesRest
+IGetOrderBookRest
+IGetRecentTradesRest
+IGetFundingRateHistoryRest
+IGetFuturesSymbolsRest
+IGetTickerRest
+IGetIndexPriceKlinesRest
+IGetMarkPriceKlinesRest
+ISetLeverageRest
+IGetOpenInterestRest
+IPlaceFuturesOrderRest
+IPlaceFuturesTriggerOrderRest
 ```
 
-Spot socket shared interfaces implemented by `new WeexSocketClient().SpotApi.SharedClient`:
+Spot socket shared interfaces implemented by `new WeexSocketClient().SpotApi.SharedApi`:
 
 ```text
-IBalanceSocketClient
-IBookTickerSocketClient
-IKlineSocketClient
-ITickerSocketClient
-ITradeSocketClient
-IUserTradeSocketClient
-ISpotOrderSocketClient
+ISubscribeBalancesSocket
+ISubscribeBookTickerSocket
+ISubscribeKlinesSocket
+ISubscribeTickerSocket
+ISubscribeTradesSocket
+ISubscribeUserTradesSocket
+ISubscribeSpotOrdersSocket
 ```
 
-Futures socket shared interfaces implemented by `new WeexSocketClient().FuturesApi.SharedClient`:
+Futures socket shared interfaces implemented by `new WeexSocketClient().FuturesApi.SharedApi`:
 
 ```text
-IBalanceSocketClient
-IKlineSocketClient
-ITickerSocketClient
-ITradeSocketClient
-IUserTradeSocketClient
-IFuturesOrderSocketClient
-IPositionSocketClient
+ISubscribeBalancesSocket
+ISubscribeKlinesSocket
+ISubscribeTickerSocket
+ISubscribeTradesSocket
+ISubscribeUserTradesSocket
+ISubscribeFuturesOrdersSocket
+ISubscribePositionsSocket
 ```
 
 ## Symbol And Precision Handling

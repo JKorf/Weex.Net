@@ -75,12 +75,12 @@ For exchange-agnostic code, use `CryptoExchange.Net.SharedApis`:
 ```csharp
 using CryptoExchange.Net.SharedApis;
 
-var shared = new WeexRestClient().SpotApi.SharedClient;
-var ticker = await shared.GetSpotTickerAsync(
+var shared = new WeexRestClient().SpotApi.SharedApi;
+var ticker = await shared.GetTickerAsync(
     new GetTickerRequest(new SharedSymbol(TradingMode.Spot, "ETH", "USDT")));
 ```
 
-Shared `ISpotSymbolRestClient` and `IFuturesSymbolRestClient` queries honor `GetSymbolsRequest` filters, refresh their symbol catalogs, and return asset classifications, fees, and price limits; futures symbols also include maximum leverage.
+Shared `IGetSpotSymbolsRest` and `IGetFuturesSymbolsRest` queries honor `GetSymbolsRequest` filters, refresh their symbol catalogs, and return asset classifications, fees, and price limits; futures symbols also include maximum leverage.
 
 ## Hard Rules
 

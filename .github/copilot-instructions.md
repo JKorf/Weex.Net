@@ -49,9 +49,9 @@ Store the returned `UpdateSubscription` and unsubscribe on shutdown via `socketC
 
 ## Cross-Exchange
 
-For code that needs to work across multiple exchanges, use `CryptoExchange.Net.SharedApis` interfaces (`ISpotTickerRestClient`, `ISpotOrderRestClient`, `IFuturesOrderRestClient`, etc.) through `.SharedClient`.
+For code that needs to work across multiple exchanges, use `CryptoExchange.Net.SharedApis` interfaces (`IGetTickerRest`, `IPlaceSpotOrderRest`, `IPlaceFuturesOrderRest`, etc.) through `.SharedApi`.
 
-For shared symbol discovery, use `ISpotSymbolRestClient` or `IFuturesSymbolRestClient`. Successful queries honor `GetSymbolsRequest` filters, refresh their symbol catalogs, and return asset classifications, fees, and price limits; futures symbols also include maximum leverage.
+For shared symbol discovery, use `IGetSpotSymbolsRest` or `IGetFuturesSymbolsRest`. Successful queries honor `GetSymbolsRequest` filters, refresh their symbol catalogs, and return asset classifications, fees, and price limits; futures symbols also include maximum leverage.
 
 ## Avoid
 

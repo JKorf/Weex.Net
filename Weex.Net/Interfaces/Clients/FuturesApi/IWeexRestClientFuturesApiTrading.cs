@@ -60,9 +60,23 @@ namespace Weex.Net.Interfaces.Clients.FuturesApi
         /// <param name="stopLossTriggerPrice">["<c>slTriggerPrice</c>"] Stop loss trigger price</param>
         /// <param name="takeProfitWorkingType">["<c>TpWorkingType</c>"] Take profit trigger price type</param>
         /// <param name="stopLossWorkingType">["<c>SlWorkingType</c>"] Stop loss trigger price type</param>
-        /// <param name="reduceOnly">["<c>reduceOnly</c>"] Only reduce an existing position</param>
+        /// <param name="reduceOnly">["<c>reduceOnly</c>"] Reduce only flag</param>
         /// <param name="ct">Cancellation token</param>
-        Task<HttpResult<WeexFuturesOrderResult>> PlaceOrderAsync(string symbol, OrderSide side, PositionSide positionSide, OrderType orderType, decimal quantity, decimal? price = null, TimeInForce? timeInForce = null, string? clientOrderId = null, decimal? takeProfitTriggerPrice = null, decimal? stopLossTriggerPrice = null, FuturesPriceType? takeProfitWorkingType = null, FuturesPriceType? stopLossWorkingType = null, bool? reduceOnly = null, CancellationToken ct = default);
+        Task<HttpResult<WeexFuturesOrderResult>> PlaceOrderAsync(
+            string symbol,
+            OrderSide side, 
+            PositionSide positionSide,
+            OrderType orderType,
+            decimal quantity,
+            decimal? price = null,
+            TimeInForce? timeInForce = null,
+            string? clientOrderId = null,
+            decimal? takeProfitTriggerPrice = null, 
+            decimal? stopLossTriggerPrice = null,
+            FuturesPriceType? takeProfitWorkingType = null, 
+            FuturesPriceType? stopLossWorkingType = null,
+            bool? reduceOnly = null,
+            CancellationToken ct = default);
 
         /// <summary>
         /// Cancel order
@@ -204,8 +218,23 @@ namespace Weex.Net.Interfaces.Clients.FuturesApi
         /// <param name="stopLossPrice">["<c>presetStopLossPrice</c>"] Stop loss price</param>
         /// <param name="takeProfitWorkingType">["<c>TpWorkingType</c>"] Take profit trigger price type</param>
         /// <param name="stopLossWorkingType">["<c>SlWorkingType</c>"] Stop loss trigger price type</param>
+        /// <param name="reduceOnly">["<c>reduceOnly</c>"] Reduce only flag</param>
         /// <param name="ct">Cancellation token</param>
-        Task<HttpResult<WeexFuturesOrderResult>> PlaceConditionalOrderAsync(string symbol, OrderSide side, PositionSide positionSide, FuturesOrderType type, decimal quantity, decimal triggerPrice, decimal? price = null, string? clientOrderId = null, decimal? takeProfitPrice = null, decimal? stopLossPrice = null, FuturesPriceType? takeProfitWorkingType = null, FuturesPriceType? stopLossWorkingType = null, CancellationToken ct = default);
+        Task<HttpResult<WeexFuturesOrderResult>> PlaceConditionalOrderAsync(
+            string symbol,
+            OrderSide side,
+            PositionSide positionSide,
+            FuturesOrderType type,
+            decimal quantity, 
+            decimal triggerPrice,
+            decimal? price = null, 
+            string? clientOrderId = null, 
+            decimal? takeProfitPrice = null, 
+            decimal? stopLossPrice = null, 
+            FuturesPriceType? takeProfitWorkingType = null,
+            FuturesPriceType? stopLossWorkingType = null, 
+            bool? reduceOnly = null,
+            CancellationToken ct = default);
 
         /// <summary>
         /// Cancel an open conditional order

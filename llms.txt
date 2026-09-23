@@ -29,9 +29,9 @@ Weex.Net exposes `WeexRestClient` and `WeexSocketClient` with `SpotApi` and `Fut
 - Use `FuturesApi.ExchangeData.GetTickersAsync("ETHUSDT")` for futures 24h ticker data.
 - Use `OrderType` for spot and regular futures orders; use `FuturesOrderType` only for futures conditional orders.
 - Use `WeexEnvironment.Live` or `WeexEnvironment.CreateCustom(...)`; no testnet environment is present in the current source.
-- Use `.SharedClient` for multi-exchange code.
+- Use `.SharedApi` for multi-exchange code.
 - Shared spot and futures symbol clients expose symbol catalogs; successful symbol queries refresh them, honor `GetSymbolsRequest` filters, and provide asset classifications, fees, and price limits, plus maximum leverage for futures.
-- Use `SharedClient.Discover()` when code needs to inspect implemented shared interfaces and endpoint options at runtime.
+- Use the exchange-level `IWeexSharedApiClient` aggregate's `GetCapability(...)` or `GetCapabilities(...)` methods for runtime capability lookup; use an API surface's `.SharedApi` property when the transport and API are known.
 
 ## Reference
 
