@@ -127,23 +127,23 @@ Use this file to route common user intents to the correct Weex.Net client member
 
 | User intent | Weex.Net member or interface |
 |---|---|
-| Shared spot REST client | `new WeexRestClient().SpotApi.SharedClient` |
-| Shared futures REST client | `new WeexRestClient().FuturesApi.SharedClient` |
-| Shared spot socket client | `new WeexSocketClient().SpotApi.SharedClient` |
-| Shared futures socket client | `new WeexSocketClient().FuturesApi.SharedClient` |
-| Query/filter shared spot symbols | `ISpotSymbolRestClient.GetSpotSymbolsAsync(new GetSymbolsRequest(...))` |
-| Read cached shared spot symbol metadata | `ISpotSymbolRestClient.SpotSymbolCatalog` (refreshed by a successful symbol query) |
-| Query/filter shared futures symbols | `IFuturesSymbolRestClient.GetFuturesSymbolsAsync(new GetSymbolsRequest(...))` |
-| Read cached shared futures symbol metadata | `IFuturesSymbolRestClient.FuturesSymbolCatalog` (refreshed by a successful symbol query) |
-| Shared spot ticker REST | `ISpotTickerRestClient.GetSpotTickerAsync(new GetTickerRequest(symbol))` |
-| Shared spot order REST | `ISpotOrderRestClient.PlaceSpotOrderAsync(...)` |
-| Shared futures order REST | `IFuturesOrderRestClient.PlaceFuturesOrderAsync(...)` |
-| Shared funding REST | `IFundingRateRestClient.GetFundingRateAsync(...)` |
-| Shared leverage REST | `ILeverageRestClient.SetLeverageAsync(...)` |
-| Shared ticker socket | `ITickerSocketClient.SubscribeToTickerUpdatesAsync(...)` |
-| Shared order socket | `ISpotOrderSocketClient` / `IFuturesOrderSocketClient` |
-| Shared position socket | `IPositionSocketClient` |
-| Discover shared capabilities | `client.SpotApi.SharedClient.Discover()` or the equivalent futures/socket SharedClient root |
+| Shared spot REST client | `new WeexRestClient().SpotApi.SharedApi` |
+| Shared futures REST client | `new WeexRestClient().FuturesApi.SharedApi` |
+| Shared spot socket client | `new WeexSocketClient().SpotApi.SharedApi` |
+| Shared futures socket client | `new WeexSocketClient().FuturesApi.SharedApi` |
+| Query/filter shared spot symbols | `IGetSpotSymbolsRest.GetSpotSymbolsAsync(new GetSymbolsRequest(...))` |
+| Read cached shared spot symbol metadata | `IGetSpotSymbolsRest.SpotSymbolCatalog` (refreshed by a successful symbol query) |
+| Query/filter shared futures symbols | `IGetFuturesSymbolsRest.GetFuturesSymbolsAsync(new GetSymbolsRequest(...))` |
+| Read cached shared futures symbol metadata | `IGetFuturesSymbolsRest.FuturesSymbolCatalog` (refreshed by a successful symbol query) |
+| Shared spot ticker REST | `IGetTickerRest.GetTickerAsync(new GetTickerRequest(symbol))` |
+| Shared spot order REST | `IPlaceSpotOrderRest.PlaceSpotOrderAsync(...)` |
+| Shared futures order REST | `IPlaceFuturesOrderRest.PlaceFuturesOrderAsync(...)` |
+| Shared funding info REST | `IGetFundingInfoRest.GetFundingInfoAsync(...)` |
+| Shared leverage REST | `ISetLeverageRest.SetLeverageAsync(...)` |
+| Shared ticker socket | `ISubscribeTickerSocket.SubscribeToTickerUpdatesAsync(...)` |
+| Shared order socket | `ISubscribeSpotOrdersSocket` / `ISubscribeFuturesOrdersSocket` |
+| Shared position socket | `ISubscribePositionsSocket` |
+| Resolve a runtime-selected Shared API capability | `IWeexSharedApiClient.GetCapability(...)` |
 
 For shared socket subscriptions, keep the concrete socket client and unsubscribe with `await socketClient.UnsubscribeAsync(subscription.Data)`.
 
@@ -171,5 +171,5 @@ Shared spot and futures symbol results include display names, asset classificati
 | `FuturesOrderType` for regular futures orders | `OrderType` |
 | `SpotApi.Trading.CancelOrderAsync(symbol, orderId)` | `SpotApi.Trading.CancelOrderAsync(orderId: orderId)` |
 | `.Data` without `.Success` check | Check `.Success` first |
-| `ITickerSocketClient.UnsubscribeAsync(...)` | Keep the concrete socket client and call `socketClient.UnsubscribeAsync(subscription.Data)` |
+| Unsubscribe from a shared subscription | Keep the concrete socket client and call `socketClient.UnsubscribeAsync(subscription.Data)` |
 | Testnet environment | `WeexEnvironment.Live` or `WeexEnvironment.CreateCustom(...)` |
