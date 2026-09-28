@@ -10,9 +10,14 @@ namespace Weex.Net.Clients.MessageHandlers
     {
         public override JsonSerializerOptions Options { get; } = WeexExchange._serializerContext;
 
+        /// <summary>
+        /// Create a message handler for WEEX spot and futures streams.
+        /// </summary>
         public WeexSocketSpotMessageHandler()
         {
             AddTopicMapping<WeexSocketEvent<WeexKlineUpdate[]>>(x => x.Symbol + x.Data.First().IntervalString);
+            // Different depths of the same symbol must have distinct routes for dispatch and unsubscribe.
+            AddTopicMapping<WeexOrderBookUpdate>(x => $"{x.Symbol}@depth{x.Depth}");
             AddTopicMapping<WeexSocketEvent>(x => x.Symbol);
         }
 
