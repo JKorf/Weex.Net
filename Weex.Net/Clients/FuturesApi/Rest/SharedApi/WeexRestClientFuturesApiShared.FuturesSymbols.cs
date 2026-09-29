@@ -70,19 +70,29 @@ namespace Weex.Net.Clients.FuturesApi
 
             };
 
-            if (LibraryHelpers.IsCommodity(result.BaseAsset))
+            if (s.ContractType == ContractType.Perpetual)
             {
-                result.BaseAssetType = SharedAssetType.TradFi;
-                result.BaseAssetSubType = SharedAssetSubType.Commodity;
-            } 
-            else if (LibraryHelpers.IsEquity(result.BaseAsset))
-            {
-                result.BaseAssetType = SharedAssetType.TradFi;
-                result.BaseAssetSubType = SharedAssetSubType.Equity;
+                result.BaseAssetType = SharedAssetType.Crypto;
             }
             else
             {
-                result.BaseAssetType = SharedAssetType.Crypto;
+                if (s.UnderlyingType == UnderlyingType.Stocks
+                    || s.UnderlyingType == UnderlyingType.PreIpo
+                    || s.UnderlyingType == UnderlyingType.Indices)
+                {
+                    result.BaseAssetType = SharedAssetType.TradFi;
+                    result.BaseAssetSubType = SharedAssetSubType.Equity;
+                }
+                else if (s.UnderlyingType == UnderlyingType.Commodities
+                    || s.UnderlyingType == UnderlyingType.Metals)
+                {
+                    result.BaseAssetType = SharedAssetType.TradFi;
+                    result.BaseAssetSubType = SharedAssetSubType.Commodity;
+                }
+                else if (s.UnderlyingType == UnderlyingType.Forex)
+                {
+                    result.BaseAssetType = SharedAssetType.Fiat;
+                }
             }
 
             return result;

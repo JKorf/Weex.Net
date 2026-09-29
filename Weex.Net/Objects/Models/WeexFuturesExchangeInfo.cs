@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using Weex.Net.Enums;
 
 namespace Weex.Net.Objects.Models
 {
@@ -161,6 +162,22 @@ namespace Weex.Net.Objects.Models
         /// </summary>
         [JsonPropertyName("marketOpenLimitSize")]
         public decimal MarketOpenLimitQuantity { get; set; }
+
+        /// <summary>
+        /// ["<c>contractType</c>"] Contract type
+        /// </summary>
+        [JsonPropertyName("contractType")]
+        public ContractType ContractType { get; set; }
+        /// <summary>
+        /// ["<c>underlyingType</c>"] Underlying type
+        /// </summary>
+        [JsonPropertyName("underlyingType")]
+        public UnderlyingType UnderlyingType { get; set; }
+        /// <summary>
+        /// ["<c>underlyingSubType</c>"] Underlying sub type
+        /// </summary>
+        [JsonPropertyName("underlyingSubType")]
+        public string[] UnderlyingSubType { get; set; } = [];
     }
 
 
