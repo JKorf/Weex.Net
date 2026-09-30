@@ -227,6 +227,13 @@ Make a one time donation in a crypto currency of your choice. If you prefer to d
 Alternatively, sponsor me on Github using [Github Sponsors](https://github.com/sponsors/JKorf). 
 
 ## Release notes
+* Version 2.6.0 - 30 Sep 2026
+    * Updated CryptoExchange.Net to V13.1.0
+    * Added ContractType, UnderlyingType and UnderlyingSubType to WeexFuturesSymbol model
+    * Added ApiMakerFeeRate and ApiTakerFeeRate to WeexFuturesSymbol
+    * Added ApiMakerFeeRate and ApiTakerFeeRate to WeexSymbol
+    * Updated Shared GetFuturesSymbolsAsync asset type mapping
+
 * Version 2.5.0 - 24 Sep 2026
     * Updated CryptoExchange.Net to v13.0.0
     * Shared APIs
