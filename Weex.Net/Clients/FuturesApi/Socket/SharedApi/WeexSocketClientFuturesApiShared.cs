@@ -45,5 +45,7 @@ namespace Weex.Net.Clients.FuturesApi
                 );
         }
 
+        /// <inheritdoc />
+        public Task UnsubscribeAllAsync() => _api.UnsubscribeAllAsync();
     }
 }

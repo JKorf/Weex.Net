@@ -150,6 +150,16 @@ namespace Weex.Net.Objects.Models
         /// </summary>
         [JsonPropertyName("displayHot")]
         public bool DisplayHot { get; set; }
+        /// <summary>
+        /// ["<c>apiMakerFeeRate</c>"] API maker fee rate
+        /// </summary>
+        [JsonPropertyName("apiMakerFeeRate")]
+        public decimal? ApiMakerFeeRate { get; set; }
+        /// <summary>
+        /// ["<c>apiTakerFeeRate</c>"] API taker fee rate
+        /// </summary>
+        [JsonPropertyName("apiTakerFeeRate")]
+        public decimal? ApiTakerFeeRate { get; set; }
     }
 
 
