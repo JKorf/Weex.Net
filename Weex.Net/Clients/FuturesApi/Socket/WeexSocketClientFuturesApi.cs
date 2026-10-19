@@ -142,7 +142,8 @@ namespace Weex.Net.Clients.FuturesApi
                     );
             });
 
-            var subscription = new WeexSubscription<WeexOrderBookUpdate>(_logger, symbols.Select(x => $"{x}@depth" + depth).ToArray(), ["depth", "depthSnapshot"], symbols.ToArray(), internalHandler, false);
+            var topics = symbols.Select(x => $"{x}@depth{depth}").ToArray();
+            var subscription = new WeexSubscription<WeexOrderBookUpdate>(_logger, subTopics: topics, eventType: ["depth", "depthSnapshot"], topicFilters: topics, handler: internalHandler, auth: false);
             return await SubscribeAsync(BaseAddress.AppendPath("/v3/ws/public"), subscription, ct).ConfigureAwait(false);
         }
 

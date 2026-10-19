@@ -17,13 +17,19 @@ namespace Weex.Net.Objects.Sockets.Subscriptions
         private readonly string[] _subTopics;
 
         /// <summary>
-        /// ctor
+        /// Create a subscription with wire topics and optional local topic filters.
         /// </summary>
+        /// <param name="logger">Logger</param>
+        /// <param name="subTopics">Topics sent to WEEX in subscribe and unsubscribe requests</param>
+        /// <param name="eventType">Event identifiers to route to this subscription</param>
+        /// <param name="topicFilters">Local routing keys matching the message handler's topic mappings; null or empty matches only by event identifier</param>
+        /// <param name="handler">Callback for matching messages</param>
+        /// <param name="auth">Whether the subscription requires authentication</param>
         public WeexSubscription(
             ILogger logger,
             string[] subTopics,
             string[] eventType, 
-            string[]? symbols,
+            string[]? topicFilters,
             Action<DateTime, string?, T> handler,
             bool auth
             ) : base(logger, auth)
@@ -35,9 +41,9 @@ namespace Weex.Net.Objects.Sockets.Subscriptions
             var routes = new List<MessageRoute>();
             foreach(var type in eventType)
             {
-                if (symbols?.Length > 0)
+                if (topicFilters?.Length > 0)
                 {
-                    routes.AddRange(symbols.Select(x => MessageRoute.CreateForEvent<T>(type, x, DoHandleMessage)));
+                    routes.AddRange(topicFilters.Select(x => MessageRoute.CreateForEvent<T>(type, x, DoHandleMessage)));
                 }
                 else
                 {
