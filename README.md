@@ -225,6 +225,10 @@ Make a one time donation in a crypto currency of your choice. If you prefer to d
 Alternatively, sponsor me on Github using [Github Sponsors](https://github.com/sponsors/JKorf). 
 
 ## Release notes
+* Version 2.7.0 - 23 Oct 2026
+    * Updated CryptoExchange.Net to v13.2.2
+    * Fixed identification of socket order book updates of different depths 
+
 * Version 2.6.0 - 30 Sep 2026
     * Updated CryptoExchange.Net to V13.1.0
     * Added ContractType, UnderlyingType and UnderlyingSubType to WeexFuturesSymbol model
