@@ -2,6 +2,7 @@ using CryptoExchange.Net.Objects;
 using CryptoExchange.Net.SharedApis;
 using CryptoExchange.Net.Trackers.Klines;
 using CryptoExchange.Net.Trackers.Trades;
+using CryptoExchange.Net.Trackers.UserData;
 using CryptoExchange.Net.Trackers.UserData.Interfaces;
 using CryptoExchange.Net.Trackers.UserData.Objects;
 using Microsoft.Extensions.DependencyInjection;
@@ -118,12 +119,7 @@ namespace Weex.Net
             var client = _serviceProvider?.GetRequiredService<IWeexSharedApiClient>() ?? new WeexSharedApiClient(
                 new WeexRestClient(), new WeexSocketClient(), Options.Create(WeexOptions.Create()));
 
-            return new WeexUserSpotDataTracker(
-                _serviceProvider?.GetRequiredService<ILogger<WeexUserSpotDataTracker>>() ?? new NullLogger<WeexUserSpotDataTracker>(),
-                client,
-                null,
-                config
-                );
+            return CreateSpotTracker(client, null, config);
         }
 
         /// <inheritdoc />
@@ -132,33 +128,25 @@ namespace Weex.Net
             var clientProvider = _serviceProvider?.GetRequiredService<IWeexUserClientProvider>() ?? new WeexUserClientProvider();
             var restClient = clientProvider.GetRestClient(userIdentifier, credentials, environment);
             var socketClient = clientProvider.GetSocketClient(userIdentifier, credentials, environment);
-
-            return new WeexUserSpotDataTracker(
-                _serviceProvider?.GetRequiredService<ILogger<WeexUserSpotDataTracker>>() ?? new NullLogger<WeexUserSpotDataTracker>(),
-                new WeexSharedApiClient(restClient, socketClient, Options.Create(WeexOptions.Create())),
-                userIdentifier,
-                config
-                );
+            var client = new WeexSharedApiClient(restClient, socketClient, Options.Create(WeexOptions.Create()));
+            return CreateSpotTracker(client, userIdentifier, config);
         }
 
         /// <inheritdoc />
         public async Task<CallResult<IUserSpotDataTracker>> TryCreateUserSpotDataTrackerAsync(
-            string userIdentifier, 
+            string userIdentifier,
             SpotUserDataTrackerConfig? config = null,
             WeexEnvironment? environment = null,
             CancellationToken ct = default)
         {
-            var clientProvider = _serviceProvider?.GetRequiredService<IWeexUserClientProvider>() ?? new WeexUserClientProvider();
-            var client = await clientProvider.TryGetSharedApiClientAsync(userIdentifier, environment, ct).ConfigureAwait(false);
-            if (!client.Success)
-                return CallResult.Fail<IUserSpotDataTracker>(client.Error!);
+            var provider = _serviceProvider?.GetRequiredService<IWeexUserClientProvider>()
+                ?? new WeexUserClientProvider();
 
-            return CallResult.Ok<IUserSpotDataTracker>(new WeexUserSpotDataTracker(
-                _serviceProvider?.GetRequiredService<ILogger<WeexUserSpotDataTracker>>() ?? new NullLogger<WeexUserSpotDataTracker>(),
-                client.Data,
-                userIdentifier,
-                config
-                ));
+            var client = await provider.TryGetSharedApiClientAsync(userIdentifier, environment, ct).ConfigureAwait(false);
+            if (!client.Success)
+                return CallResult.Fail<IUserSpotDataTracker>(client.Error);
+
+            return CallResult.Ok(CreateSpotTracker(client.Data, userIdentifier, config));
         }
 
         /// <inheritdoc />
@@ -167,12 +155,7 @@ namespace Weex.Net
             var client = _serviceProvider?.GetRequiredService<IWeexSharedApiClient>() ?? new WeexSharedApiClient(
                 new WeexRestClient(), new WeexSocketClient(), Options.Create(WeexOptions.Create()));
 
-            return new WeexUserFuturesDataTracker(
-                _serviceProvider?.GetRequiredService<ILogger<WeexUserFuturesDataTracker>>() ?? new NullLogger<WeexUserFuturesDataTracker>(),
-                client,
-                null,
-                config
-                );
+            return CreateFuturesTracker(client, null, TradingMode.PerpetualLinear, config);
         }
 
         /// <inheritdoc />
@@ -181,13 +164,8 @@ namespace Weex.Net
             var clientProvider = _serviceProvider?.GetRequiredService<IWeexUserClientProvider>() ?? new WeexUserClientProvider();
             var restClient = clientProvider.GetRestClient(userIdentifier, credentials, environment);
             var socketClient = clientProvider.GetSocketClient(userIdentifier, credentials, environment);
-
-            return new WeexUserFuturesDataTracker(
-                _serviceProvider?.GetRequiredService<ILogger<WeexUserFuturesDataTracker>>() ?? new NullLogger<WeexUserFuturesDataTracker>(),
-                new WeexSharedApiClient(restClient, socketClient, Options.Create(WeexOptions.Create())),
-                userIdentifier,
-                config
-                );
+            var client = new WeexSharedApiClient(restClient, socketClient, Options.Create(WeexOptions.Create()));
+            return CreateFuturesTracker(client, userIdentifier, TradingMode.PerpetualLinear, config);
         }
 
         public Task<CallResult<IUserFuturesDataTracker>> TryCreateUserFuturesDataTrackerAsync(
@@ -210,17 +188,63 @@ namespace Weex.Net
             WeexEnvironment? environment = null,
             CancellationToken ct = default)
         {
-            var clientProvider = _serviceProvider?.GetRequiredService<IWeexUserClientProvider>() ?? new WeexUserClientProvider();
-            var client = await clientProvider.TryGetSharedApiClientAsync(userIdentifier, environment, ct).ConfigureAwait(false);
-            if (!client.Success)
-                return CallResult.Fail<IUserFuturesDataTracker>(client.Error!);
+            ValidateFuturesMode(mode);
 
-            return CallResult.Ok<IUserFuturesDataTracker>(new WeexUserFuturesDataTracker(
-                _serviceProvider?.GetRequiredService<ILogger<WeexUserFuturesDataTracker>>() ?? new NullLogger<WeexUserFuturesDataTracker>(),
-                client.Data,
+            var provider = _serviceProvider?.GetRequiredService<IWeexUserClientProvider>()
+                ?? new WeexUserClientProvider();
+
+            var client = await provider.TryGetSharedApiClientAsync(userIdentifier, environment, ct).ConfigureAwait(false);
+
+            if (!client.Success)
+                return CallResult.Fail<IUserFuturesDataTracker>(client.Error);
+
+            return CallResult.Ok(CreateFuturesTracker(client.Data, userIdentifier, mode, config));
+        }
+
+        private IUserSpotDataTracker CreateSpotTracker(
+            ISharedApiClientBase client,
+            string? userIdentifier,
+            SpotUserDataTrackerConfig? config)
+        {
+            var logger = _serviceProvider?
+                .GetRequiredService<ILogger<UserSpotDataTracker>>()
+                ?? NullLogger<UserSpotDataTracker>.Instance;
+
+            return new UserSpotDataTracker(
+                logger,
+                client,
                 userIdentifier,
-                config
-                ));
+                config ?? new SpotUserDataTrackerConfig());
+        }
+
+        private IUserFuturesDataTracker CreateFuturesTracker(
+            ISharedApiClientBase client,
+            string? userIdentifier,
+            TradingMode mode,
+            FuturesUserDataTrackerConfig? config)
+        {
+            ValidateFuturesMode(mode);
+
+            var logger = _serviceProvider?
+                .GetRequiredService<ILogger<UserFuturesDataTracker>>()
+                ?? NullLogger<UserFuturesDataTracker>.Instance;
+
+            return new UserFuturesDataTracker(
+                logger,
+                client,
+                userIdentifier,
+                config ?? new FuturesUserDataTrackerConfig(),
+                websocketPositionUpdatesAreFullSnapshots: false,
+                accountType: SharedAccountType.PerpetualLinearFutures);
+        }
+
+        private static void ValidateFuturesMode(TradingMode mode)
+        {
+            if (mode != TradingMode.PerpetualLinear)
+            {
+                throw new NotSupportedException(
+                    $"Weex futures tracking does not support {mode}.");
+            }
         }
     }
 }

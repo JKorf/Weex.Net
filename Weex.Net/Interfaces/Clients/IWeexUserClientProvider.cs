@@ -12,7 +12,7 @@ namespace Weex.Net.Interfaces.Clients
     /// <summary>
     /// Provider for clients with credentials for specific users
     /// </summary>
-    public interface IWeexUserClientProvider : ISharedUserClientProvider
+    public interface IWeexUserClientProvider : ISharedUserClientProvider<IWeexSharedApiClient, WeexEnvironment>
     {
         /// <summary>
         /// Initialize a client for the specified user identifier. This can be used so to initialize a client for a user so credentials do not need to be passed later.
@@ -38,8 +38,6 @@ namespace Weex.Net.Interfaces.Clients
         Task<CallResult<IWeexRestClient>> TryGetRestClientAsync(string userIdentifier, WeexEnvironment? environment = null, CancellationToken ct = default);
         Task<CallResult<IWeexSocketClient>> TryGetSocketClientAsync(string userIdentifier, WeexEnvironment? environment = null, CancellationToken ct = default);
 
-        new Task<CallResult<IWeexSharedApiClient>> TryGetSharedApiClientAsync(string userIdentifier, WeexEnvironment? environment = null, CancellationToken ct = default);
-        new IWeexSharedApiClient GetPublicSharedApiClient(WeexEnvironment? environment = null);
         IWeexRestClient GetPublicRestClient(WeexEnvironment? environment = null);
         IWeexSocketClient GetPublicSocketClient(WeexEnvironment? environment = null);
 
