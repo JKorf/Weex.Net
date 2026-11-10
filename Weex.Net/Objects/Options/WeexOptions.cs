@@ -19,8 +19,6 @@ namespace Weex.Net.Objects.Options
         /// </summary>
         public SharedApiOptions SharedApi { get; set; } = new();
 
-        public WeexUserClientProvider.CredentialResolver? CredentialResolver { get; set; }
-
         /// <summary>
         /// Create WeexOptions instance using the provided configuration action
         /// </summary>

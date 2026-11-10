@@ -47,7 +47,7 @@ namespace Weex.Net.Clients
             HttpClient? httpClient,
             ILoggerFactory? loggerFactory,
             IOptions<WeexOptions> options)
-            : base(httpClient, loggerFactory, Options.Create(options.Value.Rest), Options.Create(options.Value.Socket), options.Value.CredentialResolver)
+            : base(httpClient, loggerFactory, Options.Create(options.Value.Rest), Options.Create(options.Value.Socket), options.Value.UserClientProviderCredentialResolver)
         {
             _options = options;
         }
