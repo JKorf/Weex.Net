@@ -29,8 +29,9 @@ namespace Weex.Net.Interfaces
         /// <param name="options">Book options</param>
         /// <returns></returns>
         ISymbolOrderBook Create(SharedSymbol symbol, Action<WeexOrderBookOptions>? options = null);
+        ISymbolOrderBook Create(SharedSymbol symbol, Action<WeexOrderBookOptions>? options, WeexEnvironment? environment);
 
-        
+
         /// <summary>
         /// Create a new Futures local order book instance
         /// </summary>

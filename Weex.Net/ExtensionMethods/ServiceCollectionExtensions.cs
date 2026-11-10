@@ -80,12 +80,12 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddTransient<IWeexOrderBookFactory, WeexOrderBookFactory>();
             services.AddTransient<ITrackerFactory, WeexTrackerFactory>();
             services.AddTransient<IWeexTrackerFactory, WeexTrackerFactory>();
+            services.AddTransient(typeof(WeexSessionTrackerBuilder<>));
             services.AddSingleton<IWeexUserClientProvider, WeexUserClientProvider>(x =>
                 new WeexUserClientProvider(
                     x.GetRequiredService<IHttpClientFactory>().CreateClient(typeof(IWeexRestClient).Name),
                     x.GetRequiredService<ILoggerFactory>(),
-                    x.GetRequiredService<IOptions<WeexRestOptions>>(),
-                    x.GetRequiredService<IOptions<WeexSocketOptions>>()));
+                    x.GetRequiredService<IOptions<WeexOptions>>()));
 
             services.RegisterSharedRestInterfaces(x => x.GetRequiredService<IWeexRestClient>().FuturesApi.SharedClient);
             services.RegisterSharedSocketInterfaces(x => x.GetRequiredService<IWeexSocketClient>().FuturesApi.SharedClient);

@@ -1,11 +1,18 @@
 using CryptoExchange.Net.Authentication;
+using CryptoExchange.Net.Interfaces.Clients;
+using CryptoExchange.Net.Objects;
+using CryptoExchange.Net.SharedApis;
+using System;
+using System.Net;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Weex.Net.Interfaces.Clients
 {
     /// <summary>
     /// Provider for clients with credentials for specific users
     /// </summary>
-    public interface IWeexUserClientProvider
+    public interface IWeexUserClientProvider : ISharedUserClientProvider
     {
         /// <summary>
         /// Initialize a client for the specified user identifier. This can be used so to initialize a client for a user so credentials do not need to be passed later.
@@ -18,7 +25,7 @@ namespace Weex.Net.Interfaces.Clients
         /// <summary>
         /// Reset the cached clients for a user. This can be useful when a user changes API credentials.
         /// </summary>
-        public void ClearUserClients(string userIdentifier);
+        void ClearUserClients(string userIdentifier, WeexEnvironment? environment = null);
 
         /// <summary>
         /// Get the Rest client for a specific user. In case the client does not exist yet it will be created and the <paramref name="credentials"/> should be provided, unless <see cref="InitializeUserClient" /> has been called prior for this user.
@@ -27,6 +34,14 @@ namespace Weex.Net.Interfaces.Clients
         /// <param name="credentials">The credentials for the user. Required the first time a client is requested for this user unless <see cref="InitializeUserClient" /> has been called prior for this user.</param>
         /// <param name="environment">The environment to use</param>
         IWeexRestClient GetRestClient(string userIdentifier, WeexCredentials? credentials = null, WeexEnvironment? environment = null);
+
+        Task<CallResult<IWeexRestClient>> TryGetRestClientAsync(string userIdentifier, WeexEnvironment? environment = null, CancellationToken ct = default);
+        Task<CallResult<IWeexSocketClient>> TryGetSocketClientAsync(string userIdentifier, WeexEnvironment? environment = null, CancellationToken ct = default);
+
+        new Task<CallResult<IWeexSharedApiClient>> TryGetSharedApiClientAsync(string userIdentifier, WeexEnvironment? environment = null, CancellationToken ct = default);
+        new IWeexSharedApiClient GetPublicSharedApiClient(WeexEnvironment? environment = null);
+        IWeexRestClient GetPublicRestClient(WeexEnvironment? environment = null);
+        IWeexSocketClient GetPublicSocketClient(WeexEnvironment? environment = null);
 
         /// <summary>
         /// Get the Socket client for a specific user. In case the client does not exist yet it will be created and the <paramref name="credentials"/> should be provided, unless <see cref="InitializeUserClient" /> has been called prior for this user.

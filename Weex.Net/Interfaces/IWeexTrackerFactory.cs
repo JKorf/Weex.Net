@@ -1,13 +1,20 @@
 using CryptoExchange.Net.Interfaces;
+using CryptoExchange.Net.Objects;
+using CryptoExchange.Net.SharedApis;
 using CryptoExchange.Net.Trackers.UserData.Interfaces;
 using CryptoExchange.Net.Trackers.UserData.Objects;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Weex.Net.Interfaces
 {
     /// <summary>
     /// Tracker factory
     /// </summary>
-    public interface IWeexTrackerFactory : ITrackerFactory
+    public interface IWeexTrackerFactory 
+        : ITrackerFactory,
+          ISpotUserDataTrackerFactory<WeexEnvironment>,
+          IFuturesUserDataTrackerFactory<WeexEnvironment>
     {
         /// <summary>
         /// Create a new Spot user data tracker
@@ -36,5 +43,6 @@ namespace Weex.Net.Interfaces
         /// </summary>
         /// <param name="config">Configuration</param>
         IUserFuturesDataTracker CreateUserFuturesDataTracker(FuturesUserDataTrackerConfig? config = null);
+        Task<CallResult<IUserFuturesDataTracker>> TryCreateUserFuturesDataTrackerAsync(string userIdentifier, FuturesUserDataTrackerConfig? config = null, WeexEnvironment? environment = null, CancellationToken ct = default);
     }
 }

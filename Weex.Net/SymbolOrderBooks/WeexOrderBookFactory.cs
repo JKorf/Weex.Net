@@ -47,8 +47,33 @@ namespace Weex.Net.SymbolOrderBooks
             return CreateFutures(symbolName, options);
         }
 
-        
-         /// <inheritdoc />
+        /// <inheritdoc />
+        public ISymbolOrderBook Create(SharedSymbol symbol, Action<WeexOrderBookOptions>? options, WeexEnvironment? environment)
+        {
+            var provider = _serviceProvider.GetRequiredService<IWeexUserClientProvider>();
+
+            var logger = _serviceProvider
+                .GetRequiredService<ILoggerFactory>();
+
+            var rest = provider.GetPublicRestClient(environment);
+            var socket = provider.GetPublicSocketClient(environment);
+            var symbolName = symbol.GetSymbol(WeexExchange.FormatSymbol);
+
+            return symbol.TradingMode switch
+            {
+                TradingMode.Spot => new WeexSpotSymbolOrderBook(
+                    symbolName, options, logger, rest, socket),
+
+                TradingMode.PerpetualLinear => new WeexFuturesSymbolOrderBook(
+                    symbolName, options, logger, rest, socket),
+
+                _ => throw new NotSupportedException(
+                    $"Weex order books do not support {symbol.TradingMode}.")
+            };
+        }
+
+
+        /// <inheritdoc />
         public ISymbolOrderBook CreateFutures(string symbol, Action<WeexOrderBookOptions>? options = null)
             => new WeexFuturesSymbolOrderBook(symbol, options, 
                                                           _serviceProvider.GetRequiredService<ILoggerFactory>(),

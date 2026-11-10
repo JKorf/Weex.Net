@@ -3,6 +3,9 @@ using CryptoExchange.Net.Objects.Options;
 using CryptoExchange.Net.SharedApis;
 using Microsoft.Extensions.Configuration;
 using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Weex.Net.Clients;
 
 namespace Weex.Net.Objects.Options
 {
@@ -15,6 +18,9 @@ namespace Weex.Net.Objects.Options
         /// Options for Shared API usage
         /// </summary>
         public SharedApiOptions SharedApi { get; set; } = new();
+
+        public WeexUserClientProvider.CredentialResolver? CredentialResolver { get; set; }
+
         /// <summary>
         /// Create WeexOptions instance using the provided configuration action
         /// </summary>

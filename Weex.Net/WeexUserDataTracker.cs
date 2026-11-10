@@ -19,22 +19,11 @@ namespace Weex.Net
         /// </summary>
         public WeexUserSpotDataTracker(
             ILogger<WeexUserSpotDataTracker> logger,
-            IWeexRestClient restClient,
-            IWeexSocketClient socketClient,
+            IWeexSharedApiClient client,
             string? userIdentifier,
             SpotUserDataTrackerConfig? config = null) : base(
                 logger,
-                restClient.SpotApi.SharedApi,
-
-                restClient.SpotApi.SharedApi,
-                socketClient.SpotApi.SharedApi,
-
-                restClient.SpotApi.SharedApi,
-                restClient.SpotApi.SharedApi,
-                socketClient.SpotApi.SharedApi,
-
-                restClient.SpotApi.SharedApi,
-                socketClient.SpotApi.SharedApi,
+                client,
                 userIdentifier,
                 config ?? new SpotUserDataTrackerConfig())
         {
@@ -53,25 +42,11 @@ namespace Weex.Net
         /// </summary>
         public WeexUserFuturesDataTracker(
             ILogger<WeexUserFuturesDataTracker> logger,
-            IWeexRestClient restClient,
-            IWeexSocketClient socketClient,
+            IWeexSharedApiClient client,
             string? userIdentifier,
             FuturesUserDataTrackerConfig? config = null) :
             base(logger,
-                restClient.FuturesApi.SharedApi,
-
-                restClient.FuturesApi.SharedApi,
-                socketClient.FuturesApi.SharedApi,
-
-                restClient.FuturesApi.SharedApi,
-                restClient.FuturesApi.SharedApi,
-                socketClient.FuturesApi.SharedApi,
-
-                restClient.FuturesApi.SharedApi,
-                socketClient.FuturesApi.SharedApi,
-
-                restClient.FuturesApi.SharedApi,
-                socketClient.FuturesApi.SharedApi,
+                client,
                 userIdentifier,
                 config ?? new FuturesUserDataTrackerConfig())
         {
