@@ -18,7 +18,9 @@ namespace Weex.Net.Clients.SpotApi
     {
         #region Get All Assets
 
-        async Task<IExchangeCallResult<SharedAsset[]>> IGetAllAssets.GetAllAssetsAsync(GetAssetsRequest request, CancellationToken ct)
+        async Task<IExchangeCallResult<SharedAsset[]>> IGetAllAssetsOperation.GetAllAssetsAsync(
+            GetAssetsRequest request,
+            CancellationToken ct)
             => await GetAllAssetsAsync(request, ct).ConfigureAwait(false);
 
         Task<HttpResult<SharedAsset[]>> IAssetsRestClient.GetAssetsAsync(GetAssetsRequest request, CancellationToken ct)
@@ -55,7 +57,9 @@ namespace Weex.Net.Clients.SpotApi
         #endregion
         #region Get Asset
 
-        async Task<IExchangeCallResult<SharedAsset>> IGetAsset.GetAssetAsync(GetAssetRequest request, CancellationToken ct)
+        async Task<IExchangeCallResult<SharedAsset>> IGetAssetOperation.GetAssetAsync(
+            GetAssetRequest request,
+            CancellationToken ct)
             => await GetAssetAsync(request, ct).ConfigureAwait(false);
 
         public GetAssetOptions GetAssetOptions { get; } = new GetAssetOptions(_exchangeName, false);

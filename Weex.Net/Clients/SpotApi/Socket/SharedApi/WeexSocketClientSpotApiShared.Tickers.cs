@@ -16,7 +16,10 @@ namespace Weex.Net.Clients.SpotApi
     {
         #region Subscribe Ticker
 
-        async Task<WebSocketResult<UpdateSubscription>> ISubscribeTickerSocket.SubscribeToTickerUpdatesAsync(SubscribeTickerRequest request, Action<DataEvent<SharedTicker>> handler, CancellationToken ct)
+        async Task<WebSocketResult<UpdateSubscription>> ISubscribeTickerOperation.SubscribeToTickerUpdatesAsync(
+            SubscribeTickerRequest request,
+            Action<DataEvent<SharedTicker>> handler,
+            CancellationToken ct)
             => await SubscribeToTickerUpdatesAsync(request, x => handler(x.ToType<SharedTicker>(x.Data)), ct).ConfigureAwait(false);
 
         public SubscribeTickerOptions SubscribeTickerOptions { get; } = new SubscribeTickerOptions(_exchangeName)
@@ -34,7 +37,7 @@ namespace Weex.Net.Clients.SpotApi
                 new SharedSpotTicker(
                     ExchangeSymbolCache.ParseSymbol(_topicId, _api.EnvironmentName, null, update.Symbol),
                     update.Symbol!,
-                    update.Data.LastPrice, 
+                    update.Data.LastPrice,
                     update.Data.HighPrice,
                     update.Data.LowPrice,
                     new SharedOrderQuantity(update.Data.Volume, update.Data.QuoteVolume),

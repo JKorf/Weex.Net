@@ -10,7 +10,10 @@ namespace Weex.Net;
 /// Symbol configuration builder
 /// </summary>
 public sealed class WeexTradingSessionSymbolBuilder<TStrategy>
-    : TradingSessionSymbolBuilder<TStrategy, WeexTradingSessionSymbolBuilder<TStrategy>>
+    : TradingSessionSymbolBuilder<TStrategy, WeexTradingSessionSymbolBuilder<TStrategy>>,
+        ITradeTrackingBuilder,
+        ITickerTrackingBuilder,
+        IKlineTrackingBuilder
     where TStrategy : TradingStrategy
 {
     internal IWeexOrderBookFactory OrderBooks { get; }

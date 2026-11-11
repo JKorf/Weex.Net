@@ -16,7 +16,10 @@ namespace Weex.Net.Clients.FuturesApi
     {
         #region Get Klines
 
-        async Task<IExchangeCallResult<SharedKline[]>> IGetKlines.GetKlinesAsync(GetKlinesRequest request, PageRequest? pageRequest, CancellationToken ct)
+        async Task<IExchangeCallResult<SharedKline[]>> IGetKlinesOperation.GetKlinesAsync(
+            GetKlinesRequest request,
+            PageRequest? pageRequest,
+            CancellationToken ct)
             => await GetKlinesAsync(request, pageRequest, ct).ConfigureAwait(false);
 
         public GetKlinesOptions GetKlinesOptions { get; } = new GetKlinesOptions(_exchangeName, false, false, false, 1000, false,
@@ -54,11 +57,11 @@ namespace Weex.Net.Clients.FuturesApi
             return HttpResult.Ok(result, ExchangeHelpers.ApplyFilter(result.Data, x => x.OpenTime, request.StartTime, request.EndTime, direction)
                     .Select(x =>
                         new SharedKline(
-                            request.Symbol, 
-                            symbol, 
+                            request.Symbol,
+                            symbol,
                             x.OpenTime,
-                            x.ClosePrice, 
-                            x.HighPrice, 
+                            x.ClosePrice,
+                            x.HighPrice,
                             x.LowPrice,
                             x.OpenPrice,
                             new SharedOrderQuantity(x.Volume, x.QuoteVolume)))

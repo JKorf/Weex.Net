@@ -16,7 +16,9 @@ namespace Weex.Net.Clients.FuturesApi
     {
         #region Get Open Interest
 
-        async Task<IExchangeCallResult<SharedOpenInterest>> IGetOpenInterest.GetOpenInterestAsync(GetOpenInterestRequest request, CancellationToken ct)
+        async Task<IExchangeCallResult<SharedOpenInterest>> IGetOpenInterestOperation.GetOpenInterestAsync(
+            GetOpenInterestRequest request,
+            CancellationToken ct)
             => await GetOpenInterestAsync(request, ct).ConfigureAwait(false);
 
         public GetOpenInterestOptions GetOpenInterestOptions { get; } = new GetOpenInterestOptions(_exchangeName, false);

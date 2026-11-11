@@ -18,7 +18,9 @@ namespace Weex.Net.Clients.FuturesApi
 
         #region Get Leverage
 
-        async Task<IExchangeCallResult<SharedLeverage>> IGetLeverage.GetLeverageAsync(GetLeverageRequest request, CancellationToken ct)
+        async Task<IExchangeCallResult<SharedLeverage>> IGetLeverageOperation.GetLeverageAsync(
+            GetLeverageRequest request,
+            CancellationToken ct)
             => await GetLeverageAsync(request, ct).ConfigureAwait(false);
 
         public GetLeverageOptions GetLeverageOptions { get; } = new GetLeverageOptions(_exchangeName, true);
@@ -41,7 +43,9 @@ namespace Weex.Net.Clients.FuturesApi
 
         #region Set Leverage
 
-        async Task<IExchangeCallResult<SharedLeverage>> ISetLeverage.SetLeverageAsync(SetLeverageRequest request, CancellationToken ct)
+        async Task<IExchangeCallResult<SharedLeverage>> ISetLeverageOperation.SetLeverageAsync(
+            SetLeverageRequest request,
+            CancellationToken ct)
             => await SetLeverageAsync(request, ct).ConfigureAwait(false);
 
         public SetLeverageOptions SetLeverageOptions { get; } = new SetLeverageOptions(_exchangeName)
@@ -60,7 +64,7 @@ namespace Weex.Net.Clients.FuturesApi
             var result = await _api.Account.SetLeverageAsync(
                 symbol: request.Symbol!.GetSymbol(FormatSymbol),
                 marginMode,
-                marginMode == MarginType.Cross ? request.Leverage : null, 
+                marginMode == MarginType.Cross ? request.Leverage : null,
                 marginMode == MarginType.Isolated ? request.Leverage : null,
                 marginMode == MarginType.Isolated ? request.Leverage : null,
                 ct: ct).ConfigureAwait(false);

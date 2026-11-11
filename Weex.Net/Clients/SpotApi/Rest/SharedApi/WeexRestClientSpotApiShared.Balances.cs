@@ -18,7 +18,9 @@ namespace Weex.Net.Clients.SpotApi
     {
         #region Get Balances
 
-        async Task<IExchangeCallResult<SharedBalance[]>> IGetBalances.GetBalancesAsync(GetBalancesRequest request, CancellationToken ct)
+        async Task<IExchangeCallResult<SharedBalance[]>> IGetBalancesOperation.GetBalancesAsync(
+            GetBalancesRequest request,
+            CancellationToken ct)
             => await GetBalancesAsync(request, ct).ConfigureAwait(false);
 
         public GetBalancesOptions GetBalancesOptions { get; } = new GetBalancesOptions(_exchangeName, AccountTypeFilter.Spot);

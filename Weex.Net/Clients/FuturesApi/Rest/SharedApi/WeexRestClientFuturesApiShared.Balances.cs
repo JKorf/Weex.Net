@@ -16,7 +16,9 @@ namespace Weex.Net.Clients.FuturesApi
     {
         #region Get Balances
 
-        async Task<IExchangeCallResult<SharedBalance[]>> IGetBalances.GetBalancesAsync(GetBalancesRequest request, CancellationToken ct)
+        async Task<IExchangeCallResult<SharedBalance[]>> IGetBalancesOperation.GetBalancesAsync(
+            GetBalancesRequest request,
+            CancellationToken ct)
             => await GetBalancesAsync(request, ct).ConfigureAwait(false);
 
         public GetBalancesOptions GetBalancesOptions { get; } = new GetBalancesOptions(_exchangeName, AccountTypeFilter.Spot);
@@ -31,7 +33,7 @@ namespace Weex.Net.Clients.FuturesApi
             if (!result.Success)
                 return HttpResult.Fail<SharedBalance[]>(result);
 
-            return HttpResult.Ok(result, result.Data.Select(x => 
+            return HttpResult.Ok(result, result.Data.Select(x =>
                 new SharedBalance(SupportedTradingModes, x.Asset, x.AvailableBalance, x.Balance)).ToArray());
         }
 

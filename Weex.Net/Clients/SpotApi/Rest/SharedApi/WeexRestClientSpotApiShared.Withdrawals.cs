@@ -19,7 +19,10 @@ namespace Weex.Net.Clients.SpotApi
 
         #region Get Withdrawal History
 
-        async Task<IExchangeCallResult<SharedWithdrawal[]>> IGetWithdrawalHistory.GetWithdrawalHistoryAsync(GetWithdrawalsRequest request, PageRequest? pageRequest, CancellationToken ct)
+        async Task<IExchangeCallResult<SharedWithdrawal[]>> IGetWithdrawalHistoryOperation.GetWithdrawalHistoryAsync(
+            GetWithdrawalsRequest request,
+            PageRequest? pageRequest,
+            CancellationToken ct)
             => await GetWithdrawalHistoryAsync(request, pageRequest, ct).ConfigureAwait(false);
 
         Task<HttpResult<SharedWithdrawal[]>> IWithdrawalRestClient.GetWithdrawalsAsync(GetWithdrawalsRequest request, PageRequest? pageRequest, CancellationToken ct)
@@ -60,8 +63,8 @@ namespace Weex.Net.Clients.SpotApi
                 .Select(x =>
                     new SharedWithdrawal(
                         x.Asset,
-                        string.Empty, 
-                        x.DeltaQuantity, 
+                        string.Empty,
+                        x.DeltaQuantity,
                         true,
                         x.CreateTime,
                         SharedTransferStatus.Unknown)

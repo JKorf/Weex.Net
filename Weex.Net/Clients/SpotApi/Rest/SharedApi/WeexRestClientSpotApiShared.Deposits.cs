@@ -28,7 +28,10 @@ namespace Weex.Net.Clients.SpotApi
 
         #region Get Deposit History
 
-        async Task<IExchangeCallResult<SharedDeposit[]>> IGetDepositHistory.GetDepositHistoryAsync(GetDepositsRequest request, PageRequest? pageRequest, CancellationToken ct)
+        async Task<IExchangeCallResult<SharedDeposit[]>> IGetDepositHistoryOperation.GetDepositHistoryAsync(
+            GetDepositsRequest request,
+            PageRequest? pageRequest,
+            CancellationToken ct)
             => await GetDepositHistoryAsync(request, pageRequest, ct).ConfigureAwait(false);
 
         Task<HttpResult<SharedDeposit[]>> IDepositRestClient.GetDepositsAsync(GetDepositsRequest request, PageRequest? pageRequest, CancellationToken ct)

@@ -16,7 +16,10 @@ namespace Weex.Net.Clients.FuturesApi
     {
         #region Get Index Price Klines
 
-        async Task<IExchangeCallResult<SharedFuturesKline[]>> IGetIndexPriceKlines.GetIndexPriceKlinesAsync(GetKlinesRequest request, PageRequest? pageRequest, CancellationToken ct)
+        async Task<IExchangeCallResult<SharedFuturesKline[]>> IGetIndexPriceKlinesOperation.GetIndexPriceKlinesAsync(
+            GetKlinesRequest request,
+            PageRequest? pageRequest,
+            CancellationToken ct)
             => await GetIndexPriceKlinesAsync(request, pageRequest, ct).ConfigureAwait(false);
 
         public GetIndexPriceKlinesOptions GetIndexPriceKlinesOptions { get; } = new GetIndexPriceKlinesOptions(_exchangeName, false, true, false, 1000, false)

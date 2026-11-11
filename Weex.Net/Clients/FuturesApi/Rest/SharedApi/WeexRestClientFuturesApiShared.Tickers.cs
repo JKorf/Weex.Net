@@ -16,7 +16,9 @@ namespace Weex.Net.Clients.FuturesApi
     {
         #region Get Ticker
 
-        async Task<IExchangeCallResult<SharedTicker>> IGetTicker.GetTickerAsync(GetTickerRequest request, CancellationToken ct)
+        async Task<IExchangeCallResult<SharedTicker>> IGetTickerOperation.GetTickerAsync(
+            GetTickerRequest request,
+            CancellationToken ct)
             => await ((IGetTickerRest)this).GetTickerAsync(request, ct).ConfigureAwait(false);
 
         async Task<HttpResult<SharedTicker>> IGetTickerRest.GetTickerAsync(GetTickerRequest request, CancellationToken ct)
@@ -51,12 +53,12 @@ namespace Weex.Net.Clients.FuturesApi
             var funding = resultFunding.Result.Data.Single();
 
             return HttpResult.Ok(resultTicker.Result, new SharedFuturesTicker(
-                ExchangeSymbolCache.ParseSymbol(_topicId, _api.EnvironmentName, null, ticker.Symbol), 
+                ExchangeSymbolCache.ParseSymbol(_topicId, _api.EnvironmentName, null, ticker.Symbol),
                 ticker.Symbol,
-                ticker.LastPrice, 
+                ticker.LastPrice,
                 ticker.HighPrice,
                 ticker.LowPrice,
-                new SharedOrderQuantity(ticker.Volume, ticker.QuoteVolume), 
+                new SharedOrderQuantity(ticker.Volume, ticker.QuoteVolume),
                 ticker.PriceChangePercentage * 100)
             {
                 MarkPrice = ticker.MarkPrice,
@@ -70,7 +72,9 @@ namespace Weex.Net.Clients.FuturesApi
 
         #region Get All Tickers
 
-        async Task<IExchangeCallResult<SharedTicker[]>> IGetAllTickers.GetAllTickersAsync(GetTickersRequest request, CancellationToken ct)
+        async Task<IExchangeCallResult<SharedTicker[]>> IGetAllTickersOperation.GetAllTickersAsync(
+            GetTickersRequest request,
+            CancellationToken ct)
             => await ((IGetAllTickersRest)this).GetAllTickersAsync(request, ct).ConfigureAwait(false);
 
         async Task<HttpResult<SharedTicker[]>> IGetAllTickersRest.GetAllTickersAsync(GetTickersRequest request, CancellationToken ct)

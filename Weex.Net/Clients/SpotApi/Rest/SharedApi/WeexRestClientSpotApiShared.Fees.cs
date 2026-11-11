@@ -18,7 +18,9 @@ namespace Weex.Net.Clients.SpotApi
     {
         #region Get Fees
 
-        async Task<IExchangeCallResult<SharedFee>> IGetFees.GetFeesAsync(GetFeeRequest request, CancellationToken ct)
+        async Task<IExchangeCallResult<SharedFee>> IGetFeesOperation.GetFeesAsync(
+            GetFeeRequest request,
+            CancellationToken ct)
             => await GetFeesAsync(request, ct).ConfigureAwait(false);
 
         public GetFeeOptions GetFeeOptions { get; } = new GetFeeOptions(_exchangeName, true);
