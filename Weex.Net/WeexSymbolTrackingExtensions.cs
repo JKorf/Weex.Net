@@ -7,12 +7,16 @@ using Weex.Net.Objects.Options;
 
 namespace Weex.Net
 {
-    public static class WeexSymbolTrackingExtensions
+    /// <summary>
+    /// Trading session symbol extension methods
+    /// </summary>
+    public static class WeexTradingSessionSymbolExtensions
     {
-        public static WeexSymbolTrackingBuilder<TSession> AddOrderBookTracking<TSession>(
-            this WeexSymbolTrackingBuilder<TSession> builder,
+
+        public static WeexTradingSessionSymbolBuilder<TSession> AddOrderBookTracking<TSession>(
+            this WeexTradingSessionSymbolBuilder<TSession> builder,
             Action<WeexOrderBookOptions>? options = null)
-            where TSession : Session, IOrderBookUpdateHandler
+            where TSession : TradingSession, IOrderBookUpdateHandler
         {
             if (builder == null)
                 throw new ArgumentNullException(nameof(builder));

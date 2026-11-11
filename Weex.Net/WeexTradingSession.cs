@@ -13,9 +13,13 @@ using Weex.Net.Interfaces.Clients;
 
 namespace Weex.Net
 {
-    public class WeexSession : Session<IWeexUserClientProvider, WeexSessionUser>
+    /// <summary>
+    /// Weex trading session
+    /// </summary>
+    public class WeexTradingSession : TradingSession<IWeexUserClientProvider, WeexSessionUser>
     {
-        protected override WeexSessionUser CreateUser(SessionUserDefinition definition)
+        /// <inheritdoc />
+        protected override WeexSessionUser CreateUser(TradingSessionUserDefinition definition)
         {
             return new WeexSessionUser(
                 definition,
@@ -26,13 +30,16 @@ namespace Weex.Net
         }
     }
 
-    public sealed class WeexSessionUser : SessionUser
+    /// <summary>
+    /// Weex trading session user
+    /// </summary>
+    public sealed class WeexSessionUser : TradingSessionUser
     {
         private readonly IWeexUserClientProvider _provider;
         private readonly WeexEnvironment? _environment;
 
         internal WeexSessionUser(
-            SessionUserDefinition definition,
+            TradingSessionUserDefinition definition,
             IWeexUserClientProvider provider,
             Func<IUserSpotDataTracker> getSpotTracker,
             Func<TradingMode, IUserFuturesDataTracker> getFuturesTracker)
@@ -49,26 +56,26 @@ namespace Weex.Net
             _environment = (WeexEnvironment?)definition.Environment;
         }
 
-        public PlaceSpotOrderOptions PlaceSpotOrderOptions =>
-            _provider.GetPublicSharedApiClient(_environment)
-                .SpotRest.PlaceSpotOrderOptions;
+        //public PlaceSpotOrderOptions PlaceSpotOrderOptions =>
+        //    _provider.GetPublicSharedApiClient(_environment)
+        //        .SpotRest.PlaceSpotOrderOptions;
 
-        public async Task<HttpResult<SharedId>> PlaceSpotOrderAsync(
-            PlaceSpotOrderRequest request,
-            CancellationToken ct = default)
-        {
-            var client = await _provider.TryGetSharedApiClientAsync(
-                UserIdentifier, _environment, ct).ConfigureAwait(false);
+        //public async Task<HttpResult<SharedId>> PlaceSpotOrderAsync(
+        //    PlaceSpotOrderRequest request,
+        //    CancellationToken ct = default)
+        //{
+        //    var client = await _provider.TryGetSharedApiClientAsync(
+        //        UserIdentifier, _environment, ct).ConfigureAwait(false);
 
-            if (!client.Success)
-            {
-                return HttpResult.Fail<SharedId>(
-                    _provider.ExchangeName, client.Error);
-            }
+        //    if (!client.Success)
+        //    {
+        //        return HttpResult.Fail<SharedId>(
+        //            _provider.ExchangeName, client.Error);
+        //    }
 
-            return await client.Data.SpotRest
-                .PlaceSpotOrderAsync(request, ct)
-                .ConfigureAwait(false);
-        }
+        //    return await client.Data.SpotRest
+        //        .PlaceSpotOrderAsync(request, ct)
+        //        .ConfigureAwait(false);
+        //}
     }
 }

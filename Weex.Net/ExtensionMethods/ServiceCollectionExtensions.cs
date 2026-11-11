@@ -80,7 +80,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddTransient<IWeexOrderBookFactory, WeexOrderBookFactory>();
             services.AddTransient<ITrackerFactory, WeexTrackerFactory>();
             services.AddTransient<IWeexTrackerFactory, WeexTrackerFactory>();
-            services.AddTransient(typeof(WeexSessionTrackerBuilder<>));
+            services.AddTransient(typeof(WeexTradingSessionBuilder<>));
             services.AddSingleton<IWeexUserClientProvider, WeexUserClientProvider>(x =>
                 new WeexUserClientProvider(
                     x.GetRequiredService<IHttpClientFactory>().CreateClient(typeof(IWeexRestClient).Name),
