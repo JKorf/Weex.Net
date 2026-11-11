@@ -1,8 +1,8 @@
-using CryptoExchange.Net.Sessions;
 using CryptoExchange.Net.SharedApis;
-using CryptoExchange.Net.Trackers.Sessions;
+using CryptoExchange.Net.TradeSessions;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using Weex.Net.Interfaces;
 using Weex.Net.Interfaces.Clients;
 
@@ -10,7 +10,7 @@ namespace Weex.Net;
 
 /// <inheritdoc />
 public class WeexTradingSessionBuilder<TStrategy>
-    : TradingSessionBuilder<TStrategy, WeexTradingSessionBuilder<TStrategy>, IWeexTradingUser>
+    : TradeSessionBuilder<TStrategy, WeexTradingSessionBuilder<TStrategy>, IWeexTradingUser>
     where TStrategy : WeexTradingStrategy
 {
     private readonly IWeexOrderBookFactory _orderBookFactory;
@@ -53,6 +53,24 @@ public class WeexTradingSessionBuilder<TStrategy>
     }
 
     /// <summary>
+    /// Add the same symbol tracking configuration for each symbol
+    /// </summary>
+    /// <param name="symbols">The symbols to track</param>
+    /// <param name="configure">Symbol tracking configuration, called once for each symbol</param>
+    /// <param name="environment">Trading environment</param>
+    public WeexTradingSessionBuilder<TStrategy> AddSymbolTracking(
+        IEnumerable<SharedSymbol> symbols,
+        Action<WeexTradingSessionSymbolBuilder<TStrategy>> configure,
+        WeexEnvironment? environment = null)
+    {
+        RegisterSymbols(
+            symbols,
+            symbol => new WeexTradingSessionSymbolBuilder<TStrategy>(symbol, _orderBookFactory, environment),
+            configure);
+        return this;
+    }
+
+    /// <summary>
     /// Add a session user
     /// </summary>
     /// <param name="userIdentifier">User identifier, should be unique</param>
@@ -60,7 +78,7 @@ public class WeexTradingSessionBuilder<TStrategy>
     /// <param name="environment">Trading environment</param>
     public WeexTradingSessionBuilder<TStrategy> AddUser(
         string userIdentifier,
-        Action<TradingSessionUserBuilder<TStrategy, WeexEnvironment>> configure,
+        Action<TradeSessionUserBuilder<TStrategy, WeexEnvironment>> configure,
         WeexEnvironment? environment = null)
     {
         RegisterUser(userIdentifier, configure, Trackers, environment);

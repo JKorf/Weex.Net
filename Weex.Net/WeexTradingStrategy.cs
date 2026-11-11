@@ -1,4 +1,4 @@
-using CryptoExchange.Net.Sessions;
+using CryptoExchange.Net.TradeSessions;
 using Weex.Net.Interfaces;
 
 namespace Weex.Net;

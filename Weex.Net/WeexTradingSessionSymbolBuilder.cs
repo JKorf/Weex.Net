@@ -1,6 +1,6 @@
-using CryptoExchange.Net.Sessions;
 using CryptoExchange.Net.SharedApis;
-using CryptoExchange.Net.Trackers.Sessions.Interfaces;
+using CryptoExchange.Net.TradeSessions;
+using CryptoExchange.Net.TradeSessions.Interfaces;
 using System;
 using Weex.Net.Interfaces;
 
@@ -14,7 +14,7 @@ public sealed class WeexTradingSessionSymbolBuilder<TStrategy>
         ITradeTrackingBuilder,
         ITickerTrackingBuilder,
         IKlineTrackingBuilder
-    where TStrategy : TradingStrategy
+    where TStrategy : TradeSession
 {
     internal IWeexOrderBookFactory OrderBooks { get; }
 

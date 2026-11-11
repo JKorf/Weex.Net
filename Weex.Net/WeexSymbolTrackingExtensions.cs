@@ -1,7 +1,7 @@
-using CryptoExchange.Net.Sessions;
 using CryptoExchange.Net.SharedApis;
 using CryptoExchange.Net.Trackers.Sessions.Features;
-using CryptoExchange.Net.Trackers.Sessions.Interfaces;
+using CryptoExchange.Net.TradeSessions;
+using CryptoExchange.Net.TradeSessions.Interfaces;
 using System;
 using Weex.Net.Objects.Options;
 
@@ -15,7 +15,7 @@ public static class WeexTradingSessionSymbolExtensions
     public static WeexTradingSessionSymbolBuilder<TStrategy> AddOrderBookTracking<TStrategy>(
         this WeexTradingSessionSymbolBuilder<TStrategy> builder,
         Action<WeexOrderBookOptions>? options = null)
-        where TStrategy : TradingStrategy, IOrderBookUpdateHandler
+        where TStrategy : TradeSession, IOrderBookUpdateHandler
     {
         if (builder == null)
             throw new ArgumentNullException(nameof(builder));
