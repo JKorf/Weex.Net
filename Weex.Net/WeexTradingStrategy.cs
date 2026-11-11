@@ -1,0 +1,11 @@
+using CryptoExchange.Net.Sessions;
+using Weex.Net.Interfaces;
+
+namespace Weex.Net;
+
+/// <summary>
+/// Weex trading strategy
+/// </summary>
+public abstract class WeexTradingStrategy : TradingStrategy<IWeexTradingUser>
+{
+}
