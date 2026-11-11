@@ -1,7 +1,6 @@
 using CryptoExchange.Net.SharedApis;
-using CryptoExchange.Net.Trackers.Sessions.Features;
+using CryptoExchange.Net.TradeSessions.Features;
 using CryptoExchange.Net.TradeSessions;
-using CryptoExchange.Net.TradeSessions.Interfaces;
 using System;
 using Weex.Net.Objects.Options;
 
@@ -15,7 +14,7 @@ public static class WeexTradingSessionSymbolExtensions
     public static WeexTradingSessionSymbolBuilder<TStrategy> AddOrderBookTracking<TStrategy>(
         this WeexTradingSessionSymbolBuilder<TStrategy> builder,
         Action<WeexOrderBookOptions>? options = null)
-        where TStrategy : TradeSession, IOrderBookUpdateHandler
+        where TStrategy : TradeSession
     {
         if (builder == null)
             throw new ArgumentNullException(nameof(builder));
@@ -26,7 +25,7 @@ public static class WeexTradingSessionSymbolExtensions
             throw new NotSupportedException($"Weex order books do not support {symbol.TradingMode}.");
 
         var factory = builder.OrderBooks;
-        return builder.RegisterOrderBook(strategy =>
-            new OrderBookFeature(factory.Create(symbol, options, (WeexEnvironment?)environment), symbol, strategy));
+        return builder.RegisterOrderBook(_ =>
+            new OrderBookFeature(factory.Create(symbol, options, (WeexEnvironment?)environment), symbol));
     }
 }
