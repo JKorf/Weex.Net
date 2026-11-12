@@ -8,7 +8,7 @@ using Weex.Net.Interfaces.Clients;
 
 namespace Weex.Net;
 
-internal sealed class WeexFuturesTradingUser : TradingSessionUserApi, IWeexFuturesTradingUser
+internal sealed class WeexFuturesTradingUser : TradeSessionUserApi, IWeexFuturesTradingUser
 {
     internal WeexFuturesTradingUser(
         string userIdentifier,

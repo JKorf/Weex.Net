@@ -8,7 +8,7 @@ namespace Weex.Net;
 /// <summary>
 /// Weex trading session user
 /// </summary>
-internal sealed class WeexSessionUser : TradingSessionUser, IWeexTradingUser
+internal sealed class WeexSessionUser : TradeSessionUser, IWeexTradingUser
 {
     public IWeexSpotTradingUser Spot { get; }
     public IWeexFuturesTradingUser Futures { get; }

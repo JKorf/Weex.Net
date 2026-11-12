@@ -7,7 +7,7 @@ namespace Weex.Net.Interfaces;
 /// User-bound spot order operations supported by Weex
 /// </summary>
 public interface IWeexSpotTradingUser :
-    ITradingUserApi,
+    ITradeSessionUserApi,
     ICancelSpotOrderOperation,
     ICancelSpotOrderByClientOrderIdOperation,
     IGetClosedSpotOrdersOperation,

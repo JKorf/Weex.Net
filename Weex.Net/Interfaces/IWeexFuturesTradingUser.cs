@@ -7,7 +7,7 @@ namespace Weex.Net.Interfaces;
 /// User-bound futures order operations supported by Weex
 /// </summary>
 public interface IWeexFuturesTradingUser :
-    ITradingUserApi,
+    ITradeSessionUserApi,
     ICancelFuturesOrderOperation,
     IGetClosedFuturesOrdersOperation,
     IGetFuturesOrderOperation,

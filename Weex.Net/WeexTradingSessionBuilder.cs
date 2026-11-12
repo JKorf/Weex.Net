@@ -19,17 +19,12 @@ public class WeexTradingSessionBuilder<TStrategy>
     /// <summary>
     /// ctor
     /// </summary>
-    /// <param name="clientProvider"></param>
-    /// <param name="orderBookFactory"></param>
-    /// <param name="trackerFactory"></param>
-    /// <param name="logger"></param>
-    /// <exception cref="ArgumentNullException"></exception>
     public WeexTradingSessionBuilder(
         IWeexUserClientProvider clientProvider,
         IWeexOrderBookFactory orderBookFactory,
         IWeexTrackerFactory trackerFactory,
-        ILogger<WeexTradingSessionBuilder<TStrategy>> logger)
-        : base(clientProvider, logger, context => new WeexSessionUser(context, clientProvider))
+        ILoggerFactory logFactory)
+        : base(clientProvider, logFactory, context => new WeexSessionUser(context, clientProvider))
     {
         _orderBookFactory = orderBookFactory ?? throw new ArgumentNullException(nameof(orderBookFactory));
         Trackers = trackerFactory ?? throw new ArgumentNullException(nameof(trackerFactory));

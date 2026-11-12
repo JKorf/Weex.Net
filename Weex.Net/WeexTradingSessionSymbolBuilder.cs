@@ -10,7 +10,7 @@ namespace Weex.Net;
 /// Symbol configuration builder
 /// </summary>
 public sealed class WeexTradingSessionSymbolBuilder<TStrategy>
-    : TradingSessionSymbolBuilder<TStrategy, WeexTradingSessionSymbolBuilder<TStrategy>>,
+    : TradeSessionSymbolBuilder<TStrategy, WeexTradingSessionSymbolBuilder<TStrategy>>,
         ITradeTrackingBuilder,
         ITickerTrackingBuilder,
         IKlineTrackingBuilder
@@ -28,7 +28,7 @@ public sealed class WeexTradingSessionSymbolBuilder<TStrategy>
     }
 
     internal WeexTradingSessionSymbolBuilder<TStrategy> RegisterOrderBook(
-        Func<TStrategy, ITradingSessionFeature> create)
+        Func<TStrategy, ITradeSessionFeature> create)
     {
         return RegisterFeature("orderBook", create);
     }

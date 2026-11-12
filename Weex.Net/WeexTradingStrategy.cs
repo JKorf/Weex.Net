@@ -6,6 +6,6 @@ namespace Weex.Net;
 /// <summary>
 /// Weex trading strategy
 /// </summary>
-public abstract class WeexTradingStrategy : TradingStrategy<IWeexTradingUser>
+public abstract class WeexTradingStrategy : TradeSession<IWeexTradingUser>
 {
 }

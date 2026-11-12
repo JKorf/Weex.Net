@@ -5,7 +5,7 @@ namespace Weex.Net.Interfaces;
 /// <summary>
 /// User access to the API surfaces supported by Weex
 /// </summary>
-public interface IWeexTradingUser : ITradingUser
+public interface IWeexTradingUser : ITradeSessionUser
 {
     /// <summary>
     /// Spot order operations for this user
