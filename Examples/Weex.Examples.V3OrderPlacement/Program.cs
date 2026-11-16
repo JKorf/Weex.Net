@@ -15,7 +15,7 @@ Console.WriteLine();
 Console.WriteLine("This example can place real orders when valid credentials are configured.");
 Console.WriteLine();
 
-var client = new WeexRestClient(options =>
+using var client = new WeexRestClient(options =>
 {
     options.ApiCredentials = new WeexCredentials(apiKey, apiSecret, apiPassphrase);
 });
@@ -42,13 +42,13 @@ static async Task PlaceSpotLimitOrderAsync(WeexRestClient client)
         return;
     }
 
-    var safePrice = Math.Round(ticker.LastPrice * 0.95m, 2);
+    var limitPrice = Math.Round(ticker.LastPrice * 0.95m, 2);
     var order = await client.SpotApi.Trading.PlaceOrderAsync(
         symbol: spotSymbol,
         side: OrderSide.Buy,
         orderType: OrderType.Limit,
         quantity: 0.1m,
-        price: safePrice,
+        price: limitPrice,
         timeInForce: TimeInForce.GoodTillCanceled);
 
     if (!order.Success)
@@ -57,7 +57,7 @@ static async Task PlaceSpotLimitOrderAsync(WeexRestClient client)
         return;
     }
 
-    Console.WriteLine($"Placed spot order {order.Data.OrderId} at {safePrice}");
+    Console.WriteLine($"Placed spot order {order.Data.OrderId} at {limitPrice}");
 
     var orderStatus = await client.SpotApi.Trading.GetOrderAsync(orderId: order.Data.OrderId);
     if (orderStatus.Success)
@@ -89,14 +89,14 @@ static async Task PlaceFuturesLimitOrderExampleAsync(WeexRestClient client)
         return;
     }
 
-    var safePrice = Math.Round(ticker.LastPrice * 1.05m, 2);
+    var limitPrice = Math.Round(ticker.LastPrice * 1.05m, 2);
     var order = await client.FuturesApi.Trading.PlaceOrderAsync(
         symbol: futuresSymbol,
         side: OrderSide.Sell,
         positionSide: PositionSide.Short,
         orderType: OrderType.Limit,
         quantity: 0.01m,
-        price: safePrice,
+        price: limitPrice,
         timeInForce: TimeInForce.GoodTillCanceled);
 
     if (!order.Success)
@@ -111,7 +111,13 @@ static async Task PlaceFuturesLimitOrderExampleAsync(WeexRestClient client)
         return;
     }
 
-    Console.WriteLine($"Placed futures order {order.Data.OrderId} at {safePrice}");
+    if (!order.Data.Success)
+    {
+        Console.WriteLine($"Futures order rejected: {order.Data.ErrorCode}: {order.Data.ErrorMessage}");
+        return;
+    }
+
+    Console.WriteLine($"Placed futures order {order.Data.OrderId} at {limitPrice}");
 
     var orderStatus = await client.FuturesApi.Trading.GetOrderAsync(order.Data.OrderId.Value);
     if (orderStatus.Success)

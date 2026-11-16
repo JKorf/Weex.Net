@@ -16,7 +16,7 @@ using Weex.Net.Enums;
 
 // ---- 1. PUBLIC CLIENT (no credentials needed for market data) ----
 // Reuse this client across the application; do not create one per request.
-var publicClient = new WeexRestClient();
+using var publicClient = new WeexRestClient();
 
 var ticker = await publicClient.SpotApi.ExchangeData.GetTickersAsync(new[] { "ETHUSDT" });
 if (!ticker.Success)
@@ -30,7 +30,7 @@ Console.WriteLine($"ETH/USDT last price: {ethTicker.LastPrice}");
 Console.WriteLine($"24h volume: {ethTicker.Volume} ETH");
 
 // ---- 2. AUTHENTICATED CLIENT (for account / trading) ----
-var tradingClient = new WeexRestClient(options =>
+using var tradingClient = new WeexRestClient(options =>
 {
     options.ApiCredentials = new WeexCredentials("API_KEY", "API_SECRET", "API_PASSPHRASE");
 });
@@ -48,16 +48,16 @@ foreach (var balance in account.Data.Balances.Where(b => b.Free + b.Locked > 0))
 }
 
 // ---- 3. PLACE A LIMIT BUY ORDER ----
-// Limit, Buy, 0.1 ETH at a price 5% below current; likely will not fill immediately.
+// A limit buy below the last ticker can still execute. Validate exchange filters and intended exposure.
 // Let Weex.Net generate the client order id unless you need a specific external id.
-var safePrice = Math.Round(ethTicker.LastPrice * 0.95m, 2);
+var limitPrice = Math.Round(ethTicker.LastPrice * 0.95m, 2);
 
 var order = await tradingClient.SpotApi.Trading.PlaceOrderAsync(
     symbol: "ETHUSDT",
     side: OrderSide.Buy,
     orderType: OrderType.Limit,
     quantity: 0.1m,
-    price: safePrice,
+    price: limitPrice,
     timeInForce: TimeInForce.GoodTillCanceled);
 
 if (!order.Success)
@@ -66,7 +66,7 @@ if (!order.Success)
     return;
 }
 
-Console.WriteLine($"Placed order {order.Data.OrderId} at {safePrice}");
+Console.WriteLine($"Placed order {order.Data.OrderId} at {limitPrice}");
 
 // ---- 4. CHECK ORDER STATUS ----
 var status = await tradingClient.SpotApi.Trading.GetOrderAsync(orderId: order.Data.OrderId);

@@ -9,7 +9,7 @@ using Weex.Net;
 using Weex.Net.Clients;
 using Weex.Net.Enums;
 
-var client = new WeexRestClient(options =>
+using var client = new WeexRestClient(options =>
 {
     options.ApiCredentials = new WeexCredentials("API_KEY", "API_SECRET", "API_PASSPHRASE");
 });
@@ -35,12 +35,13 @@ else
 }
 
 // ---- 2. SIMPLE RETRY WITH BACKOFF ----
-// Retry only transient errors such as rate limits, network blips, or server overload.
+// This helper is for public reads. A transient error does not make order resubmission safe.
 
 async Task<HttpResult<T>> WithRetry<T>(
     Func<Task<HttpResult<T>>> call,
     int maxAttempts = 3)
 {
+    ArgumentOutOfRangeException.ThrowIfLessThan(maxAttempts, 1);
     HttpResult<T> last = default!;
     for (var attempt = 1; attempt <= maxAttempts; attempt++)
     {
@@ -48,7 +49,8 @@ async Task<HttpResult<T>> WithRetry<T>(
         if (last.Success) return last;
         if (last.Error?.IsTransient != true) return last;
 
-        await Task.Delay(TimeSpan.FromMilliseconds(250 * Math.Pow(2, attempt)));
+        if (attempt < maxAttempts)
+            await Task.Delay(TimeSpan.FromMilliseconds(250 * Math.Pow(2, attempt)));
     }
 
     return last;

@@ -1,11 +1,14 @@
 # Examples
 
-| Project | Topic |
-|---|---|
-| `Weex.Examples.Api` | Minimal ASP.NET Core API integration, dependency injection, public ticker endpoint, private balances endpoint |
-| `Weex.Examples.Console` | Basic REST ticker request and WebSocket ticker subscription |
-| `Weex.Examples.V3OrderPlacement` | Spot and futures V3 order placement, order status lookup, and cancellation |
-| `Weex.Examples.OrderBook` | Client-side order book implementation with live console display |
-| `Weex.Examples.Tracker` | Trade tracker with rolling market statistics |
+| Project | Purpose |
+| --- | --- |
+| [API](Weex.Examples.Api/Weex.Examples.Api.csproj) | Inject clients into a web API |
+| [Console](Weex.Examples.Console/Weex.Examples.Console.csproj) | Basic client use |
+| [Order book](Weex.Examples.OrderBook/Weex.Examples.OrderBook.csproj) | Maintained local book |
+| [Tracker](Weex.Examples.Tracker/Weex.Examples.Tracker.csproj) | Trade tracker |
+| [V3 order placement](Weex.Examples.V3OrderPlacement/Weex.Examples.V3OrderPlacement.csproj) | Spot and futures order submissions |
+| [Standalone programs](ai-friendly/README.md) | Focused REST, WebSocket, V2, and error examples |
 
-The `ai-friendly` folder contains standalone copy/paste examples intended for quick onboarding and AI coding assistant context.
+Compile with `dotnet build Examples/Examples.sln` from the repository root. Builds do not execute exchange calls. Running examples can contact live markets or change account state when credentials are supplied.
+
+See the [consumer skill](../.claude/skills/weex-net/SKILL.md) and [repository instructions](../AGENTS.md).
