@@ -61,13 +61,13 @@ namespace Weex.Net
             ISubscribeKlinesSocket sharedSocketClient;
             if (symbol.TradingMode == TradingMode.Spot)
             {
-                sharedRestClient = restClient.SpotApi.SharedApi;
-                sharedSocketClient = socketClient.SpotApi.SharedApi;
+                sharedRestClient = client.SpotRest;
+                sharedSocketClient = client.SpotSocket;
             }
             else
             {
-                sharedRestClient = restClient.FuturesApi.SharedApi;
-                sharedSocketClient = socketClient.FuturesApi.SharedApi;
+                sharedRestClient = client.FuturesRest;
+                sharedSocketClient = client.FuturesSocket;
             }
 
             return new KlineTracker(
@@ -91,13 +91,13 @@ namespace Weex.Net
             ISubscribeTradesSocket sharedSocketClient;
             if (symbol.TradingMode == TradingMode.Spot)
             {
-                sharedRestClient = restClient.SpotApi.SharedApi;
-                sharedSocketClient = socketClient.SpotApi.SharedApi;
+                sharedRestClient = client.SpotRest;
+                sharedSocketClient = client.SpotSocket;
             }
             else
             {
-                sharedRestClient = restClient.FuturesApi.SharedApi;
-                sharedSocketClient = socketClient.FuturesApi.SharedApi;
+                sharedRestClient = client.FuturesRest;
+                sharedSocketClient = client.FuturesSocket;
             }
 
             return new TradeTracker(
