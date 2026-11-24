@@ -61,13 +61,13 @@ namespace Weex.Net
             ISubscribeKlinesSocket sharedSocketClient;
             if (symbol.TradingMode == TradingMode.Spot)
             {
-                sharedRestClient = client.SpotRest;
-                sharedSocketClient = client.SpotSocket;
+                sharedRestClient = restClient.SpotApi.SharedApi;
+                sharedSocketClient = socketClient.SpotApi.SharedApi;
             }
             else
             {
-                sharedRestClient = client.FuturesRest;
-                sharedSocketClient = client.FuturesSocket;
+                sharedRestClient = restClient.FuturesApi.SharedApi;
+                sharedSocketClient = socketClient.FuturesApi.SharedApi;
             }
 
             return new KlineTracker(
@@ -87,17 +87,17 @@ namespace Weex.Net
             var client = _serviceProvider?.GetRequiredService<IWeexSharedApiClient>() ?? new WeexSharedApiClient(
                 new WeexRestClient(), new WeexSocketClient(), Options.Create(WeexOptions.Create()));
 
-            IGetRecentTradesRest sharedRestClient;
+            IGetRecentTradesRest? sharedRestClient;
             ISubscribeTradesSocket sharedSocketClient;
             if (symbol.TradingMode == TradingMode.Spot)
             {
-                sharedRestClient = client.SpotRest;
-                sharedSocketClient = client.SpotSocket;
+                sharedRestClient = restClient.SpotApi.SharedApi;
+                sharedSocketClient = socketClient.SpotApi.SharedApi;
             }
             else
             {
-                sharedRestClient = client.FuturesRest;
-                sharedSocketClient = client.FuturesSocket;
+                sharedRestClient = restClient.FuturesApi.SharedApi;
+                sharedSocketClient = socketClient.FuturesApi.SharedApi;
             }
 
             return new TradeTracker(

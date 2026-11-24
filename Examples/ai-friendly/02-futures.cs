@@ -10,7 +10,7 @@ using Weex.Net;
 using Weex.Net.Clients;
 using Weex.Net.Enums;
 
-var client = new WeexRestClient(options =>
+using var client = new WeexRestClient(options =>
 {
     options.ApiCredentials = new WeexCredentials("API_KEY", "API_SECRET", "API_PASSPHRASE");
 });
@@ -48,7 +48,12 @@ if (!openOrder.Success)
     return;
 }
 
-Console.WriteLine($"Opened position via order {openOrder.Data.OrderId}");
+if (!openOrder.Data.Success)
+{
+    Console.WriteLine($"Order rejected: {openOrder.Data.ErrorCode}: {openOrder.Data.ErrorMessage}");
+    return;
+}
+Console.WriteLine($"Submitted order {openOrder.Data.OrderId}; this is not proof of a fill.");
 
 // ---- 3. GET CURRENT POSITION ----
 var positions = await client.FuturesApi.Trading.GetPositionAsync(symbol);
@@ -74,7 +79,10 @@ Console.WriteLine($"Liquidation price: {position.LiquidationPrice}");
 var close = await client.FuturesApi.Trading.ClosePositionsAsync(symbol);
 if (close.Success)
 {
-    Console.WriteLine($"Close position requests: {close.Data.Length}");
+    foreach (var item in close.Data)
+        Console.WriteLine(item.Success
+            ? $"Close submitted for position {item.PositionId}: {item.SuccessOrderId}"
+            : $"Position {item.PositionId}: {item.ErrorMessage}");
 }
 
 // Common variations:

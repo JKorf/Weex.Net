@@ -1,206 +1,41 @@
----
-name: weex-net
-description: Use Weex.Net when generating C#/.NET code that interacts with the Weex cryptocurrency exchange API, including Spot REST, Futures REST, WebSocket subscriptions, account balances, order placement, positions, funding data, and SharedApis multi-exchange code. Triggers on Weex integration in C#, .NET, dotnet, F#, or VB.NET context.
----
+# Working on Weex.Net
 
-# Weex.Net Skill
+The [Weex.Net skill](.claude/skills/weex-net/SKILL.md) owns consumer guidance. [llms.txt](llms.txt) is its discovery index. This file describes repository development.
 
-## Quick Decision
+## Layout and implementation
 
-If the user asks for Weex API access in C#/.NET, use `Weex.Net`. Do not write raw `HttpClient` calls to Weex endpoints; that bypasses request signing, rate limiting, typed models, reconnection handling, and the `HttpResult<T>` / `WebSocketResult<UpdateSubscription>` error model.
+- [Public client interfaces](Weex.Net/Interfaces/Clients) and [client implementations](Weex.Net/Clients): spot/futures REST, sockets, V1 compatibility, and Shared API V2 adapters.
+- [Models and options](Weex.Net/Objects), [enums](Weex.Net/Enums), and [converters](Weex.Net/Converters): wire models, configuration, enum mappings, and JSON source-generation metadata.
+- [DI extensions](Weex.Net/ExtensionMethods), [local order books](Weex.Net/SymbolOrderBooks), [tests](Weex.Net.UnitTests), and [examples](Examples/README.md).
 
-For exchange-agnostic code, use `CryptoExchange.Net.SharedApis` through `.SharedApi`.
+Follow neighboring endpoints for request construction, signing, validation, result handling, cancellation, nullable annotations, and XML documentation. Use `ConfigureAwait(false)` on library awaits as required by the analyzer. Update public interfaces with implementations, wire models with serialization metadata, and Shared API adapters with accurate capability options. Add or adjust relevant request/response fixtures when changing endpoint behavior. Preserve native distinctions between spot, regular futures orders, conditional orders, and TP/SL workflows.
 
-## Installation
+Maintain compatibility across the target frameworks in the [project](Weex.Net/Weex.Net.csproj). Do not change unrelated package versions, release settings, or generated output.
 
-```bash
-dotnet add package Weex.Net
+## Build and validation
+
+Use the SDK configured by [CI](.github/workflows/dotnet.yml). Debug normally builds only `netstandard2.0` and `net11.0`; the test project targets `net9.0`, so include all frameworks for solution/test builds:
+
+```powershell
+dotnet restore Weex.Net.sln -p:BuildAllFrameworks=true
+dotnet build Weex.Net.sln --no-restore -p:BuildAllFrameworks=true
+dotnet test Weex.Net.UnitTests/Weex.Net.UnitTests.csproj --no-build -p:BuildAllFrameworks=true --filter "FullyQualifiedName~AiExampleCompileTests"
 ```
 
-Targets: netstandard2.0, netstandard2.1, net8.0, net9.0, net10.0. Native AOT supported.
+The documentation test compiles standalone examples as console programs without running their exchange operations. Run relevant fixture tests for implementation changes. Live REST/socket integration tests have their own `Run` gates; shared REST integration tests use `ManualRun` or `INTEGRATION=1`. Do not enable them for documentation validation.
 
-## Core Pattern: REST Client Setup
+Validate all distributable frameworks and package contents:
 
-```csharp
-using Weex.Net;
-using Weex.Net.Clients;
-
-var restClient = new WeexRestClient(options =>
-{
-    options.ApiCredentials = new WeexCredentials("API_KEY", "API_SECRET", "API_PASSPHRASE");
-});
+```powershell
+dotnet build Weex.Net/Weex.Net.csproj -c Release -p:BuildAllFrameworks=true
+dotnet pack Weex.Net/Weex.Net.csproj -c Release --no-build
+dotnet build Examples/Examples.sln
 ```
 
-For public market data, credentials are not required:
+Compile changed skill snippets with the local project. Building example projects does not execute their requests; running trading examples can change live account state.
 
-```csharp
-var publicClient = new WeexRestClient();
-```
+## Documentation ownership
 
-## Core Pattern: Result Handling
+Keep API routing in `.claude/skills/weex-net/references/api-surfaces.md`, focused consumer snippets in `references/usage.md`, and distinct execution considerations in `references/safety.md`. `SKILL.md` routes to those references, `CLAUDE.md` imports this file, and `llms.txt` is a short link index.
 
-Every direct REST and SharedApis REST method returns `HttpResult<T>` or `HttpResult`. Every direct and SharedApis WebSocket subscription returns `WebSocketResult<UpdateSubscription>`. Always check `.Success` before reading `.Data`.
-
-```csharp
-var ticker = await restClient.SpotApi.ExchangeData.GetTickersAsync(new[] { "ETHUSDT" });
-if (!ticker.Success)
-{
-    Console.WriteLine($"Error: {ticker.Error}");
-    return;
-}
-
-var lastPrice = ticker.Data.Single().LastPrice;
-```
-
-## Core Pattern: API Surface
-
-```csharp
-restClient.SpotApi.ExchangeData      // public spot market data
-restClient.SpotApi.Account           // spot balances, bills, transfers
-restClient.SpotApi.Trading           // spot orders and user trades
-
-restClient.FuturesApi.ExchangeData   // futures market data, klines, funding, open interest
-restClient.FuturesApi.Account        // futures balances, fees, configs, leverage, margin
-restClient.FuturesApi.Trading        // futures orders, positions, conditional orders, TP/SL
-
-socketClient.SpotApi                 // spot public and private streams
-socketClient.FuturesApi              // futures public and private streams
-```
-
-## Core Pattern: Placing a Spot Order
-
-Use `OrderType` for spot order placement. The library can generate a client order id; pass `clientOrderId` only when an existing workflow requires your own id.
-
-```csharp
-using Weex.Net.Enums;
-
-var order = await restClient.SpotApi.Trading.PlaceOrderAsync(
-    symbol: "ETHUSDT",
-    side: OrderSide.Buy,
-    orderType: OrderType.Limit,
-    quantity: 0.1m,
-    price: 2000m,
-    timeInForce: TimeInForce.GoodTillCanceled);
-
-if (!order.Success) { Console.WriteLine(order.Error); return; }
-Console.WriteLine(order.Data.OrderId);
-```
-
-## Core Pattern: Placing a Futures Order
-
-Futures regular orders also use `OrderType`. Conditional futures orders use `FuturesOrderType`.
-
-```csharp
-await restClient.FuturesApi.Account.SetLeverageAsync(
-    symbol: "ETHUSDT",
-    marginMode: MarginType.Isolated,
-    isolatedLongLeverage: 5,
-    isolatedShortLeverage: 5);
-
-var order = await restClient.FuturesApi.Trading.PlaceOrderAsync(
-    symbol: "ETHUSDT",
-    side: OrderSide.Buy,
-    positionSide: PositionSide.Long,
-    orderType: OrderType.Market,
-    quantity: 0.01m);
-```
-
-## Core Pattern: WebSocket Subscriptions
-
-Use `WeexSocketClient`. Store each `UpdateSubscription` and unsubscribe when shutting down.
-
-```csharp
-var socketClient = new WeexSocketClient();
-
-var sub = await socketClient.SpotApi.SubscribeToTickerUpdatesAsync(
-    "ETHUSDT",
-    update => Console.WriteLine(update.Data.LastPrice));
-
-if (!sub.Success) { Console.WriteLine(sub.Error); return; }
-
-await socketClient.UnsubscribeAsync(sub.Data);
-```
-
-Authenticated streams use the same socket client with credentials:
-
-```csharp
-var authSocket = new WeexSocketClient(options =>
-{
-    options.ApiCredentials = new WeexCredentials("API_KEY", "API_SECRET", "API_PASSPHRASE");
-});
-
-await authSocket.SpotApi.SubscribeToOrderUpdatesAsync(update =>
-{
-    foreach (var order in update.Data.Orders)
-        Console.WriteLine($"{order.Symbol} {order.Status}");
-});
-```
-
-## Multi-Exchange via CryptoExchange.Net.SharedApis
-
-```csharp
-using CryptoExchange.Net.SharedApis;
-using Weex.Net.Clients;
-
-var shared = new WeexRestClient().SpotApi.SharedApi;
-var symbol = new SharedSymbol(TradingMode.Spot, "ETH", "USDT");
-
-var ticker = await shared.GetTickerAsync(new GetTickerRequest(symbol));
-if (!ticker.Success) { Console.WriteLine(ticker.Error); return; }
-Console.WriteLine(ticker.Data.LastPrice);
-```
-
-Weex shared REST interfaces include spot ticker, spot symbols, spot orders, balances, assets, fees, klines, order books, recent trades, deposits, withdrawals, futures ticker, futures symbols, futures orders, funding rates, leverage, and open interest. Socket shared interfaces include ticker, book ticker, klines, trades, balances, orders, user trades, futures positions.
-
-`IGetSpotSymbolsRest` and `IGetFuturesSymbolsRest` expose `SpotSymbolCatalog` and `FuturesSymbolCatalog`. A successful `GetSpotSymbolsAsync(...)` or `GetFuturesSymbolsAsync(...)` call refreshes the catalog, applies the filters in `GetSymbolsRequest`, and returns symbols with display names, asset classifications, fee rates, and price limits; futures symbols also include maximum long/short leverage.
-
-Use the exchange-level `IWeexSharedApiClient` aggregate's `GetCapability(...)` or `GetCapabilities(...)` methods for runtime capability lookup; use an API surface's `.SharedApi` property when the transport and API are known.
-
-## Dependency Injection
-
-```csharp
-using Weex.Net;
-
-services.AddWeex(options =>
-{
-    options.ApiCredentials = new WeexCredentials("API_KEY", "API_SECRET", "API_PASSPHRASE");
-});
-
-// Inject IWeexRestClient and IWeexSocketClient.
-```
-
-## Common Pitfalls - Avoid
-
-- Do not use raw `HttpClient` for Weex endpoints; use `WeexRestClient` or `WeexSocketClient`.
-- Do not use generic `ApiCredentials`; use `WeexCredentials("key", "secret", "passphrase")`.
-- Do not invent `UsdFuturesApi` or `CoinFuturesApi`; Weex exposes a single `FuturesApi`.
-- Do not call `GetTickerAsync` on spot; use `GetTickersAsync(new[] { "ETHUSDT" })`.
-- Do not use `FuturesOrderType` for regular futures orders; `PlaceOrderAsync` takes `OrderType`.
-- Do not skip `.Success` checks before reading `.Data`.
-- Do not use `.Result` or `.Wait()`; use `await`.
-- Do not create clients per request; reuse clients or use DI.
-- Do not forget to unsubscribe WebSocket subscriptions on shutdown.
-- Do not assume testnet support; the current source exposes `WeexEnvironment.Live` and custom environments only.
-
-## Environments
-
-```csharp
-var live = new WeexRestClient(o => o.Environment = WeexEnvironment.Live);
-
-var custom = new WeexRestClient(o => o.Environment = WeexEnvironment.CreateCustom(
-    "custom",
-    spotRestAddress: "https://spot.example",
-    spotSocketStreamAddress: "wss://spot-ws.example",
-    futuresRestAddress: "https://futures.example",
-    futuresSocketStreamAddress: "wss://futures-ws.example"));
-```
-
-## Reference
-
-- Full client reference: https://cryptoexchange.jkorf.dev/Weex.Net/
-- Examples: `Examples/ai-friendly/`
-- Quick method map: `docs/ai-api-map.md`
-- LLM index: `llms.txt`
-- Full LLM context: `llms-full.txt`
-- Source: https://github.com/JKorf/Weex.Net
-- NuGet: https://www.nuget.org/packages/Weex.Net
+Pack `.claude/skills/**` under `skills/` without appending `%(RecursiveDir)`. Inspect the NuGet archive for exactly five skill files under `skills/weex-net/`, matching source bytes. Validate relative links and heading anchors. Label repository-source/example links inside the skill as checkout-only so the packaged skill remains usable independently.

@@ -1,29 +1,23 @@
-# AI-Friendly Examples
+# Standalone examples
 
-These examples are optimized for AI coding assistants and quick onboarding. Each file is:
+Each `.cs` file is an independent top-level console program. Copy one into `Program.cs` at a time.
 
-- **Compilable** - drop into a console project with `dotnet add package Weex.Net` and it builds.
-- **Self-contained** - single file, no external setup, no shared helpers.
-- **Heavily commented** - explains why each important step exists.
-- **Idiomatic** - follows the current Weex.Net 1.x API shape.
+| File | Purpose |
+| --- | --- |
+| [01-spot-quickstart.cs](01-spot-quickstart.cs) | Public spot data and authenticated spot orders |
+| [02-futures.cs](02-futures.cs) | Leverage, futures orders, positions, and closing |
+| [03-websocket.cs](03-websocket.cs) | Public streams and optional private order stream with cleanup |
+| [04-multi-exchange.cs](04-multi-exchange.cs) | Shared API V2 market data and subscriptions |
+| [05-error-handling.cs](05-error-handling.cs) | Result handling and read retries |
 
-## Files
-
-| File | What it shows |
-|---|---|
-| `01-spot-quickstart.cs` | Client setup, spot ticker, account balances, limit order, order status |
-| `02-futures.cs` | Futures leverage, market order, positions, close positions |
-| `03-websocket.cs` | Spot and futures public streams, private account/order streams, proper teardown |
-| `04-multi-exchange.cs` | `CryptoExchange.Net.SharedApis` pattern for exchange-agnostic code |
-| `05-error-handling.cs` | `HttpResult` patterns, retry, validation with exchange info |
-
-## Running
-
-```bash
+```shell
 dotnet new console -n MyWeexApp
 cd MyWeexApp
 dotnet add package Weex.Net
-# Copy the example .cs file content into Program.cs
-# Replace API_KEY / API_SECRET / API_PASSPHRASE placeholders where needed
-dotnet run
+# Copy ONE example into Program.cs
+dotnet build
 ```
+
+Compilation executes no exchange operations. Running the spot and futures trading examples with valid credentials changes live account state; they are not sandbox programs. The socket example optionally reads `WEEX_API_KEY`, `WEEX_API_SECRET`, and `WEEX_API_PASSPHRASE` for private updates. Examples using placeholders require explicit credential configuration before private calls can succeed.
+
+See the [consumer skill](../../.claude/skills/weex-net/SKILL.md), [operational considerations](../../.claude/skills/weex-net/references/safety.md), and [complete projects](../README.md).

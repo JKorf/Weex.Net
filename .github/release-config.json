@@ -1,0 +1,18 @@
+{
+  "baseBranch": "main",
+  "sdk": "11.0.100",
+  "packages": [
+    {
+      "key": "weex",
+      "project": "Weex.Net/Weex.Net.csproj",
+      "testProjects": [
+        "Weex.Net.UnitTests/Weex.Net.UnitTests.csproj"
+      ],
+      "packageId": "Weex.Net",
+      "readme": "README.md",
+      "tagPrefix": "Weex.Net.",
+      "releaseIntegrationTests": false,
+      "publishToGitHubPackages": true
+    }
+  ]
+}

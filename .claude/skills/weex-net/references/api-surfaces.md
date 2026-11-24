@@ -1,17 +1,10 @@
-# Weex.Net AI API Quick Map
+# API surfaces
 
-Use this file to route common user intents to the correct Weex.Net client member. If a method name or parameter is not listed here, inspect `Weex.Net/Interfaces/Clients/**` before generating code.
+## Client roots
 
-## Client Roots
+`WeexRestClient` / `IWeexRestClient` expose `SpotApi` and `FuturesApi`, each with `ExchangeData`, `Account`, `Trading`, and `SharedApi`. `WeexSocketClient` / `IWeexSocketClient` expose spot and futures subscriptions plus each surface's `SharedApi`. There are no `UsdFuturesApi` or `CoinFuturesApi` roots.
 
-| Intent | Use |
-|---|---|
-| REST calls | `new WeexRestClient()` |
-| WebSocket streams | `new WeexSocketClient()` |
-| API key authentication | `options.ApiCredentials = new WeexCredentials("key", "secret", "passphrase")` |
-| Live environment | `WeexEnvironment.Live` |
-| Custom environment | `WeexEnvironment.CreateCustom(...)` |
-| Dependency injection | `services.AddWeex(options => { ... })` |
+The built-in environment is `WeexEnvironment.Live`. `WeexEnvironment.CreateCustom` accepts separate spot/futures REST and socket addresses; it does not supply a built-in sandbox. Private access uses `WeexCredentials(key, secret, passphrase)`. Native symbols commonly use `ETHUSDT`; obtain supported markets and filters from exchange information.
 
 ## Spot REST
 
@@ -123,53 +116,32 @@ Use this file to route common user intents to the correct Weex.Net client member
 | Subscribe futures order updates | `socketClient.FuturesApi.SubscribeToOrderUpdatesAsync(handler)` |
 | Subscribe futures user trade updates | `socketClient.FuturesApi.SubscribeToUserTradeUpdatesAsync(handler)` |
 
-## SharedApis
 
-| User intent | Weex.Net member or interface |
-|---|---|
-| Shared spot REST client | `new WeexRestClient().SpotApi.SharedApi` |
-| Shared futures REST client | `new WeexRestClient().FuturesApi.SharedApi` |
-| Shared spot socket client | `new WeexSocketClient().SpotApi.SharedApi` |
-| Shared futures socket client | `new WeexSocketClient().FuturesApi.SharedApi` |
-| Query/filter shared spot symbols | `IGetSpotSymbolsRest.GetSpotSymbolsAsync(new GetSymbolsRequest(...))` |
-| Read cached shared spot symbol metadata | `IGetSpotSymbolsRest.SpotSymbolCatalog` (refreshed by a successful symbol query) |
-| Query/filter shared futures symbols | `IGetFuturesSymbolsRest.GetFuturesSymbolsAsync(new GetSymbolsRequest(...))` |
-| Read cached shared futures symbol metadata | `IGetFuturesSymbolsRest.FuturesSymbolCatalog` (refreshed by a successful symbol query) |
-| Shared spot ticker REST | `IGetTickerRest.GetTickerAsync(new GetTickerRequest(symbol))` |
-| Shared spot order REST | `IPlaceSpotOrderRest.PlaceSpotOrderAsync(...)` |
-| Shared futures order REST | `IPlaceFuturesOrderRest.PlaceFuturesOrderAsync(...)` |
-| Shared funding info REST | `IGetFundingInfoRest.GetFundingInfoAsync(...)` |
-| Shared leverage REST | `ISetLeverageRest.SetLeverageAsync(...)` |
-| Shared ticker socket | `ISubscribeTickerSocket.SubscribeToTickerUpdatesAsync(...)` |
-| Shared order socket | `ISubscribeSpotOrdersSocket` / `ISubscribeFuturesOrdersSocket` |
-| Shared position socket | `ISubscribePositionsSocket` |
-| Resolve a runtime-selected Shared API capability | `IWeexSharedApiClient.GetCapability(...)` |
+## Shared API V2
 
-For shared socket subscriptions, keep the concrete socket client and unsubscribe with `await socketClient.UnsubscribeAsync(subscription.Data)`.
+`IWeexSharedApiClient` implements `ISharedApiClientBase`. Its `SpotRest`, `FuturesRest`, `SpotSocket`, and `FuturesSocket` properties expose these actual contracts:
 
-Shared spot and futures symbol results include display names, asset classifications, fee percentages, and price-limit percentages; futures results also include maximum long/short leverage. `GetSymbolsRequest` filters are applied before results are returned.
+| Surface type | Supported capabilities |
+| --- | --- |
+| `IWeexRestClientSpotSharedApi` | `IGetAllAssetsRest`, `IGetAssetRest`, `IGetBalancesRest`, `IGetBookTickerRest`, `IGetDepositHistoryRest`, `IGetFeesRest`, `IGetKlinesRest`, `IGetOrderBookRest`, `IGetRecentTradesRest`, `IGetWithdrawalHistoryRest`, `IGetSpotSymbolsRest`, `IGetTickerRest`, `IGetAllTickersRest`, `IPlaceSpotOrderRest`, `ICancelSpotOrderRest`, `IGetSpotOrderRest`, `IGetOpenSpotOrdersRest`, `IGetClosedSpotOrdersRest`, `IGetSpotOrderTradesRest`, `IGetSpotUserTradeHistoryRest`, `IGetSpotOrderByClientOrderIdRest`, `ICancelSpotOrderByClientOrderIdRest`, `IGetTransferHistoryRest` |
+| `IWeexRestClientFuturesSharedApi` | `IGetBalancesRest`, `IGetBookTickerRest`, `IGetFeesRest`, `IGetKlinesRest`, `IGetOrderBookRest`, `IGetRecentTradesRest`, `IGetFundingRateHistoryRest`, `IGetFuturesSymbolsRest`, `IGetTickerRest`, `IGetAllTickersRest`, `IGetIndexPriceKlinesRest`, `IGetMarkPriceKlinesRest`, `IGetLeverageRest`, `ISetLeverageRest`, `IGetOpenInterestRest`, `IPlaceFuturesOrderRest`, `IGetFuturesOrderRest`, `IGetOpenFuturesOrdersRest`, `IGetClosedFuturesOrdersRest`, `IGetFuturesOrderTradesRest`, `IGetFuturesUserTradeHistoryRest`, `ICancelFuturesOrderRest`, `IGetPositionsRest`, `ICloseFullPositionRest`, `IPlaceFuturesTriggerOrderRest`, `IGetFuturesTriggerOrderRest`, `ICancelFuturesTriggerOrderRest` |
+| `IWeexSocketClientSpotSharedApi` | `ISubscribeBalancesSocket`, `ISubscribeBookTickerSocket`, `ISubscribeKlinesSocket`, `ISubscribeTickerSocket`, `ISubscribeTradesSocket`, `ISubscribeUserTradesSocket`, `ISubscribeSpotOrdersSocket` |
+| `IWeexSocketClientFuturesSharedApi` | `ISubscribeBalancesSocket`, `ISubscribeKlinesSocket`, `ISubscribeTickerSocket`, `ISubscribeTradesSocket`, `ISubscribeUserTradesSocket`, `ISubscribeFuturesOrdersSocket`, `ISubscribePositionsSocket` |
 
-## Result Handling
+Use a typed surface or narrow interface when the operation is known. For runtime selection, use `GetCapability(SharedCapabilities.Tickers.GetTicker.Rest, TradingMode.Spot)` or `GetCapabilities(...)`. Use `TradingMode.PerpetualLinear` for the linear futures surface. A nullable `SharedCapabilityResolution<T>` contains `Capability` and `Options`; handle missing support. `Discover()` supplies summary metadata, and `GetCapabilities` returns all matching surfaces. `PreferredTransport` affects generic selection; a `.Rest` descriptor explicitly requires REST.
 
-| Situation | Pattern |
-|---|---|
-| REST success check | Direct and shared REST methods return `HttpResult<T>` / `HttpResult` |
-| Socket subscription success check | Direct and shared subscriptions return `WebSocketResult<UpdateSubscription>` |
-| Generic success check | `if (!result.Success) { Console.WriteLine(result.Error); return; }` |
-| Read result data | Read `result.Data` only after `result.Success` |
-| Retry decision | Retry only when `result.Error?.IsTransient == true` |
-| Cancellation | Pass `ct: cancellationToken` |
+Inspect supported trading modes, request/exchange parameter rules, limits, and notes. Do not infer optional-parameter support from the shared request model. Use native APIs for exact Weex conditional-order, TP/SL, margin, or account semantics not expressible in a shared capability. V1 `.SharedClient` facades remain for compatibility.
 
-## Common Routing Pitfalls
+## Symbols, catalogs, and quantities
 
-| Do not use | Use instead |
-|---|---|
-| `WeexClient` | `WeexRestClient` |
-| `ApiCredentials` | `WeexCredentials("key", "secret", "passphrase")` |
-| `UsdFuturesApi` / `CoinFuturesApi` | `FuturesApi` |
-| `SpotApi.ExchangeData.GetTickerAsync(...)` | `SpotApi.ExchangeData.GetTickersAsync(new[] { symbol })` |
-| `FuturesOrderType` for regular futures orders | `OrderType` |
-| `SpotApi.Trading.CancelOrderAsync(symbol, orderId)` | `SpotApi.Trading.CancelOrderAsync(orderId: orderId)` |
-| `.Data` without `.Success` check | Check `.Success` first |
-| Unsubscribe from a shared subscription | Keep the concrete socket client and call `socketClient.UnsubscribeAsync(subscription.Data)` |
-| Testnet environment | `WeexEnvironment.Live` or `WeexEnvironment.CreateCustom(...)` |
+Use `SharedSymbol(TradingMode.Spot, "ETH", "USDT")` for portable spot symbols, or `TradingMode.PerpetualLinear` for futures. Successful `GetSpotSymbolsAsync`/`GetFuturesSymbolsAsync` calls apply `GetSymbolsRequest` filters and refresh `SpotSymbolCatalog`/`FuturesSymbolCatalog` for that API/environment. Symbol metadata includes display names, asset classifications, fees, price limits, and futures maximum leverage where available. Do not turn missing metadata into assumed support.
+
+Shared order requests use `SharedQuantity.Base`, `.Quote`, or `.Contracts` only where the selected capability supports those units. Response `SharedOrderQuantity` values expose nullable `QuantityInBaseAsset`, `QuantityInQuoteAsset`, and `QuantityInContracts`; absent units are not zero. Ticker volume uses `Volumes` and book ticker quantities use `BestBidQuantities`/`BestAskQuantities`. Inspect `SharedOrderBook.QuantityType` before interpreting depth quantities.
+
+Spot deposit/withdrawal history comes from account bills. The current native APIs expose history rather than transfer/withdrawal initiation, and shared deposit-address retrieval is unavailable. Do not infer wallet operations from asset/network metadata.
+
+## Services and factories
+
+`services.AddWeex(...)` registers native clients, supported Shared API capabilities, the exchange aggregate, `IWeexOrderBookFactory`, `IWeexTrackerFactory`, and `IWeexUserClientProvider`. Use the exchange aggregate for explicit selection when multiple exchanges are registered. Factories supply maintained local books and trackers; check startup results and stop/dispose owned instances on shutdown. Multi-user clients require deliberate account/credential selection.
+
+Checkout-only: [public contracts](../../../../Weex.Net/Interfaces/Clients), [Shared API adapters](../../../../Weex.Net/Clients), and [DI registration](../../../../Weex.Net/ExtensionMethods/ServiceCollectionExtensions.cs).
